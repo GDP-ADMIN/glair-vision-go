@@ -9,14 +9,14 @@ import (
 
 // Client provides API to interact with GLAIR Vision products
 type Client struct {
-	config config.Config
+	config *config.Config
 
 	ocr ocr.OCR
 }
 
 // New instatiates a client instance with the provided configuration
 // and return a pointer to the new client
-func New(config config.Config) *Client {
+func New(config *config.Config) *Client {
 	return &Client{
 		config: config,
 	}

@@ -7,37 +7,30 @@ import (
 	"net/url"
 )
 
-// Credentials provides user credentials
-type Credentials struct {
-	username string
-	password string
-	apiKey   string
-}
-
 // Config provides configuration for a client instance,
 // including credentials and API configuration such as
 // base URL and API version.
 type Config struct {
-	username string
-	password string
-	apiKey   string
+	Username string
+	Password string
+	ApiKey   string
 
-	baseUrl    *url.URL
-	apiVersion string
+	BaseUrl    *url.URL
+	ApiVersion string
 }
 
-// NewConfig creates a new configuration object with default values for
+// New creates a new configuration object with default values for
 // base URL and API Version.
-func NewConfig(credentials Credentials) *Config {
+func New(username string, password string, apiKey string) *Config {
 	defaultUrl, _ := url.Parse("https://api.vision.glair.ai")
 	defaultApiVersion := "v1"
 
 	return &Config{
-		username:   credentials.username,
-		password:   credentials.password,
-		apiKey:     credentials.apiKey,
-		baseUrl:    defaultUrl,
-		apiVersion: defaultApiVersion,
+		Username:   username,
+		Password:   password,
+		ApiKey:     apiKey,
+		BaseUrl:    defaultUrl,
+		ApiVersion: defaultApiVersion,
 	}
 }
 
@@ -45,31 +38,36 @@ func NewConfig(credentials Credentials) *Config {
 // GLAIR Vision products
 func (c *Config) GetAuth() string {
 	basicCredentials := base64.StdEncoding.EncodeToString(
-		[]byte(c.username + ":" + c.password),
+		[]byte(c.Username + ":" + c.Password),
 	)
 
 	return "Basic " + basicCredentials
 }
 
+// GetEndpointURL creates service URL with base URL and API version
+func (c *Config) GetEndpointURL(service string, endpoint string) *url.URL {
+	return c.BaseUrl.JoinPath(service, c.ApiVersion, endpoint)
+}
+
 // WithCredentials sets user credentials for a configuration instance
-func (c *Config) WithCredentials(credentials Credentials) *Config {
-	c.username = credentials.username
-	c.password = credentials.password
-	c.apiKey = credentials.apiKey
+func (c *Config) WithCredentials(username string, password string, apiKey string) *Config {
+	c.Username = username
+	c.Password = password
+	c.ApiKey = apiKey
 
 	return c
 }
 
 // WithBaseURL sets base URL for a configuration instance
 func (c *Config) WithBaseURL(baseUrl *url.URL) *Config {
-	c.baseUrl = baseUrl
+	c.BaseUrl = baseUrl
 
 	return c
 }
 
 // WithVersion
 func (c *Config) WithVersion(version string) *Config {
-	c.apiVersion = version
+	c.ApiVersion = version
 
 	return c
 }
