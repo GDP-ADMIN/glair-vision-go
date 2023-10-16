@@ -4,7 +4,7 @@ The Go client library for GLAIR Vision.
 
 ## Requirement
 
-- Go 1.16 or later with Go modules.
+- Go 1.18 or later with Go modules.
 
 ## Installation
 
