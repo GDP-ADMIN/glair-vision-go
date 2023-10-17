@@ -4,8 +4,13 @@ package config
 
 import (
 	"encoding/base64"
+	"net/http"
 	"net/url"
 )
+
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
 
 // Config provides configuration for a client instance,
 // including credentials and API configuration such as
@@ -17,6 +22,8 @@ type Config struct {
 
 	BaseUrl    *url.URL
 	ApiVersion string
+
+	Client HTTPClient
 }
 
 // New creates a new configuration object with default values for
@@ -24,6 +31,7 @@ type Config struct {
 func New(username string, password string, apiKey string) *Config {
 	defaultUrl, _ := url.Parse("https://api.vision.glair.ai")
 	defaultApiVersion := "v1"
+	defaultClient := http.DefaultClient
 
 	return &Config{
 		Username:   username,
@@ -31,6 +39,7 @@ func New(username string, password string, apiKey string) *Config {
 		ApiKey:     apiKey,
 		BaseUrl:    defaultUrl,
 		ApiVersion: defaultApiVersion,
+		Client:     defaultClient,
 	}
 }
 
@@ -49,7 +58,7 @@ func (c *Config) GetEndpointURL(service string, endpoint string) *url.URL {
 	return c.BaseUrl.JoinPath(service, c.ApiVersion, endpoint)
 }
 
-// WithCredentials sets user credentials for a configuration instance
+// WithCredentials sets user credentials for the configuration object
 func (c *Config) WithCredentials(username string, password string, apiKey string) *Config {
 	c.Username = username
 	c.Password = password
@@ -58,14 +67,22 @@ func (c *Config) WithCredentials(username string, password string, apiKey string
 	return c
 }
 
-// WithBaseURL sets base URL for a configuration instance
+// WithClient sets HTTP client for the configuration object
+// that will be used for calling GLAIR Vision API endpoints
+func (c *Config) WithClient(client HTTPClient) *Config {
+	c.Client = client
+
+	return c
+}
+
+// WithBaseURL sets base API URL for the configuration object
 func (c *Config) WithBaseURL(baseUrl *url.URL) *Config {
 	c.BaseUrl = baseUrl
 
 	return c
 }
 
-// WithVersion
+// WithVersion sets API version for the configuration object
 func (c *Config) WithVersion(version string) *Config {
 	c.ApiVersion = version
 

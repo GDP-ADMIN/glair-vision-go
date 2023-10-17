@@ -38,9 +38,15 @@ func MakeRequest[T any](
 		return responseObj, err
 	}
 
+	res, err := config.Client.Do(req)
+	if err != nil {
+		// do error check
+	}
+	defer res.Body.Close()
+
 	err = json.NewDecoder(req.Body).Decode(&responseObj)
 	if err != nil {
-		return responseObj, err
+		return responseObj, err // TODO: should I fail on error?
 	}
 
 	return responseObj, nil
