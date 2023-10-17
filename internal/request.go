@@ -3,6 +3,7 @@ package internal
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -22,6 +23,7 @@ func MakeRequest[T any](
 	var responseObj T
 
 	url := config.GetEndpointURL("ocr", endpoint)
+	fmt.Println(url.String())
 
 	buffer := new(bytes.Buffer)
 	writer := multipart.NewWriter(buffer)
@@ -38,15 +40,28 @@ func MakeRequest[T any](
 		return responseObj, err
 	}
 
+	req.SetBasicAuth(config.Username, config.Password)
+	req.Header.Set("x-api-key", config.ApiKey)
+
 	res, err := config.Client.Do(req)
 	if err != nil {
-		// do error check
+		return responseObj, err
 	}
 	defer res.Body.Close()
 
+	if res.StatusCode != http.StatusOK {
+		var errorBody responseBody
+		_ = json.NewDecoder(req.Body).Decode(&errorBody)
+
+		return responseObj, RequestError{
+			StatusCode: res.StatusCode,
+			Body:       errorBody,
+		}
+	}
+
 	err = json.NewDecoder(req.Body).Decode(&responseObj)
 	if err != nil {
-		return responseObj, err // TODO: should I fail on error?
+		return responseObj, err
 	}
 
 	return responseObj, nil

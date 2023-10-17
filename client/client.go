@@ -11,7 +11,7 @@ import (
 type Client struct {
 	config *config.Config
 
-	ocr ocr.OCR
+	Ocr *ocr.OCR
 }
 
 // New instatiates a client instance with the provided configuration
@@ -19,5 +19,6 @@ type Client struct {
 func New(config *config.Config) *Client {
 	return &Client{
 		config: config,
+		Ocr:    ocr.New(*config),
 	}
 }

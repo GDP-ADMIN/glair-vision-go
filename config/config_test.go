@@ -1,7 +1,6 @@
 package config
 
 import (
-	"encoding/base64"
 	"net/url"
 	"testing"
 
@@ -23,15 +22,6 @@ func TestNew(t *testing.T) {
 
 	assert.Equal(t, url, config.BaseUrl)
 	assert.Equal(t, "v1", config.ApiVersion)
-}
-
-func TestConfig_GetAuth(t *testing.T) {
-	config := New("a", "b", "c")
-	authHeader := config.GetAuth()
-
-	expected := base64.RawStdEncoding.EncodeToString([]byte("a:b"))
-
-	assert.Equal(t, "Basic "+expected, authHeader)
 }
 
 func TestConfig_WithCredentials(t *testing.T) {

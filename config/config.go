@@ -3,7 +3,6 @@
 package config
 
 import (
-	"encoding/base64"
 	"net/http"
 	"net/url"
 )
@@ -41,16 +40,6 @@ func New(username string, password string, apiKey string) *Config {
 		ApiVersion: defaultApiVersion,
 		Client:     defaultClient,
 	}
-}
-
-// GetAuth creates authentication headers to interact with
-// GLAIR Vision products
-func (c *Config) GetAuth() string {
-	basicCredentials := base64.StdEncoding.EncodeToString(
-		[]byte(c.Username + ":" + c.Password),
-	)
-
-	return "Basic " + basicCredentials
 }
 
 // GetEndpointURL creates service URL with base URL and API version
