@@ -9,8 +9,6 @@ import (
 
 // Client provides API to interact with GLAIR Vision products
 type Client struct {
-	config *config.Config
-
 	Ocr *ocr.OCR
 }
 
@@ -18,7 +16,6 @@ type Client struct {
 // and return a pointer to the new client
 func New(config *config.Config) *Client {
 	return &Client{
-		config: config,
-		Ocr:    ocr.New(*config),
+		Ocr: ocr.New(config),
 	}
 }

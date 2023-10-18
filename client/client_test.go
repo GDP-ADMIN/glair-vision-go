@@ -7,9 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewClient(t *testing.T) {
-	config := config.New("username", "password", "")
-	client := New(config)
+func TestNew(t *testing.T) {
+	assert.NotPanics(t, func() {
+		config := config.New("username", "password", "")
 
-	assert.Equal(t, config, client.config)
+		New(config)
+	})
 }

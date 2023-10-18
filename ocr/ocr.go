@@ -11,28 +11,29 @@ import (
 // OCR provides functions to interact with GLAIR Vision
 // OCR products
 type OCR struct {
-	config config.Config
+	config *config.Config
 }
 
 // OCRResult is wrapper object for OCR API responses
 type OCRResult[T any] struct {
-	Status string
-	Reason string
-	Data   T
+	Status string `json:"status"`
+	Reason string `json:"reason"`
+	Read   T      `json:"read"`
 }
 
 // OCRImage stores image data from OCR API response
 type OCRImage struct {
-	Photo string
-	Sign  string
+	Photo string `json:"photo"`
+	Sign  string `json:"sign"`
 }
 
 // OCRField stores field information from the provided image
 type OCRField struct {
-	Confidence int
-	Value      string
+	Confidence int    `json:"confidence"`
+	Value      string `json:"value"`
 }
 
+// OCRQualities stores image quality information from the provided image
 type OCRQualities struct {
 	IsBlurred bool `json:"is_blurred"`
 	IsBright  bool `json:"is_bright"`
@@ -44,7 +45,7 @@ type OCRQualities struct {
 }
 
 // New creates a GLAIR Vision OCR API Client from the provided config
-func New(config config.Config) *OCR {
+func New(config *config.Config) *OCR {
 	return &OCR{
 		config: config,
 	}

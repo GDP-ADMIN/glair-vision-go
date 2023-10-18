@@ -3,8 +3,8 @@ package internal
 import "fmt"
 
 type responseBody struct {
-	Status string
-	Reason string
+	Status string `json:"status"`
+	Reason string `json:"reason"`
 }
 
 type RequestError struct {
@@ -13,5 +13,5 @@ type RequestError struct {
 }
 
 func (e RequestError) Error() string {
-	return fmt.Sprintf("Failed to process request: %s", e.Body.Reason)
+	return fmt.Sprintf("Failed to process request. status: %d. reason: %s", e.StatusCode, e.Body.Reason)
 }

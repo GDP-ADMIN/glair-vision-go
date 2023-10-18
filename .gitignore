@@ -20,5 +20,9 @@
 # Go workspace file
 go.work
 
-# VSCode debug
+# VSCode debug config
 .vscode
+__debug_bin
+
+# Environment variables for testing
+.env
