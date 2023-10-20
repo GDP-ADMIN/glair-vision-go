@@ -3,46 +3,65 @@ package ocr
 import (
 	"os"
 
+	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/internal"
 )
 
 // KTP is an object that stores OCR result from the provided KTP
 type KTP struct {
 	OCRResult[KTPRead]
-	Image OCRImage
+	Image OCRImage `json:"image,omitempty"`
 }
 
 type KTPWithQuality struct {
 	KTP
-	Qualities OCRQualities
+	Qualities OCRQualities `json:"qualities,omitempty"`
 }
 
 type KTPRead struct {
-	Agama            OCRField `json:"agama"`
-	Alamat           OCRField `json:"alamat"`
-	BerlakuHingga    OCRField `json:"berlakuHingga"`
-	GolonganDarah    OCRField `json:"golonganDarah"`
-	JenisKelamin     OCRField `json:"jenisKelamin"`
-	Kecamatan        OCRField `json:"kecamatan"`
-	KelurahanDesa    OCRField `json:"kelurahanDesa"`
-	Kewarganegaraan  OCRField `json:"kewarganegaraan"`
-	KotaKabupaten    OCRField `json:"kotaKabupaten"`
-	Nama             OCRField `json:"nama"`
-	Nik              OCRField `json:"nik"`
-	Pekerjaan        OCRField `json:"pekerjaan"`
-	Provinsi         OCRField `json:"provinsi"`
-	RtRw             OCRField `json:"rtRw"`
-	StatusPerkawinan OCRField `json:"statusPerkawinan"`
-	TanggalLahir     OCRField `json:"tanggalLahir"`
-	TempatLahir      OCRField `json:"tempatLahir"`
+	Agama            OCRField `json:"agama,omitempty"`
+	Alamat           OCRField `json:"alamat,omitempty"`
+	BerlakuHingga    OCRField `json:"berlakuHingga,omitempty"`
+	GolonganDarah    OCRField `json:"golonganDarah,omitempty"`
+	JenisKelamin     OCRField `json:"jenisKelamin,omitempty"`
+	Kecamatan        OCRField `json:"kecamatan,omitempty"`
+	KelurahanDesa    OCRField `json:"kelurahanDesa,omitempty"`
+	Kewarganegaraan  OCRField `json:"kewarganegaraan,omitempty"`
+	KotaKabupaten    OCRField `json:"kotaKabupaten,omitempty"`
+	Nama             OCRField `json:"nama,omitempty"`
+	Nik              OCRField `json:"nik,omitempty"`
+	Pekerjaan        OCRField `json:"pekerjaan,omitempty"`
+	Provinsi         OCRField `json:"provinsi,omitempty"`
+	RtRw             OCRField `json:"rtRw,omitempty"`
+	StatusPerkawinan OCRField `json:"statusPerkawinan,omitempty"`
+	TanggalLahir     OCRField `json:"tanggalLahir,omitempty"`
+	TempatLahir      OCRField `json:"tempatLahir,omitempty"`
 }
 
-// Ktp calls
+// Ktp
 func (ocr *OCR) Ktp(file *os.File) (KTP, error) {
-	return internal.MakeRequest[KTP](ocr.config, "ktp", file)
+	url, err := ocr.config.GetEndpointURL("ocr", "ktp")
+	if err != nil {
+		return KTP{}, glair.ErrInvalidBaseUrl
+	}
+
+	if file == nil {
+		return KTP{}, glair.ErrFileRequired
+	}
+
+	return internal.MakeRequest[KTP](ocr.config, url, file)
 }
 
 // KtpWithQuality
 func (ocr *OCR) KtpWithQuality(file *os.File) (KTPWithQuality, error) {
-	return internal.MakeRequest[KTPWithQuality](ocr.config, "ktp/qualities", file)
+	url, err := ocr.config.GetEndpointURL("ocr", "ktp")
+	if err != nil {
+		return KTPWithQuality{}, glair.ErrInvalidBaseUrl
+	}
+
+	if file == nil {
+		return KTPWithQuality{}, glair.ErrFileRequired
+	}
+
+	return internal.MakeRequest[KTPWithQuality](ocr.config, url, file)
 }

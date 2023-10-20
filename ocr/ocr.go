@@ -5,13 +5,13 @@
 package ocr
 
 import (
-	"github.com/glair-ai/glair-vision-go/config"
+	"github.com/glair-ai/glair-vision-go"
 )
 
 // OCR provides functions to interact with GLAIR Vision
 // OCR products
 type OCR struct {
-	config *config.Config
+	config *glair.Config
 }
 
 // OCRResult is wrapper object for OCR API responses
@@ -45,7 +45,7 @@ type OCRQualities struct {
 }
 
 // New creates a GLAIR Vision OCR API Client from the provided config
-func New(config *config.Config) *OCR {
+func New(config *glair.Config) *OCR {
 	return &OCR{
 		config: config,
 	}

@@ -1,10 +1,11 @@
-// Package config is collection of objects that provides configuration
-// for GLAIR Vision SDK client
-package config
+// Package glair provides common objects that can be used
+// across all GLAIR Vision Go SDK packages
+package glair
 
 import (
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type HTTPClient interface {
@@ -19,7 +20,7 @@ type Config struct {
 	Password string
 	ApiKey   string
 
-	BaseUrl    *url.URL
+	BaseUrl    string
 	ApiVersion string
 
 	Client HTTPClient
@@ -27,8 +28,8 @@ type Config struct {
 
 // New creates a new configuration object with default values for
 // base URL and API Version.
-func New(username string, password string, apiKey string) *Config {
-	defaultUrl, _ := url.Parse("https://api.vision.glair.ai")
+func NewConfig(username string, password string, apiKey string) *Config {
+	defaultUrl := "https://api.vision.glair.ai"
 	defaultApiVersion := "v1"
 	defaultClient := http.DefaultClient
 
@@ -43,8 +44,9 @@ func New(username string, password string, apiKey string) *Config {
 }
 
 // GetEndpointURL creates service URL with base URL and API version
-func (c *Config) GetEndpointURL(service string, endpoint string) *url.URL {
-	return c.BaseUrl.JoinPath(service, c.ApiVersion, endpoint)
+func (c *Config) GetEndpointURL(service string, endpoint string) (*url.URL, error) {
+	parts := []string{c.BaseUrl, service, c.ApiVersion, endpoint}
+	return url.Parse(strings.Join(parts, "/"))
 }
 
 // WithCredentials sets user credentials for the configuration object
@@ -65,8 +67,8 @@ func (c *Config) WithClient(client HTTPClient) *Config {
 }
 
 // WithBaseURL sets base API URL for the configuration object
-func (c *Config) WithBaseURL(baseUrl *url.URL) *Config {
-	c.BaseUrl = baseUrl
+func (c *Config) WithBaseURL(url string) *Config {
+	c.BaseUrl = url
 
 	return c
 }

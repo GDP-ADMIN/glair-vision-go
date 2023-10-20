@@ -6,62 +6,61 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 
-	"github.com/glair-ai/glair-vision-go/config"
+	"github.com/glair-ai/glair-vision-go"
 )
 
 // MakeRequest creates and sends HTTP request to a specified
 // GLAIR Vision service endpoint
 func MakeRequest[T any](
-	config *config.Config,
-	endpoint string,
+	config *glair.Config,
+	url *url.URL,
 	file *os.File,
 ) (T, error) {
-	var responseObj T
+	var obj T
 
-	url := config.GetEndpointURL("ocr", endpoint)
-	header, body := createRequestPayload(file)
-
-	req, err := http.NewRequest("POST", url.String(), body)
+	header, body, err := createRequestPayload(file)
 	if err != nil {
-		return responseObj, err
+		return obj, err
 	}
 
+	req, _ := http.NewRequest("POST", url.String(), body)
 	req.SetBasicAuth(config.Username, config.Password)
 	req.Header.Set("x-api-key", config.ApiKey)
-
 	for key, value := range header {
 		req.Header.Set(key, value)
 	}
 
 	res, err := config.Client.Do(req)
 	if err != nil {
-		return responseObj, err
+		return obj, glair.ErrBadClient
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		var errorBody responseBody
+		bytes, err := io.ReadAll(res.Body)
+		if err != nil {
+			return obj, glair.ErrInvalidResponseBody
+		}
 
-		_ = json.NewDecoder(res.Body).Decode(&errorBody)
-
-		return responseObj, RequestError{
-			StatusCode: res.StatusCode,
-			Body:       errorBody,
+		return obj, glair.RequestError{
+			StatusCode:   res.StatusCode,
+			ResponseBody: bytes,
 		}
 	}
 
-	err = json.NewDecoder(res.Body).Decode(&responseObj)
+	err = json.NewDecoder(res.Body).Decode(&obj)
 	if err != nil {
-		return responseObj, err
+		return obj, glair.ErrInvalidResponseBody
 	}
 
-	return responseObj, nil
+	return obj, nil
 }
 
-func createRequestPayload(file *os.File) (map[string]string, *bytes.Buffer) {
+func createRequestPayload(file *os.File) (map[string]string, *bytes.Buffer, error) {
 	header := map[string]string{}
 	body := &bytes.Buffer{}
 
@@ -69,12 +68,19 @@ func createRequestPayload(file *os.File) (map[string]string, *bytes.Buffer) {
 	file.Read(bytes)
 
 	writer := multipart.NewWriter(body)
-	part, _ := writer.CreateFormFile("image", filepath.Base(file.Name()))
-	io.Copy(part, file)
+	part, err := writer.CreateFormFile("image", filepath.Base(file.Name()))
+	if err != nil {
+		return header, nil, glair.ErrInvalidFormData
+	}
+
+	_, err = io.Copy(part, file)
+	if err != nil {
+		return header, nil, glair.ErrInvalidFile
+	}
 
 	writer.Close()
 
 	header["Content-Type"] = writer.FormDataContentType()
 
-	return header, body
+	return header, body, nil
 }

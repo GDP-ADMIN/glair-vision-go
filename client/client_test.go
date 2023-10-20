@@ -3,14 +3,14 @@ package client
 import (
 	"testing"
 
-	"github.com/glair-ai/glair-vision-go/config"
+	"github.com/glair-ai/glair-vision-go"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
-	assert.NotPanics(t, func() {
-		config := config.New("username", "password", "")
+	config := glair.NewConfig("username", "password", "api_key")
 
-		New(config)
-	})
+	client := New(config)
+
+	assert.Equal(t, config, client.Config)
 }
