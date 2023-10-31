@@ -149,7 +149,21 @@ func (ocr *OCR) STNK(
 		return STNK{}, err
 	}
 
-	url := ocr.config.GetEndpointURL("ocr", "kk")
+	url := ocr.config.GetEndpointURL("ocr", "stnk")
 
 	return internal.MakeRequest[STNK](ctx, url, ocr.config, stnk)
+}
+
+func (ocr *OCR) BPKB(
+	ctx context.Context,
+	file interface{},
+) (BPKB, error) {
+	bpkb, err := ocr.readFile(file)
+	if err != nil {
+		return BPKB{}, err
+	}
+
+	url := ocr.config.GetEndpointURL("ocr", "bpkb")
+
+	return internal.MakeRequest[BPKB](ctx, url, ocr.config, bpkb)
 }
