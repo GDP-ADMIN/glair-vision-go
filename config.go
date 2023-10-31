@@ -4,8 +4,12 @@ package glair
 
 import (
 	"net/http"
-	"net/url"
 	"strings"
+)
+
+const (
+	defaultUrl     = "https://api.vision.glair.ai"
+	defaultVersion = "v1"
 )
 
 type HTTPClient interface {
@@ -29,8 +33,6 @@ type Config struct {
 // New creates a new configuration object with default values for
 // base URL and API Version.
 func NewConfig(username string, password string, apiKey string) *Config {
-	defaultUrl := "https://api.vision.glair.ai"
-	defaultApiVersion := "v1"
 	defaultClient := http.DefaultClient
 
 	return &Config{
@@ -38,19 +40,26 @@ func NewConfig(username string, password string, apiKey string) *Config {
 		Password:   password,
 		ApiKey:     apiKey,
 		BaseUrl:    defaultUrl,
-		ApiVersion: defaultApiVersion,
+		ApiVersion: defaultVersion,
 		Client:     defaultClient,
 	}
 }
 
 // GetEndpointURL creates service URL with base URL and API version
-func (c *Config) GetEndpointURL(service string, endpoint string) (*url.URL, error) {
+func (c *Config) GetEndpointURL(
+	service string,
+	endpoint string,
+) string {
 	parts := []string{c.BaseUrl, service, c.ApiVersion, endpoint}
-	return url.Parse(strings.Join(parts, "/"))
+	return strings.Join(parts, "/")
 }
 
 // WithCredentials sets user credentials for the configuration object
-func (c *Config) WithCredentials(username string, password string, apiKey string) *Config {
+func (c *Config) WithCredentials(
+	username string,
+	password string,
+	apiKey string,
+) *Config {
 	c.Username = username
 	c.Password = password
 	c.ApiKey = apiKey

@@ -32,7 +32,7 @@ func TestConfig_WithCredentials(t *testing.T) {
 func TestConfig_WithBaseURL(t *testing.T) {
 	url := "https://api.vision.glare.ai"
 
-	config := NewConfig("a", "b", "c").WithBaseURL(url)
+	config := NewConfig("a", "b", "c")
 
 	assert.Equal(t, url, config.BaseUrl)
 }
@@ -44,37 +44,7 @@ func TestConfig_WithVersion(t *testing.T) {
 }
 
 func TestConfig_GetEndpointURL(t *testing.T) {
-	tests := []struct {
-		name    string
-		config  *Config
-		want    string
-		wantErr bool
-	}{
-		{
-			name:    "should return valid URL",
-			config:  NewConfig("a", "b", "c"),
-			want:    "https://api.vision.glair.ai/ocr/v1/ktp",
-			wantErr: false,
-		},
-		{
-			name:    "should return error invalid URL",
-			config:  NewConfig("a", "b", "c").WithBaseURL("%+0"),
-			want:    "",
-			wantErr: true,
-		},
-	}
+	url := NewConfig("a", "b", "c").GetEndpointURL("ocr", "ktp")
 
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			url, err := tc.config.GetEndpointURL("ocr", "ktp")
-
-			assertion := ""
-			if url != nil {
-				assertion = url.String()
-			}
-
-			assert.Equal(t, tc.want, assertion)
-			assert.Equal(t, tc.wantErr, err != nil)
-		})
-	}
+	assert.Equal(t, "https://api.vision.glair.ai/ocr/v1/ktp", url)
 }

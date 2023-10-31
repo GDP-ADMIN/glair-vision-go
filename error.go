@@ -1,45 +1,32 @@
 package glair
 
-import (
-	"encoding/json"
-	"errors"
+type ErrorCode string
+
+const (
+	ErrorCodeInvalidFile     ErrorCode = "INVALID_FILE"
+	ErrorCodeFileCorrupted   ErrorCode = "FILE_CORRUPTED"
+	ErrorCodeInvalidURL      ErrorCode = "INVAlID_URL"
+	ErrorCodeBadClient       ErrorCode = "BAD_CLIENT"
+	ErrorCodeInvalidResponse ErrorCode = "INVALID_RESPONSE"
 )
 
-var (
-	ErrInvalidBaseUrl = errors.New("invalid base URL configuration")
-	ErrFileRequired   = errors.New("input file is required")
-	ErrInvalidFile    = errors.New("input file is corrupted")
-	ErrBadClient      = errors.New("invalid http client")
-
-	// this should not happen
-
-	ErrInvalidResponseBody = errors.New("invalid response body format")
-	ErrInvalidFormData     = errors.New("failed to create form data")
-)
-
-type responseBody struct {
+type ResponseBody struct {
 	Status string `json:"status"`
 	Reason string `json:"reason"`
 }
 
-// RequestError is an error that occurs when GLAIR Vision
-// API does not return HTTP Status OK
-type RequestError struct {
-	StatusCode   int    `json:"status_code"`
-	ResponseBody []byte `json:"body"`
+type Error struct {
+	Code    ErrorCode
+	Message string
+	Err     error
+
+	Body ResponseBody
 }
 
-func (e RequestError) Error() string {
-	var body responseBody
-	json.Unmarshal(e.ResponseBody, &body)
-
-	return body.Reason
+func (e *Error) Error() string {
+	return e.Message
 }
 
-// Body returns raw response body
-func (e RequestError) Body() responseBody {
-	var body responseBody
-	json.Unmarshal(e.ResponseBody, &body)
-
-	return body
+func (e *Error) Unwrap() error {
+	return e.Err
 }

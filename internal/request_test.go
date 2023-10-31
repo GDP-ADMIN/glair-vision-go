@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -29,14 +30,27 @@ func TestMakeRequest(t *testing.T) {
 		config     *glair.Config
 		mockServer *httptest.Server
 		want       mockStruct
-		wantErr    error
+		wantErr    *glair.Error
 	}{
 		{
-			name: "failed to send request",
+			name: "failed to send request due to bad url",
+			config: glair.NewConfig("username", "password", "api-key").
+				WithBaseURL("this-is-invalid"),
+			want: mockStruct{},
+			wantErr: &glair.Error{
+				Code:    glair.ErrorCodeInvalidURL,
+				Message: "invalid base url provided in configuration",
+			},
+		},
+		{
+			name: "failed to send request due to bad client",
 			config: glair.NewConfig("username", "password", "api-key").
 				WithClient(failingClient{}),
-			want:    mockStruct{},
-			wantErr: glair.ErrBadClient,
+			want: mockStruct{},
+			wantErr: &glair.Error{
+				Code:    glair.ErrorCodeBadClient,
+				Message: "bad http client provided in configuration",
+			},
 		},
 		{
 			name:   "response is not OK",
@@ -46,9 +60,13 @@ func TestMakeRequest(t *testing.T) {
 				w.Write([]byte(`{"status": "NO_FILE", "reason": "No file in request body"}`))
 			})),
 			want: mockStruct{},
-			wantErr: glair.RequestError{
-				StatusCode:   http.StatusBadRequest,
-				ResponseBody: []byte(`{"status": "NO_FILE", "reason": "No file in request body"}`),
+			wantErr: &glair.Error{
+				Code:    "NO_FILE",
+				Message: "No file in request body",
+				Body: glair.ResponseBody{
+					Status: "NO_FILE",
+					Reason: "No file in request body",
+				},
 			},
 		},
 		{
@@ -58,8 +76,11 @@ func TestMakeRequest(t *testing.T) {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte(`im not a valid JSON`))
 			})),
-			want:    mockStruct{},
-			wantErr: glair.ErrInvalidResponseBody,
+			want: mockStruct{},
+			wantErr: &glair.Error{
+				Code:    glair.ErrorCodeInvalidResponse,
+				Message: "failed to parse http response",
+			},
 		},
 		{
 			name:   "success",
@@ -77,14 +98,12 @@ func TestMakeRequest(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cfg := tc.config
-			if tc.mockServer != nil {
-				cfg = tc.config.WithBaseURL(tc.mockServer.URL)
-			}
-
-			url, _ := cfg.GetEndpointURL("ocr", "ktp")
-
-			res, err := MakeRequest[mockStruct](cfg, url, file)
+			res, err := MakeRequest[mockStruct](
+				context.TODO(),
+				tc.mockServer.URL,
+				tc.config,
+				file,
+			)
 
 			assert.Equal(t, tc.want, res)
 			assert.Equal(t, tc.wantErr, err)

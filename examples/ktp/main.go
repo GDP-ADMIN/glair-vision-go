@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -11,12 +12,14 @@ import (
 )
 
 func main() {
-	config := glair.NewConfig("USERNAME", "PASSWORD", "API_KEY")
+	ctx := context.Background()
+
+	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	file, _ := os.Open("./images/ktp.jpeg")
+	file, _ := os.Open("../images/ktp.jpeg")
 
-	result, err := client.Ocr.Ktp(file)
+	result, err := client.Ocr.Ktp(ctx, file)
 
 	if err != nil {
 		log.Fatalln(err.Error())
