@@ -208,3 +208,17 @@ func (ocr *OCR) GeneralDocument(
 
 	return internal.MakeRequest[GeneralDocument](ctx, url, ocr.config, generalDocument)
 }
+
+func (ocr *OCR) Invoice(
+	ctx context.Context,
+	file interface{},
+) (Invoice, error) {
+	invoice, err := ocr.readFile(file)
+	if err != nil {
+		return Invoice{}, err
+	}
+
+	url := ocr.config.GetEndpointURL("ocr", "plate")
+
+	return internal.MakeRequest[Invoice](ctx, url, ocr.config, invoice)
+}
