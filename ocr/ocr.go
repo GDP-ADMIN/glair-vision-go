@@ -236,3 +236,17 @@ func (ocr *OCR) Receipt(
 
 	return internal.MakeRequest[Receipt](ctx, url, ocr.config, receipt)
 }
+
+func (ocr *OCR) BankStatement(
+	ctx context.Context,
+	file interface{},
+) (BankStatement, error) {
+	bankStatement, err := ocr.readFile(file)
+	if err != nil {
+		return BankStatement{}, err
+	}
+
+	url := ocr.config.GetEndpointURL("ocr", "bank-statement")
+
+	return internal.MakeRequest[BankStatement](ctx, url, ocr.config, bankStatement)
+}
