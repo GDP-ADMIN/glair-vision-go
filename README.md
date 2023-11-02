@@ -21,3 +21,7 @@ Alternatively, you can also run `go get` the explicitly resolve and fetch the SD
 ```bash
 go get -u github.com/glair-ai/glair-vision-go
 ```
+
+## Examples
+
+You can see the examples in the [examples folder](./examples) 

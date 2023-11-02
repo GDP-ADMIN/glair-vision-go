@@ -1,5 +1,3 @@
-// Package glair provides common objects that can be used
-// across all GLAIR Vision Go SDK packages
 package glair
 
 import (
@@ -12,6 +10,9 @@ const (
 	defaultVersion = "v1"
 )
 
+// HTTPClient is an interface that users can implement
+// to customize HTTP calls behavior when interacting
+// with GLAIR Vision API
 type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
@@ -20,17 +21,30 @@ type HTTPClient interface {
 // including credentials and API configuration such as
 // base URL and API version.
 type Config struct {
+	// Username represents username to be used for basic authentication
+	// with GLAIR Vision API
 	Username string
+	// Password represents password to be used for basic authentication
+	// with GLAIR Vision API
 	Password string
-	ApiKey   string
+	// API key represents API key to be used for authentication
+	// with GLAIR Vision API
+	ApiKey string
 
-	BaseUrl    string
+	// BaseUrl represents base URL path for GLAIR Vision API
+	// endpoints. Defaults to "https://api.vision.glair.ai"
+	BaseUrl string
+	// ApiVersion represents GLAIR Vision API version to
+	// be called. Defaults to "v1"
 	ApiVersion string
 
+	// Client represents the HTTP client that is used
+	// to call the HTTP endpoints of GLAIR Vision API.
+	// Defaults to the default HTTP client of Go
 	Client HTTPClient
 }
 
-// New creates a new configuration object with default values for
+// NewConfig creates a new configuration object with default values for
 // base URL and API Version.
 func NewConfig(username string, password string, apiKey string) *Config {
 	defaultClient := http.DefaultClient
