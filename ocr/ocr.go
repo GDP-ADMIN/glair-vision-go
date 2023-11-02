@@ -98,7 +98,7 @@ func (ocr *OCR) Ktp(
 }
 
 // KtpWithQuality
-func (ocr *OCR) KTPWithQuality(
+func (ocr *OCR) KtpWithQuality(
 	ctx context.Context,
 	file interface{},
 ) (KTPWithQuality, error) {
@@ -180,4 +180,18 @@ func (ocr *OCR) Passport(
 	url := ocr.config.GetEndpointURL("ocr", "passport")
 
 	return internal.MakeRequest[Passport](ctx, url, ocr.config, passport)
+}
+
+func (ocr *OCR) Plate(
+	ctx context.Context,
+	file interface{},
+) (Plate, error) {
+	passport, err := ocr.readFile(file)
+	if err != nil {
+		return Plate{}, err
+	}
+
+	url := ocr.config.GetEndpointURL("ocr", "plate")
+
+	return internal.MakeRequest[Plate](ctx, url, ocr.config, passport)
 }

@@ -19,7 +19,7 @@ func main() {
 
 	file, _ := os.Open("../images/ktp.jpeg")
 
-	result, err := client.Ocr.KTPWithQuality(ctx, file)
+	result, err := client.Ocr.KtpWithQuality(ctx, file)
 
 	if err != nil {
 		log.Fatalln(err.Error())
