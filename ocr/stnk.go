@@ -1,5 +1,6 @@
 package ocr
 
+// STNK stores OCR result of STNK model from the given input
 type STNK = OCRResult[STNKData]
 
 type STNKData struct {

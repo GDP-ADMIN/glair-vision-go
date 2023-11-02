@@ -1,5 +1,6 @@
 package ocr
 
+// NPWP stores OCR result of NPWP model from the given input
 type NPWP = OCRResult[NPWPData]
 
 type NPWPData struct {

@@ -1,5 +1,6 @@
 package ocr
 
+// BPKB stores OCR result of BPKB model from the given input
 type BPKB = OCRResult[BPKBData]
 
 type BPKBData struct {

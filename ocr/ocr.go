@@ -1,4 +1,4 @@
-// Package ocr is collection of functions and objects that interacts
+// Package ocr is a collection of functions and objects that interacts
 // with GLAIR Vision OCR products and its results
 package ocr
 
@@ -29,14 +29,19 @@ type OCRImage struct {
 	Sign  string `json:"sign,omitempty"`
 }
 
-// OCRField stores field information from the provided image
+// OCRField stores field information from OCR result of the given file
 type OCRField struct {
-	Confidence int      `json:"confidence,omitempty"`
-	Value      string   `json:"value,omitempty"`
-	Polygon    [][2]int `json:"polygon,omitempty"`
+	// Confidence represents OCR accuracy of the value
+	Confidence int    `json:"confidence,omitempty"`
+	Value      string `json:"value,omitempty"`
+	// Polygon represents value position from the given image
+	//
+	// Do note that not all OCR API provides this value
+	Polygon [][]int `json:"polygon,omitempty"`
 }
 
-// OCRQualities stores image quality information from the provided image
+// OCRQualities stores image quality information from OCR result of
+// the given file
 type OCRQualities struct {
 	IsBlurred bool `json:"is_blurred,omitempty"`
 	IsBright  bool `json:"is_bright,omitempty"`
@@ -81,7 +86,12 @@ func (ocr *OCR) readFile(file interface{}) (*os.File, error) {
 	return input, nil
 }
 
-// Ktp
+// Ktp performs OCR on the given file using KTP model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/ktp
 func (ocr *OCR) Ktp(
 	ctx context.Context,
 	file interface{},
@@ -96,7 +106,13 @@ func (ocr *OCR) Ktp(
 	return internal.MakeRequest[KTP](ctx, url, ocr.config, ktp)
 }
 
-// KtpWithQuality
+// KtpWithQuality performs OCR on the given file using KTP model
+// and supplements it with file quality data
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/ktp
 func (ocr *OCR) KtpWithQuality(
 	ctx context.Context,
 	file interface{},
@@ -111,6 +127,12 @@ func (ocr *OCR) KtpWithQuality(
 	return internal.MakeRequest[KTPWithQuality](ctx, url, ocr.config, ktp)
 }
 
+// NPWP performs OCR on the given file using NPWP model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/npwp
 func (ocr *OCR) NPWP(
 	ctx context.Context,
 	file interface{},
@@ -125,6 +147,12 @@ func (ocr *OCR) NPWP(
 	return internal.MakeRequest[NPWP](ctx, url, ocr.config, npwp)
 }
 
+// KK performs OCR on the given file using Kartu Keluarga model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/kk
 func (ocr *OCR) KK(
 	ctx context.Context,
 	file interface{},
@@ -139,6 +167,12 @@ func (ocr *OCR) KK(
 	return internal.MakeRequest[KK](ctx, url, ocr.config, kk)
 }
 
+// STNK performs OCR on the given file using STNK model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/stnk
 func (ocr *OCR) STNK(
 	ctx context.Context,
 	file interface{},
@@ -153,6 +187,12 @@ func (ocr *OCR) STNK(
 	return internal.MakeRequest[STNK](ctx, url, ocr.config, stnk)
 }
 
+// BPKB performs OCR on the given file using BPKB model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/bpkb
 func (ocr *OCR) BPKB(
 	ctx context.Context,
 	file interface{},
@@ -167,6 +207,12 @@ func (ocr *OCR) BPKB(
 	return internal.MakeRequest[BPKB](ctx, url, ocr.config, bpkb)
 }
 
+// Passport performs OCR on the given file using Passport model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/passport
 func (ocr *OCR) Passport(
 	ctx context.Context,
 	file interface{},
@@ -181,6 +227,12 @@ func (ocr *OCR) Passport(
 	return internal.MakeRequest[Passport](ctx, url, ocr.config, passport)
 }
 
+// Plate performs OCR on the given file using License Plate model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/plate
 func (ocr *OCR) Plate(
 	ctx context.Context,
 	file interface{},
@@ -195,6 +247,12 @@ func (ocr *OCR) Plate(
 	return internal.MakeRequest[Plate](ctx, url, ocr.config, passport)
 }
 
+// GeneralDocument performs OCR on the given file using all-purpose Document model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/general-document
 func (ocr *OCR) GeneralDocument(
 	ctx context.Context,
 	file interface{},
@@ -209,6 +267,12 @@ func (ocr *OCR) GeneralDocument(
 	return internal.MakeRequest[GeneralDocument](ctx, url, ocr.config, generalDocument)
 }
 
+// Invoice performs OCR on the given file using Invoice model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/invoice
 func (ocr *OCR) Invoice(
 	ctx context.Context,
 	file interface{},
@@ -223,6 +287,12 @@ func (ocr *OCR) Invoice(
 	return internal.MakeRequest[Invoice](ctx, url, ocr.config, invoice)
 }
 
+// Receipt performs OCR on the given file using Receipt model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/receipt
 func (ocr *OCR) Receipt(
 	ctx context.Context,
 	file interface{},
@@ -237,6 +307,12 @@ func (ocr *OCR) Receipt(
 	return internal.MakeRequest[Receipt](ctx, url, ocr.config, receipt)
 }
 
+// BankStatement performs OCR on the given file using Bank Statement model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/bank-statemetn
 func (ocr *OCR) BankStatement(
 	ctx context.Context,
 	file interface{},

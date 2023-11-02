@@ -1,5 +1,7 @@
 package ocr
 
+// BankStatement stores OCR result of Bank Stattement model
+// from the given input
 type BankStatement = OCRResult[BankStatementData]
 
 type BankStatementData struct {

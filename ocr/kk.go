@@ -1,5 +1,6 @@
 package ocr
 
+// KK stores OCR result of Kartu Keluarga model from the given input
 type KK = OCRResult[KKData]
 
 type KKData struct {

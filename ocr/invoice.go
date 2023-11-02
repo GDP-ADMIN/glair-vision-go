@@ -1,5 +1,6 @@
 package ocr
 
+// Invoice stores OCR result of Invoice model from the given input
 type Invoice = OCRResult[InvoiceData]
 
 type InvoiceData struct {

@@ -1,5 +1,6 @@
 package ocr
 
+// Receipt stores OCR result of Receipt model from the given input
 type Receipt = OCRResult[ReceiptData]
 
 type ReceiptData struct {

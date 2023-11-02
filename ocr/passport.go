@@ -1,5 +1,6 @@
 package ocr
 
+// Passport stores OCR result of Passport model from the given input
 type Passport = OCRResult[PassportData]
 
 type PassportData struct {
