@@ -1,7 +1,5 @@
-// Package ocr is collection of functions that interacts
-// with GLAIR Vision OCR products
-//
-// This package is not meant to be used separately without the client
+// Package ocr is collection of functions and objects that interacts
+// with GLAIR Vision OCR products and its results
 package ocr
 
 import (
@@ -27,25 +25,26 @@ type OCRResult[T any] struct {
 
 // OCRImage stores image data from OCR API response
 type OCRImage struct {
-	Photo string `json:"photo"`
-	Sign  string `json:"sign"`
+	Photo string `json:"photo,omitempty"`
+	Sign  string `json:"sign,omitempty"`
 }
 
 // OCRField stores field information from the provided image
 type OCRField struct {
-	Confidence int    `json:"confidence"`
-	Value      string `json:"value"`
+	Confidence int      `json:"confidence,omitempty"`
+	Value      string   `json:"value,omitempty"`
+	Polygon    [][2]int `json:"polygon,omitempty"`
 }
 
 // OCRQualities stores image quality information from the provided image
 type OCRQualities struct {
-	IsBlurred bool `json:"is_blurred"`
-	IsBright  bool `json:"is_bright"`
-	IsCopy    bool `json:"is_copy"`
-	IsDark    bool `json:"is_dark"`
-	IsFlash   bool `json:"is_flash"`
-	IsKtp     bool `json:"is_ktp"`
-	IsRotated bool `json:"is_rotated"`
+	IsBlurred bool `json:"is_blurred,omitempty"`
+	IsBright  bool `json:"is_bright,omitempty"`
+	IsCopy    bool `json:"is_copy,omitempty"`
+	IsDark    bool `json:"is_dark,omitempty"`
+	IsFlash   bool `json:"is_flash,omitempty"`
+	IsKtp     bool `json:"is_ktp,omitempty"`
+	IsRotated bool `json:"is_rotated,omitempty"`
 }
 
 // New creates a GLAIR Vision OCR API Client from the provided config
@@ -194,4 +193,18 @@ func (ocr *OCR) Plate(
 	url := ocr.config.GetEndpointURL("ocr", "plate")
 
 	return internal.MakeRequest[Plate](ctx, url, ocr.config, passport)
+}
+
+func (ocr *OCR) GeneralDocument(
+	ctx context.Context,
+	file interface{},
+) (GeneralDocument, error) {
+	generalDocument, err := ocr.readFile(file)
+	if err != nil {
+		return GeneralDocument{}, err
+	}
+
+	url := ocr.config.GetEndpointURL("ocr", "plate")
+
+	return internal.MakeRequest[GeneralDocument](ctx, url, ocr.config, generalDocument)
 }
