@@ -1,11 +1,9 @@
 package ocr
 
-type KK = OCRResult[KKRead]
+type KK = OCRResult[KKData]
 
-type KKRead struct {
-	// Alamat represents registered family address
-	Alamat string `json:"alamat,omitempty"`
-	// DesaKelurahan represents registered district
+type KKData struct {
+	Alamat             string  `json:"alamat,omitempty"`
 	DesaKelurahan      string  `json:"desa_kelurahan,omitempty"`
 	KabupatenKota      string  `json:"kabupaten_kota,omitempty"`
 	Kecamatan          string  `json:"kecamatan,omitempty"`

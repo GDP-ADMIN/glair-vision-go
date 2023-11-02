@@ -1,8 +1,8 @@
 package ocr
 
-type BPKB = OCRResult[BPKBRead]
+type BPKB = OCRResult[BPKBData]
 
-type BPKBRead struct {
+type BPKBData struct {
 	IdentitasPemilik         OwnerIdentity        `json:"identitas_pemilik,omitempty"`
 	IdentitasKendaraan       VehicleIdentity      `json:"identitas_kendaraan,omitempty"`
 	DokumenRegistrasiPertama RegistrationDocument `json:"dokumen_registrasi_pertama,omitempty"`

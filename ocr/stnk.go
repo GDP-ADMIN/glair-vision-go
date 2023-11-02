@@ -1,8 +1,8 @@
 package ocr
 
-type STNK = OCRResult[STNKRead]
+type STNK = OCRResult[STNKData]
 
-type STNKRead struct {
+type STNKData struct {
 	Alamat               string `json:"alamat,omitempty"`
 	BahanBakar           string `json:"bahan_bakar,omitempty"`
 	BerlakuSampai        string `json:"berlaku_sampai,omitempty"`

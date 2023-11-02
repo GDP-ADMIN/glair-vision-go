@@ -2,7 +2,7 @@ package ocr
 
 // KTP stores OCR result from the provided KTP input
 type KTP struct {
-	OCRResult[KTPRead]
+	OCRResult[KTPData]
 	Image OCRImage `json:"image,omitempty"`
 }
 
@@ -13,9 +13,9 @@ type KTPWithQuality struct {
 	Qualities OCRQualities `json:"qualities,omitempty"`
 }
 
-// KTPRead stores key-value field of KTP that has been
+// KTPData stores key-value field of KTP that has been
 // recognized by the OCR engine
-type KTPRead struct {
+type KTPData struct {
 	Agama            OCRField `json:"agama,omitempty"`
 	Alamat           OCRField `json:"alamat,omitempty"`
 	BerlakuHingga    OCRField `json:"berlakuHingga,omitempty"`

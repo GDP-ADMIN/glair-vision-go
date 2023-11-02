@@ -167,3 +167,17 @@ func (ocr *OCR) BPKB(
 
 	return internal.MakeRequest[BPKB](ctx, url, ocr.config, bpkb)
 }
+
+func (ocr *OCR) Passport(
+	ctx context.Context,
+	file interface{},
+) (Passport, error) {
+	passport, err := ocr.readFile(file)
+	if err != nil {
+		return Passport{}, err
+	}
+
+	url := ocr.config.GetEndpointURL("ocr", "passport")
+
+	return internal.MakeRequest[Passport](ctx, url, ocr.config, passport)
+}

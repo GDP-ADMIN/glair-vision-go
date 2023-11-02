@@ -1,8 +1,8 @@
 package ocr
 
-type NPWP = OCRResult[NPWPRead]
+type NPWP = OCRResult[NPWPData]
 
-type NPWPRead struct {
+type NPWPData struct {
 	Alamat string `json:"alamat,omitempty"`
 	Nama   string `json:"nama,omitempty"`
 	Nik    string `json:"nik,omitempty"`
