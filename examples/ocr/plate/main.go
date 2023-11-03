@@ -17,9 +17,9 @@ func main() {
 	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	file, _ := os.Open("../images/ktp.jpeg")
+	file, _ := os.Open("../images/plate.jpg")
 
-	result, err := client.Ocr.Ktp(ctx, file)
+	result, err := client.Ocr.Plate(ctx, file)
 
 	if err != nil {
 		log.Fatalln(err.Error())
