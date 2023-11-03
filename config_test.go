@@ -32,7 +32,7 @@ func TestConfig_WithCredentials(t *testing.T) {
 func TestConfig_WithBaseURL(t *testing.T) {
 	url := "https://api.vision.glare.ai"
 
-	config := NewConfig("a", "b", "c")
+	config := NewConfig("a", "b", "c").WithBaseURL(url)
 
 	assert.Equal(t, url, config.BaseUrl)
 }

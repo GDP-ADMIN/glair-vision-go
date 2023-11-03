@@ -17,6 +17,10 @@ const (
 	// ErrorCodeBadClient is returned when the provided HTTP
 	// client unable to send HTTP request to GLAIR Vision API
 	ErrorCodeBadClient ErrorCode = "BAD_CLIENT"
+	// ErrorCodeAPIError is returned when GLAIR Vision API
+	// returns a non-OK response. In this case, please
+	// check the Body property for more details on the error
+	ErrorCodeAPIError ErrorCode = "API_ERROR"
 	// ErrorCodeInvalidResponse is returned when GLAIR Vision API
 	// returns an unexpected response
 	//
@@ -25,11 +29,12 @@ const (
 	ErrorCodeInvalidResponse ErrorCode = "INVALID_RESPONSE"
 )
 
-// ResponseBody represents the response body returned
-// by GLAIR Vision API if the response body exists
-type ResponseBody struct {
-	Status string `json:"status"`
-	Reason string `json:"reason"`
+// Response represents the response returned
+// by GLAIR Vision API if request returned an error
+type Response struct {
+	Code   int    `json:"code,omitempty"`
+	Status string `json:"status,omitempty"`
+	Reason string `json:"reason,omitempty"`
 }
 
 // Error is an extended error object used by
@@ -47,9 +52,9 @@ type Error struct {
 	// Err is the original error object that is returned by the SDK
 	Err error
 
-	// Body represents response returned by GLAIR Vision API
-	// if available
-	Body ResponseBody
+	// Response represents response returned by GLAIR Vision API
+	// if response is available
+	Response Response
 }
 
 func (e *Error) Error() string {

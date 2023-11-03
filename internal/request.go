@@ -14,7 +14,9 @@ import (
 )
 
 // MakeRequest creates and sends HTTP request to a specified
-// GLAIR Vision service endpoint
+// GLAIR Vision service endpoint.
+//
+// This function is not meant to be used outside GLAIR Vision SDK
 func MakeRequest[T any](
 	ctx context.Context,
 	url string,
@@ -32,7 +34,7 @@ func MakeRequest[T any](
 	if err != nil {
 		return response, &glair.Error{
 			Code:    glair.ErrorCodeInvalidURL,
-			Message: "invalid base url provided in configuration",
+			Message: "Invalid base URL is provided in configuration.",
 			Err:     err,
 		}
 	}
@@ -49,36 +51,56 @@ func MakeRequest[T any](
 	if err != nil {
 		return response, &glair.Error{
 			Code:    glair.ErrorCodeBadClient,
-			Message: "bad http client provided in configuration",
+			Message: "Bad HTTP client is provided in configuration.",
 			Err:     err,
 		}
 	}
 	defer res.Body.Close()
 
-	err = json.NewDecoder(res.Body).Decode(&response)
-	if err != nil {
-		var body map[string]interface{}
-		err = json.NewDecoder(res.Body).Decode(&body)
-
-		glairErr := &glair.Error{
-			Code:    glair.ErrorCodeInvalidResponse,
-			Message: "failed to parse http response",
-			Err:     err,
-		}
+	if res.StatusCode != http.StatusOK {
+		var resBody map[string]interface{}
+		err = json.NewDecoder(res.Body).Decode(&resBody)
 
 		if err != nil {
-			return response, glairErr
+			// TODO: telemetry
+			return response, &glair.Error{
+				Code:    glair.ErrorCodeInvalidResponse,
+				Message: "Failed to parse API response. Please contact us about this error.",
+				Err:     err,
+				Response: glair.Response{
+					Code: res.StatusCode,
+				},
+			}
 		}
 
-		glairErr.Code = body["status"].(glair.ErrorCode)
-		glairErr.Message = body["reason"].(string)
-		glairErr.Body = glair.ResponseBody{
-			Status: body["status"].(string),
-			Reason: body["reason"].(string),
+		glairErr := &glair.Error{
+			Code:    glair.ErrorCodeAPIError,
+			Message: "GLAIR API returned non-OK response. Please check the Response property for more detailed explanation.",
+			Response: glair.Response{
+				Code: res.StatusCode,
+			},
+		}
+
+		reason, ok := resBody["reason"].(string)
+		if ok {
+			glairErr.Response.Reason = reason
+		}
+
+		message, ok := resBody["message"].(string)
+		if glairErr.Response.Reason == "" && ok {
+			glairErr.Response.Reason = message
+		}
+
+		status, ok := resBody["status"].(string)
+		if ok {
+			glairErr.Response.Status = status
 		}
 
 		return response, glairErr
 	}
+
+	// we don't need to check the error here
+	json.NewDecoder(res.Body).Decode(&response)
 
 	return response, nil
 }
@@ -95,7 +117,7 @@ func createRequestPayload(file *os.File) (map[string]string, *bytes.Buffer, erro
 	if err != nil {
 		return header, nil, &glair.Error{
 			Code:    glair.ErrorCodeFileCorrupted,
-			Message: "failed to append image to request",
+			Message: "Failed to append file into request body.",
 			Err:     err,
 		}
 	}
@@ -104,7 +126,7 @@ func createRequestPayload(file *os.File) (map[string]string, *bytes.Buffer, erro
 	if err != nil {
 		return header, nil, &glair.Error{
 			Code:    glair.ErrorCodeFileCorrupted,
-			Message: "failed to parse image data",
+			Message: "Failed to parse image data.",
 			Err:     err,
 		}
 	}

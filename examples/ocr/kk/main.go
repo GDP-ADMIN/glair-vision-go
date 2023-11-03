@@ -14,12 +14,12 @@ import (
 func main() {
 	ctx := context.Background()
 
-	config := glair.NewConfig("sdk-tester", "bzJ0Vt0a8R2XqVbCPrgH", "OKMjceKWLXdmTKYwoSCXAVVDWtQWRrhr")
+	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	file, _ := os.Open("../images/ktp.jpeg")
+	file, _ := os.Open("../images/kk.jpg")
 
-	result, err := client.Ocr.Ktp(ctx, file)
+	result, err := client.Ocr.NPWP(ctx, file)
 
 	if err != nil {
 		log.Fatalln(err.Error())

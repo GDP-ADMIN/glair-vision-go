@@ -68,7 +68,7 @@ func (ocr *OCR) readFile(file interface{}) (*os.File, error) {
 		if err != nil {
 			return nil, &glair.Error{
 				Code:    glair.ErrorCodeInvalidFile,
-				Message: "cannot read file from path",
+				Message: "Cannot read file from the given path.",
 				Err:     err,
 			}
 		}
@@ -79,7 +79,7 @@ func (ocr *OCR) readFile(file interface{}) (*os.File, error) {
 	default:
 		return nil, &glair.Error{
 			Code:    glair.ErrorCodeInvalidFile,
-			Message: "invalid file type. Supported types are string or *os.File",
+			Message: "Invalid file type is provided. Valid file types are string or *os.File",
 		}
 	}
 
@@ -122,7 +122,7 @@ func (ocr *OCR) KtpWithQuality(
 		return KTPWithQuality{}, err
 	}
 
-	url := ocr.config.GetEndpointURL("ocr", "ktp/quality")
+	url := ocr.config.GetEndpointURL("ocr", "ktp/qualities")
 
 	return internal.MakeRequest[KTPWithQuality](ctx, url, ocr.config, ktp)
 }
