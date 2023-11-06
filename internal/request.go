@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
-	"net/http/httputil"
 	"os"
 	"path/filepath"
 
@@ -58,9 +56,6 @@ func MakeRequest[T any](
 		}
 	}
 	defer res.Body.Close()
-
-	str, _ := httputil.DumpResponse(res, true)
-	fmt.Println(string(str))
 
 	if res.StatusCode != http.StatusOK {
 		var resBody map[string]interface{}
