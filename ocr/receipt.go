@@ -10,14 +10,14 @@ type ReceiptData struct {
 	ReceiptTime     OCRStringField `json:"receipt_time,omitempty"`
 	Items           []ReceiptItem  `json:"items,omitempty"`
 	SubTotalAmount  OCRStringField `json:"sub_total_amount,omitempty"`
-	TaxAmount       OCRStringField `json:"tax_amount,omitempty"`
-	TipAmount       OCRStringField `json:"tip_amount,omitempty"`
+	TaxAmount       OCRIntField    `json:"tax_amount,omitempty"`
+	TipAmount       OCRIntField    `json:"tip_amount,omitempty"`
 	TotalAmount     OCRStringField `json:"total_amount,omitempty"`
 }
 
 type ReceiptItem struct {
 	ItemName        OCRStringField `json:"item_name,omitempty"`
 	ItemQuantity    OCRStringField `json:"item_quantity,omitempty"`
-	ItemTotalPrice  OCRStringField `json:"item_total_price,omitempty"`
-	ItemProductCode OCRStringField `json:"item_product_code"`
+	ItemTotalPrice  OCRIntField    `json:"item_total_price,omitempty"`
+	ItemProductCode OCRStringField `json:"item_product_code,omitempty"`
 }
