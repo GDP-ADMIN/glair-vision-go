@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"path/filepath"
 
@@ -57,12 +59,15 @@ func MakeRequest[T any](
 	}
 	defer res.Body.Close()
 
+	str, _ := httputil.DumpResponse(res, true)
+	fmt.Println(string(str))
+
 	if res.StatusCode != http.StatusOK {
 		var resBody map[string]interface{}
 		err = json.NewDecoder(res.Body).Decode(&resBody)
 
 		if err != nil {
-			// TODO: telemetry
+			// TODO: telemetry?
 			return response, &glair.Error{
 				Code:    glair.ErrorCodeInvalidResponse,
 				Message: "Failed to parse API response. Please contact us about this error.",

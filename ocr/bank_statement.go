@@ -5,18 +5,18 @@ package ocr
 type BankStatement = OCRResult[BankStatementData]
 
 type BankStatementData struct {
-	BankName               BankStatementOCRStringField `json:"bank_name,omitempty"`
-	AccountNumber          BankStatementOCRStringField `json:"account_number,omitempty"`
-	AccountName            BankStatementOCRStringField `json:"account_name,omitempty"`
-	Currency               BankStatementOCRStringField `json:"currency,omitempty"`
-	BeginningBalance       BankStatementOCRIntField    `json:"beginning_balance,omitempty"`
-	TotalDebitTransaction  BankStatementOCRIntField    `json:"total_debit_transaction,omitempty"`
-	TotalCreditTransaction BankStatementOCRIntField    `json:"total_credit_transaction,omitempty"`
-	TotalTransaction       BankStatementOCRIntField    `json:"total_transaction,omitempty"`
-	ProductName            BankStatementOCRStringField `json:"product_name,omitempty"`
-	StartPeriod            BankStatementOCRStringField `json:"start_period,omitempty"`
-	EndPeriod              BankStatementOCRStringField `json:"end_period,omitempty"`
-	Transactions           []BankStatementTransaction  `json:"transactions,omitempty"`
+	BankName               PaperlessOCRStringField    `json:"bank_name,omitempty"`
+	AccountNumber          PaperlessOCRStringField    `json:"account_number,omitempty"`
+	AccountName            PaperlessOCRStringField    `json:"account_name,omitempty"`
+	Currency               PaperlessOCRStringField    `json:"currency,omitempty"`
+	BeginningBalance       PaperlessOCRIntField       `json:"beginning_balance,omitempty"`
+	TotalDebitTransaction  PaperlessOCRIntField       `json:"total_debit_transaction,omitempty"`
+	TotalCreditTransaction PaperlessOCRIntField       `json:"total_credit_transaction,omitempty"`
+	TotalTransaction       PaperlessOCRIntField       `json:"total_transaction,omitempty"`
+	ProductName            PaperlessOCRStringField    `json:"product_name,omitempty"`
+	StartPeriod            PaperlessOCRStringField    `json:"start_period,omitempty"`
+	EndPeriod              PaperlessOCRStringField    `json:"end_period,omitempty"`
+	Transactions           []BankStatementTransaction `json:"transactions,omitempty"`
 }
 
 type BankStatementTransaction struct {
@@ -30,31 +30,12 @@ type BankStatementTransaction struct {
 	SignedAmount      BankStatementOCRIntTransactionField    `json:"signed_amount,omitempty"`
 }
 
-type BankStatementOCRField struct {
-	OCRField
-
-	ConfidenceText float32 `json:"confidence_text,omitempty"`
-	PageIndex      int     `json:"page_index"`
-	ValueOriginal  string  `json:"value_original,omitempty"`
-}
-
 type BankStatementOCRTransactionField struct {
 	Confidence     float32 `json:"confidence"`
 	ConfidenceText float32 `json:"confidence_text"`
 	PageIndex      int     `json:"page_index"`
 	PolygonText    [][]int `json:"polygon_text,omitempty"`
 	ValueOriginal  string  `json:"value_original,omitempty"`
-}
-
-type BankStatementOCRStringField struct {
-	BankStatementOCRField
-
-	Value string `json:"value"`
-}
-
-type BankStatementOCRIntField struct {
-	BankStatementOCRField
-	Value int64 `json:"value"`
 }
 
 type BankStatementOCRStringTransactionField struct {

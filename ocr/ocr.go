@@ -58,6 +58,34 @@ type OCRIntField struct {
 	Value int64 `json:"value"`
 }
 
+// PaperlessOCRField stores field information of OCR result from the
+// given file in addition of page index and original text data
+type PaperlessOCRField struct {
+	OCRField
+
+	ConfidenceText float32 `json:"confidence_text,omitempty"`
+	PageIndex      int     `json:"page_index"`
+	ValueOriginal  string  `json:"value_original,omitempty"`
+}
+
+// PaperlessOCRStringField stores field information of OCR result from the
+// given file that can be represented as a string in addition of page
+// index and original text data
+type PaperlessOCRStringField struct {
+	PaperlessOCRField
+
+	Value string `json:"value,omitempty"`
+}
+
+// PaperlessOCRIntField stores field information of OCR result from the
+// given file that can be represented as a string in addition of page
+// index and original text data
+type PaperlessOCRIntField struct {
+	PaperlessOCRField
+
+	Value int64 `json:"value,omitempty"`
+}
+
 // OCRQualities stores image quality information from OCR result of
 // the given file
 type OCRQualities struct {
