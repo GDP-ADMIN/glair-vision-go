@@ -10,6 +10,10 @@ import (
 	"github.com/glair-ai/glair-vision-go/internal"
 )
 
+type OCRValue interface {
+	string | int
+}
+
 // OCR provides functions to interact with GLAIR Vision
 // OCR products
 type OCR struct {
@@ -29,15 +33,29 @@ type OCRImage struct {
 	Sign  string `json:"sign,omitempty"`
 }
 
-// OCRField stores field information from OCR result of the given file
+// OCRField is stores field information of OCR result from the given file
 type OCRField struct {
 	// Confidence represents OCR accuracy of the value
 	Confidence float32 `json:"confidence,omitempty"`
-	Value      string  `json:"value,omitempty"`
+
 	// Polygon represents value position from the given image
 	//
 	// Do note that not all OCR API provides this value
 	Polygon [][]int `json:"polygon,omitempty"`
+}
+
+// OCRStringField stores field information that can be represented
+// as a string of OCR result from the given file
+type OCRStringField struct {
+	OCRField
+	Value string `json:"value,omitempty"`
+}
+
+// OCRIntField stores field information that can be represented
+// as an integer of OCR result from the given file
+type OCRIntField struct {
+	OCRField
+	Value int64 `json:"value,omitempty"`
 }
 
 // OCRQualities stores image quality information from OCR result of

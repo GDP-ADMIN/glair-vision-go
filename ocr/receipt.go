@@ -4,20 +4,20 @@ package ocr
 type Receipt = OCRResult[ReceiptData]
 
 type ReceiptData struct {
-	MerchantName    string        `json:"merchant_name,omitempty"`
-	MerchantAddress string        `json:"merchant_address,omitempty"`
-	ReceiptDate     string        `json:"receipt_date,omitempty"`
-	ReceiptTime     string        `json:"receipt_time.omitempty"`
-	Items           []ReceiptItem `json:"items,omitempty"`
-	SubTotalAmount  string        `json:"sub_total_amount,omitempty"`
-	TaxAmount       string        `json:"tax_amount,omitempty"`
-	TipAmount       string        `json:"tip_amount,omitempty"`
-	TotalAmount     string        `json:"total_amount,omitempty"`
+	MerchantName    OCRStringField `json:"merchant_name,omitempty"`
+	MerchantAddress OCRStringField `json:"merchant_address,omitempty"`
+	ReceiptDate     OCRStringField `json:"receipt_date,omitempty"`
+	ReceiptTime     OCRStringField `json:"receipt_time,omitempty"`
+	Items           []ReceiptItem  `json:"items,omitempty"`
+	SubTotalAmount  OCRStringField `json:"sub_total_amount,omitempty"`
+	TaxAmount       OCRStringField `json:"tax_amount,omitempty"`
+	TipAmount       OCRStringField `json:"tip_amount,omitempty"`
+	TotalAmount     OCRStringField `json:"total_amount,omitempty"`
 }
 
 type ReceiptItem struct {
-	ItemName        string `json:"item_name,omitempty"`
-	ItemQuantity    string `json:"item_quantity,omitempty"`
-	ItemTotalPrice  string `json:"item_total_price,omitempty"`
-	ItemProductCode string `json:"item_product_code"`
+	ItemName        OCRStringField `json:"item_name,omitempty"`
+	ItemQuantity    OCRStringField `json:"item_quantity,omitempty"`
+	ItemTotalPrice  OCRStringField `json:"item_total_price,omitempty"`
+	ItemProductCode OCRStringField `json:"item_product_code"`
 }

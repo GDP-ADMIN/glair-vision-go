@@ -4,8 +4,8 @@ package ocr
 type NPWP = OCRResult[NPWPData]
 
 type NPWPData struct {
-	Alamat OCRField `json:"alamat,omitempty"`
-	Nama   OCRField `json:"nama,omitempty"`
-	Nik    OCRField `json:"nik,omitempty"`
-	NoNPWP OCRField `json:"noNpwp,omitempty"`
+	Alamat OCRStringField `json:"alamat,omitempty"`
+	Nama   OCRStringField `json:"nama,omitempty"`
+	Nik    OCRStringField `json:"nik,omitempty"`
+	NoNPWP OCRStringField `json:"noNpwp,omitempty"`
 }

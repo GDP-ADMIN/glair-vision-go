@@ -16,21 +16,21 @@ type KTPWithQuality struct {
 // KTPData stores key-value field of KTP that can be
 // recognized by the OCR engine
 type KTPData struct {
-	Agama            OCRField `json:"agama,omitempty"`
-	Alamat           OCRField `json:"alamat,omitempty"`
-	BerlakuHingga    OCRField `json:"berlakuHingga,omitempty"`
-	GolonganDarah    OCRField `json:"golonganDarah,omitempty"`
-	JenisKelamin     OCRField `json:"jenisKelamin,omitempty"`
-	Kecamatan        OCRField `json:"kecamatan,omitempty"`
-	KelurahanDesa    OCRField `json:"kelurahanDesa,omitempty"`
-	Kewarganegaraan  OCRField `json:"kewarganegaraan,omitempty"`
-	KotaKabupaten    OCRField `json:"kotaKabupaten,omitempty"`
-	Nama             OCRField `json:"nama,omitempty"`
-	Nik              OCRField `json:"nik,omitempty"`
-	Pekerjaan        OCRField `json:"pekerjaan,omitempty"`
-	Provinsi         OCRField `json:"provinsi,omitempty"`
-	RtRw             OCRField `json:"rtRw,omitempty"`
-	StatusPerkawinan OCRField `json:"statusPerkawinan,omitempty"`
-	TanggalLahir     OCRField `json:"tanggalLahir,omitempty"`
-	TempatLahir      OCRField `json:"tempatLahir,omitempty"`
+	Agama            OCRStringField `json:"agama,omitempty"`
+	Alamat           OCRStringField `json:"alamat,omitempty"`
+	BerlakuHingga    OCRStringField `json:"berlakuHingga,omitempty"`
+	GolonganDarah    OCRStringField `json:"golonganDarah,omitempty"`
+	JenisKelamin     OCRStringField `json:"jenisKelamin,omitempty"`
+	Kecamatan        OCRStringField `json:"kecamatan,omitempty"`
+	KelurahanDesa    OCRStringField `json:"kelurahanDesa,omitempty"`
+	Kewarganegaraan  OCRStringField `json:"kewarganegaraan,omitempty"`
+	KotaKabupaten    OCRStringField `json:"kotaKabupaten,omitempty"`
+	Nama             OCRStringField `json:"nama,omitempty"`
+	Nik              OCRStringField `json:"nik,omitempty"`
+	Pekerjaan        OCRStringField `json:"pekerjaan,omitempty"`
+	Provinsi         OCRStringField `json:"provinsi,omitempty"`
+	RtRw             OCRStringField `json:"rtRw,omitempty"`
+	StatusPerkawinan OCRStringField `json:"statusPerkawinan,omitempty"`
+	TanggalLahir     OCRStringField `json:"tanggalLahir,omitempty"`
+	TempatLahir      OCRStringField `json:"tempatLahir,omitempty"`
 }
