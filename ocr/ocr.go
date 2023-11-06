@@ -32,8 +32,8 @@ type OCRImage struct {
 // OCRField stores field information from OCR result of the given file
 type OCRField struct {
 	// Confidence represents OCR accuracy of the value
-	Confidence int    `json:"confidence,omitempty"`
-	Value      string `json:"value,omitempty"`
+	Confidence float32 `json:"confidence,omitempty"`
+	Value      string  `json:"value,omitempty"`
 	// Polygon represents value position from the given image
 	//
 	// Do note that not all OCR API provides this value
