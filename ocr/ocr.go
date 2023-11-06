@@ -312,7 +312,7 @@ func (ocr *OCR) Receipt(
 // File must be provided as a string that represents a path or
 // an interface of *os.File
 //
-// API Docs: https://docs.glair.ai/vision/bank-statemetn
+// API Docs: https://docs.glair.ai/vision/bank-statement
 func (ocr *OCR) BankStatement(
 	ctx context.Context,
 	file interface{},
@@ -325,4 +325,24 @@ func (ocr *OCR) BankStatement(
 	url := ocr.config.GetEndpointURL("ocr", "bank-statement")
 
 	return internal.MakeRequest[BankStatement](ctx, url, ocr.config, bankStatement)
+}
+
+// SKPR performs OCR on the given file using SKPR model
+//
+// File must be provided as a string that represents a path or
+// an interface of *os.File
+//
+// API Docs: https://docs.glair.ai/vision/skpr
+func (ocr *OCR) SKPR(
+	ctx context.Context,
+	file interface{},
+) (SKPR, error) {
+	skpr, err := ocr.readFile(file)
+	if err != nil {
+		return SKPR{}, err
+	}
+
+	url := ocr.config.GetEndpointURL("ocr", "skpr")
+
+	return internal.MakeRequest[SKPR](ctx, url, ocr.config, skpr)
 }
