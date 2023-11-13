@@ -19,7 +19,9 @@ func main() {
 
 	file, _ := os.Open("../images/invoice.jpg")
 
-	result, err := client.Ocr.Invoice(ctx, file)
+	result, err := client.Ocr.Invoice(ctx, glair.OCRInput{
+		File: file,
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())

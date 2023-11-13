@@ -4,16 +4,20 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
-	"net/http/httputil"
 	"os"
 	"path/filepath"
 
 	"github.com/glair-ai/glair-vision-go"
 )
+
+type RequestParameters struct {
+	Url       string
+	RequestID string
+	Payload   map[string]*os.File
+}
 
 // MakeRequest creates and sends HTTP request to a specified
 // GLAIR Vision service endpoint.
@@ -21,18 +25,17 @@ import (
 // This function is not meant to be used outside GLAIR Vision SDK
 func MakeRequest[T any](
 	ctx context.Context,
-	url string,
+	payload RequestParameters,
 	config *glair.Config,
-	file *os.File,
 ) (T, error) {
 	var response T
 
-	header, body, err := createRequestPayload(file)
+	header, body, err := createRequestPayload(payload.Payload)
 	if err != nil {
 		return response, err
 	}
 
-	req, err := http.NewRequest("POST", url, body)
+	req, err := http.NewRequest("POST", payload.Url, body)
 	if err != nil {
 		return response, &glair.Error{
 			Code:    glair.ErrorCodeInvalidURL,
@@ -49,6 +52,10 @@ func MakeRequest[T any](
 		req.Header.Set(key, value)
 	}
 
+	if payload.RequestID != "" {
+		req.Header.Set("x-request-id", payload.RequestID)
+	}
+
 	res, err := config.Client.Do(req)
 	if err != nil {
 		return response, &glair.Error{
@@ -59,15 +66,11 @@ func MakeRequest[T any](
 	}
 	defer res.Body.Close()
 
-	str, _ := httputil.DumpResponse(res, true)
-	fmt.Println(string(str))
-
 	if res.StatusCode != http.StatusOK {
 		var resBody map[string]interface{}
 		err = json.NewDecoder(res.Body).Decode(&resBody)
 
 		if err != nil {
-			// TODO: telemetry?
 			return response, &glair.Error{
 				Code:    glair.ErrorCodeInvalidResponse,
 				Message: "Failed to parse API response. Please contact us about this error.",
@@ -110,29 +113,33 @@ func MakeRequest[T any](
 	return response, nil
 }
 
-func createRequestPayload(file *os.File) (map[string]string, *bytes.Buffer, error) {
+func createRequestPayload(
+	payload map[string]*os.File,
+) (map[string]string, *bytes.Buffer, error) {
 	header := map[string]string{}
 	body := &bytes.Buffer{}
-
-	var bytes []byte
-	file.Read(bytes)
-
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile("image", filepath.Base(file.Name()))
-	if err != nil {
-		return header, nil, &glair.Error{
-			Code:    glair.ErrorCodeFileCorrupted,
-			Message: "Failed to append file into request body.",
-			Err:     err,
-		}
-	}
 
-	_, err = io.Copy(part, file)
-	if err != nil {
-		return header, nil, &glair.Error{
-			Code:    glair.ErrorCodeFileCorrupted,
-			Message: "Failed to parse image data.",
-			Err:     err,
+	for field, file := range payload {
+		var bytes []byte
+		file.Read(bytes)
+
+		part, err := writer.CreateFormFile(field, filepath.Base(file.Name()))
+		if err != nil {
+			return header, nil, &glair.Error{
+				Code:    glair.ErrorCodeFileCorrupted,
+				Message: "Failed to append file into request body.",
+				Err:     err,
+			}
+		}
+
+		_, err = io.Copy(part, file)
+		if err != nil {
+			return header, nil, &glair.Error{
+				Code:    glair.ErrorCodeFileCorrupted,
+				Message: "Failed to parse image data.",
+				Err:     err,
+			}
 		}
 	}
 

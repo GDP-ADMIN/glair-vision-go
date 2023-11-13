@@ -19,7 +19,9 @@ func main() {
 
 	file, _ := os.Open("../images/bpkb.pdf")
 
-	result, err := client.Ocr.BPKB(ctx, file)
+	result, err := client.Ocr.BPKB(ctx, glair.OCRInput{
+		File: file,
+	})
 
 	if err != nil {
 		log.Fatalln(err.(*glair.Error).Response)

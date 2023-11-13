@@ -19,7 +19,9 @@ func main() {
 
 	file, _ := os.Open("../images/skpr.jpg")
 
-	result, err := client.Ocr.SKPR(ctx, file)
+	result, err := client.Ocr.SKPR(ctx, glair.OCRInput{
+		File: file,
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())

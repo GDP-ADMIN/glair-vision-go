@@ -124,11 +124,18 @@ func TestMakeRequest(t *testing.T) {
 				url = tc.mockServer.URL
 			}
 
+			params := RequestParameters{
+				Url:       url,
+				RequestID: "samples",
+				Payload: map[string]*os.File{
+					"image": file,
+				},
+			}
+
 			res, err := MakeRequest[mockStruct](
 				context.TODO(),
-				url,
+				params,
 				tc.config,
-				file,
 			)
 
 			assert.Equal(t, tc.want, res)

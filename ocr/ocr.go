@@ -10,10 +10,6 @@ import (
 	"github.com/glair-ai/glair-vision-go/internal"
 )
 
-type OCRValue interface {
-	string | int
-}
-
 // OCR provides functions to interact with GLAIR Vision
 // OCR products
 type OCR struct {
@@ -105,290 +101,315 @@ func New(config *glair.Config) *OCR {
 	}
 }
 
-func (ocr *OCR) readFile(file interface{}) (*os.File, error) {
-	var input *os.File
-
-	switch param := file.(type) {
-	case string:
-		file, err := os.Open(param)
-		if err != nil {
-			return nil, &glair.Error{
-				Code:    glair.ErrorCodeInvalidFile,
-				Message: "Cannot read file from the given path.",
-				Err:     err,
-			}
-		}
-
-		input = file
-	case *os.File:
-		input = file.(*os.File)
-	default:
-		return nil, &glair.Error{
-			Code:    glair.ErrorCodeInvalidFile,
-			Message: "Invalid file type is provided. Valid file types are string or *os.File",
-		}
-	}
-
-	return input, nil
-}
-
 // Ktp performs OCR on the given file using KTP model
-//
-// File must be provided as a string that represents a path or
-// an interface of *os.File
 //
 // API Docs: https://docs.glair.ai/vision/ktp
 func (ocr *OCR) Ktp(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (KTP, error) {
-	ktp, err := ocr.readFile(file)
+	ktp, err := internal.ReadFile(input.File)
 	if err != nil {
 		return KTP{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "ktp")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": ktp,
+		},
+	}
 
-	return internal.MakeRequest[KTP](ctx, url, ocr.config, ktp)
+	return internal.MakeRequest[KTP](ctx, params, ocr.config)
 }
 
 // KtpWithQuality performs OCR on the given file using KTP model
 // and supplements it with file quality data
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/ktp
 func (ocr *OCR) KtpWithQuality(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (KTPWithQuality, error) {
-	ktp, err := ocr.readFile(file)
+	ktp, err := internal.ReadFile(input.File)
 	if err != nil {
 		return KTPWithQuality{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "ktp/qualities")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": ktp,
+		},
+	}
 
-	return internal.MakeRequest[KTPWithQuality](ctx, url, ocr.config, ktp)
+	return internal.MakeRequest[KTPWithQuality](ctx, params, ocr.config)
 }
 
 // NPWP performs OCR on the given file using NPWP model
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/npwp
 func (ocr *OCR) NPWP(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (NPWP, error) {
-	npwp, err := ocr.readFile(file)
+	npwp, err := internal.ReadFile(input.File)
 	if err != nil {
 		return NPWP{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "npwp")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": npwp,
+		},
+	}
 
-	return internal.MakeRequest[NPWP](ctx, url, ocr.config, npwp)
+	return internal.MakeRequest[NPWP](ctx, params, ocr.config)
 }
 
 // KK performs OCR on the given file using Kartu Keluarga model
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/kk
 func (ocr *OCR) KK(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (KK, error) {
-	kk, err := ocr.readFile(file)
+	kk, err := internal.ReadFile(input.File)
 	if err != nil {
 		return KK{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "kk")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": kk,
+		},
+	}
 
-	return internal.MakeRequest[KK](ctx, url, ocr.config, kk)
+	return internal.MakeRequest[KK](ctx, params, ocr.config)
 }
 
 // STNK performs OCR on the given file using STNK model
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/stnk
 func (ocr *OCR) STNK(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (STNK, error) {
-	stnk, err := ocr.readFile(file)
+	stnk, err := internal.ReadFile(input.File)
 	if err != nil {
 		return STNK{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "stnk")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": stnk,
+		},
+	}
 
-	return internal.MakeRequest[STNK](ctx, url, ocr.config, stnk)
+	return internal.MakeRequest[STNK](ctx, params, ocr.config)
 }
 
 // BPKB performs OCR on the given file using BPKB model
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/bpkb
 func (ocr *OCR) BPKB(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (BPKB, error) {
-	bpkb, err := ocr.readFile(file)
+	bpkb, err := internal.ReadFile(input.File)
 	if err != nil {
 		return BPKB{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "bpkb")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": bpkb,
+		},
+	}
 
-	return internal.MakeRequest[BPKB](ctx, url, ocr.config, bpkb)
+	return internal.MakeRequest[BPKB](ctx, params, ocr.config)
 }
 
 // Passport performs OCR on the given file using Passport model
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/passport
 func (ocr *OCR) Passport(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (Passport, error) {
-	passport, err := ocr.readFile(file)
+	passport, err := internal.ReadFile(input.File)
 	if err != nil {
 		return Passport{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "passport")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": passport,
+		},
+	}
 
-	return internal.MakeRequest[Passport](ctx, url, ocr.config, passport)
+	return internal.MakeRequest[Passport](ctx, params, ocr.config)
 }
 
 // Plate performs OCR on the given file using License Plate model
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/plate
 func (ocr *OCR) Plate(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (Plate, error) {
-	passport, err := ocr.readFile(file)
+	plate, err := internal.ReadFile(input.File)
 	if err != nil {
 		return Plate{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "plate")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": plate,
+		},
+	}
 
-	return internal.MakeRequest[Plate](ctx, url, ocr.config, passport)
+	return internal.MakeRequest[Plate](ctx, params, ocr.config)
 }
 
 // GeneralDocument performs OCR on the given file using all-purpose Document model
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/general-document
 func (ocr *OCR) GeneralDocument(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (GeneralDocument, error) {
-	generalDocument, err := ocr.readFile(file)
+	generalDocument, err := internal.ReadFile(input.File)
 	if err != nil {
 		return GeneralDocument{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "general-document")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": generalDocument,
+		},
+	}
 
-	return internal.MakeRequest[GeneralDocument](ctx, url, ocr.config, generalDocument)
+	return internal.MakeRequest[GeneralDocument](ctx, params, ocr.config)
 }
 
 // Invoice performs OCR on the given file using Invoice model
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/invoice
 func (ocr *OCR) Invoice(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (Invoice, error) {
-	invoice, err := ocr.readFile(file)
+	invoice, err := internal.ReadFile(input.File)
 	if err != nil {
 		return Invoice{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "invoice")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": invoice,
+		},
+	}
 
-	return internal.MakeRequest[Invoice](ctx, url, ocr.config, invoice)
+	return internal.MakeRequest[Invoice](ctx, params, ocr.config)
 }
 
 // Receipt performs OCR on the given file using Receipt model
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/receipt
 func (ocr *OCR) Receipt(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (Receipt, error) {
-	receipt, err := ocr.readFile(file)
+	receipt, err := internal.ReadFile(input.File)
 	if err != nil {
 		return Receipt{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "receipt")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": receipt,
+		},
+	}
 
-	return internal.MakeRequest[Receipt](ctx, url, ocr.config, receipt)
+	return internal.MakeRequest[Receipt](ctx, params, ocr.config)
 }
 
 // BankStatement performs OCR on the given file using Bank Statement model
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/bank-statement
 func (ocr *OCR) BankStatement(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (BankStatement, error) {
-	bankStatement, err := ocr.readFile(file)
+	bankStatement, err := internal.ReadFile(input.File)
 	if err != nil {
 		return BankStatement{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "bank-statement")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": bankStatement,
+		},
+	}
 
-	return internal.MakeRequest[BankStatement](ctx, url, ocr.config, bankStatement)
+	return internal.MakeRequest[BankStatement](ctx, params, ocr.config)
 }
 
 // SKPR performs OCR on the given file using SKPR model
 //
-// File must be provided as a string that represents a path or
-// an interface of *os.File
-//
 // API Docs: https://docs.glair.ai/vision/skpr
 func (ocr *OCR) SKPR(
 	ctx context.Context,
-	file interface{},
+	input glair.OCRInput,
 ) (SKPR, error) {
-	skpr, err := ocr.readFile(file)
+	skpr, err := internal.ReadFile(input.File)
 	if err != nil {
 		return SKPR{}, err
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "skpr")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Payload: map[string]*os.File{
+			"image": skpr,
+		},
+	}
 
-	return internal.MakeRequest[SKPR](ctx, url, ocr.config, skpr)
+	return internal.MakeRequest[SKPR](ctx, params, ocr.config)
 }

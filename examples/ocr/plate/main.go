@@ -19,7 +19,9 @@ func main() {
 
 	file, _ := os.Open("../images/plate.jpg")
 
-	result, err := client.Ocr.Plate(ctx, file)
+	result, err := client.Ocr.Plate(ctx, glair.OCRInput{
+		File: file,
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())

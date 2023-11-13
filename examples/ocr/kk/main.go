@@ -19,7 +19,9 @@ func main() {
 
 	file, _ := os.Open("../images/kk.jpg")
 
-	result, err := client.Ocr.NPWP(ctx, file)
+	result, err := client.Ocr.KK(ctx, glair.OCRInput{
+		File: file,
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())

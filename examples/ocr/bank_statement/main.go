@@ -19,7 +19,9 @@ func main() {
 
 	file, _ := os.Open("../images/bank-statement.jpg")
 
-	result, err := client.Ocr.BankStatement(ctx, file)
+	result, err := client.Ocr.BankStatement(ctx, glair.OCRInput{
+		File: file,
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())

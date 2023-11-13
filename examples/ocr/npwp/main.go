@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
@@ -16,7 +17,11 @@ func main() {
 	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	result, err := client.Ocr.NPWP(ctx, "../images/npwp.jpg")
+	file, _ := os.Open("../images/npwp.jpg")
+
+	result, err := client.Ocr.NPWP(ctx, glair.OCRInput{
+		File: file,
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())

@@ -19,7 +19,9 @@ func main() {
 
 	file, _ := os.Open("../images/passport.jpeg")
 
-	result, err := client.Ocr.Passport(ctx, file)
+	result, err := client.Ocr.Passport(ctx, glair.OCRInput{
+		File: file,
+	})
 
 	if err != nil {
 		log.Fatalln(err.(*glair.Error).Response)

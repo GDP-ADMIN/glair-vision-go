@@ -19,7 +19,9 @@ func main() {
 
 	file, _ := os.Open("../images/ktp.jpeg")
 
-	result, err := client.Ocr.Ktp(ctx, file)
+	result, err := client.Ocr.Ktp(ctx, glair.OCRInput{
+		File: file,
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())

@@ -19,7 +19,9 @@ func main() {
 
 	file, _ := os.Open("../images/stnk.jpg")
 
-	result, err := client.Ocr.STNK(ctx, file)
+	result, err := client.Ocr.STNK(ctx, glair.OCRInput{
+		File: file,
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())
