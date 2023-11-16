@@ -48,7 +48,7 @@ package main
 
 import (
     "github.com/glair-ai/glair-vision-go"
-	"github.com/glair-ai/glair-vision-go/client"
+	  "github.com/glair-ai/glair-vision-go/client"
 )
 
 func main() {
@@ -124,7 +124,7 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-    fmt.Println(result.Read.Nama)
+  fmt.Println(result.Read.Nama)
 }
 ```
 
@@ -167,21 +167,21 @@ func main() {
 	})
 
 	if err != nil {
-      // is a glair.Error, assert the error code
+    // is a glair.Error, assert the error code
 	  if glairErr, ok := err.(*glair.Error); ok {
-        switch glairErr.Code {
-          case glair.ErrorCodeInvalidFile:
-            fmt.Println("Cannot read input file")
-          case glair.ErrorCodeFileCorrupted:
-            fmt.Println("File corrupted")
-          case glair.ErrorCodeInvalidURL:
-            fmt.Println("URL is invalid")
-          default:
-            fmt.Printf("GLAIR SDK returns error code: %d", glairErr.Code)
-        }
-      } else {
-        fmt.Printf("Unexpected error occured: %w", err)
+      switch glairErr.Code {
+        case glair.ErrorCodeInvalidFile:
+          fmt.Println("Cannot read input file")
+        case glair.ErrorCodeFileCorrupted:
+          fmt.Println("File corrupted")
+        case glair.ErrorCodeInvalidURL:
+          fmt.Println("URL is invalid")
+        default:
+          fmt.Printf("GLAIR SDK returns error code: %d", glairErr.Code)
       }
+    } else {
+      fmt.Printf("Unexpected error occured: %w", err)
+    }
 	}
 }
 ```
