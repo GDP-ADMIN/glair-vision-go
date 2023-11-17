@@ -55,7 +55,7 @@ func MakeRequest[T any](
 	if payload.RequestID != "" {
 		req.Header.Set("x-request-id", payload.RequestID)
 	}
-	req.Header.Set("User-Agent", "GLAIR-Vision-Go-SDK")
+	req.Header.Set("User-Agent", "go/GLAIR-Vision-SDK")
 
 	res, err := config.Client.Do(req)
 	if err != nil {
