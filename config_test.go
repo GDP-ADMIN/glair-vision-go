@@ -1,6 +1,8 @@
 package glair
 
 import (
+	"errors"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -43,8 +45,36 @@ func TestConfig_WithVersion(t *testing.T) {
 	assert.Equal(t, "v2", config.ApiVersion)
 }
 
+type fakeClient struct{}
+
+func (c fakeClient) Do(_ *http.Request) (*http.Response, error) {
+	return nil, errors.New("failed to send request")
+}
+
+func TestConfig_WithClient(t *testing.T) {
+	httpClient := fakeClient{}
+	config := NewConfig("a", "b", "c").WithClient(httpClient)
+
+	assert.Equal(t, httpClient, config.Client)
+}
+
 func TestConfig_GetEndpointURL(t *testing.T) {
 	url := NewConfig("a", "b", "c").GetEndpointURL("ocr", "ktp")
 
 	assert.Equal(t, "https://api.vision.glair.ai/ocr/v1/ktp", url)
+}
+
+type SampleLogger struct{}
+
+func (l SampleLogger) Debugf(format string, val ...interface{}) {}
+func (l SampleLogger) Infof(format string, val ...interface{})  {}
+func (l SampleLogger) Warnf(format string, val ...interface{})  {}
+func (l SampleLogger) Errorf(format string, val ...interface{}) {}
+
+func TestConfig_WithLogger(t *testing.T) {
+	logger := SampleLogger{}
+
+	config := NewConfig("a", "b", "c").WithLogger(logger)
+
+	assert.Equal(t, logger, config.Logger)
 }

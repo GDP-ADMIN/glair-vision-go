@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/glair-ai/glair-vision-go"
 )
@@ -30,54 +31,25 @@ func MakeRequest[T any](
 ) (T, error) {
 	var response T
 
-	header, body, err := createRequestPayload(payload.Payload)
+	res, status, err := sendRequest(ctx, payload, config)
 	if err != nil {
 		return response, err
 	}
 
-	req, err := http.NewRequest("POST", payload.Url, body)
-	if err != nil {
-		return response, &glair.Error{
-			Code:    glair.ErrorCodeInvalidURL,
-			Message: "Invalid base URL is provided in configuration.",
-			Err:     err,
-		}
-	}
+	config.Logger.Debugf("API Response: %s", string(res))
 
-	req = req.WithContext(ctx)
-
-	req.SetBasicAuth(config.Username, config.Password)
-	req.Header.Set("x-api-key", config.ApiKey)
-	for key, value := range header {
-		req.Header.Set(key, value)
-	}
-
-	if payload.RequestID != "" {
-		req.Header.Set("x-request-id", payload.RequestID)
-	}
-	req.Header.Set("User-Agent", "go/GLAIR-Vision-SDK")
-
-	res, err := config.Client.Do(req)
-	if err != nil {
-		return response, &glair.Error{
-			Code:    glair.ErrorCodeBadClient,
-			Message: "Bad HTTP client is provided in configuration.",
-			Err:     err,
-		}
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
+	if status != http.StatusOK {
 		var resBody map[string]interface{}
-		err = json.NewDecoder(res.Body).Decode(&resBody)
+		err = json.Unmarshal(res, &resBody)
 
 		if err != nil {
+			config.Logger.Errorf("Failed to parse API response due to %v", err)
 			return response, &glair.Error{
 				Code:    glair.ErrorCodeInvalidResponse,
 				Message: "Failed to parse API response. Please contact us about this error.",
 				Err:     err,
 				Response: glair.Response{
-					Code: res.StatusCode,
+					Code: status,
 				},
 			}
 		}
@@ -86,7 +58,7 @@ func MakeRequest[T any](
 			Code:    glair.ErrorCodeAPIError,
 			Message: "GLAIR API returned non-OK response. Please check the Response property for more detailed explanation.",
 			Response: glair.Response{
-				Code: res.StatusCode,
+				Code: status,
 			},
 		}
 
@@ -109,13 +81,79 @@ func MakeRequest[T any](
 	}
 
 	// we don't need to check the error here
-	json.NewDecoder(res.Body).Decode(&response)
+	json.Unmarshal(res, &response)
 
 	return response, nil
 }
 
+func sendRequest(
+	ctx context.Context,
+	payload RequestParameters,
+	config *glair.Config,
+) ([]byte, int, error) {
+	header, body, err := createRequestPayload(payload.Payload, config.Logger)
+	if err != nil {
+		return []byte{}, 0, err
+	}
+
+	req, err := http.NewRequest("POST", payload.Url, body)
+	if err != nil {
+		return []byte{}, 0, &glair.Error{
+			Code:    glair.ErrorCodeInvalidURL,
+			Message: "Invalid base URL is provided in configuration.",
+			Err:     err,
+		}
+	}
+
+	req = req.WithContext(ctx)
+
+	req.SetBasicAuth(config.Username, config.Password)
+	req.Header.Set("x-api-key", config.ApiKey)
+	for key, value := range header {
+		req.Header.Set(key, value)
+	}
+
+	if payload.RequestID != "" {
+		req.Header.Set("x-request-id", payload.RequestID)
+	}
+	req.Header.Set("User-Agent", "go/GLAIR-Vision-SDK")
+
+	config.Logger.Infof("Calling GLAIR Vision API at %s", payload.Url)
+
+	start := time.Now()
+
+	res, err := config.Client.Do(req)
+	if err != nil {
+		return []byte{}, 0, &glair.Error{
+			Code:    glair.ErrorCodeBadClient,
+			Message: "Bad HTTP client is provided in configuration.",
+			Err:     err,
+		}
+	}
+	defer res.Body.Close()
+
+	elapsed := time.Since(start)
+
+	config.Logger.Infof("Request handled in %.2f second(s)", elapsed.Seconds())
+
+	str, err := io.ReadAll(res.Body)
+	if err != nil {
+		return []byte{}, 0, &glair.Error{
+			Code:    glair.ErrorCodeInvalidResponse,
+			Message: "Failed to parse API response. Please contact us about this error.",
+			Err:     err,
+			Response: glair.Response{
+				Code: res.StatusCode,
+			},
+		}
+	}
+
+	return str, res.StatusCode, nil
+}
+
 func createRequestPayload(
 	payload map[string]*os.File,
+	logger glair.Logger,
 ) (map[string]string, *bytes.Buffer, error) {
 	header := map[string]string{}
 	body := &bytes.Buffer{}
@@ -127,6 +165,7 @@ func createRequestPayload(
 
 		part, err := writer.CreateFormFile(field, filepath.Base(file.Name()))
 		if err != nil {
+			logger.Errorf("Failed when appending file to request body: %v", err.Error())
 			return header, nil, &glair.Error{
 				Code:    glair.ErrorCodeFileCorrupted,
 				Message: "Failed to append file into request body.",
@@ -136,6 +175,7 @@ func createRequestPayload(
 
 		_, err = io.Copy(part, file)
 		if err != nil {
+			logger.Errorf("Failed to copy image data to request body: %v", err.Error())
 			return header, nil, &glair.Error{
 				Code:    glair.ErrorCodeFileCorrupted,
 				Message: "Failed to parse image data.",
