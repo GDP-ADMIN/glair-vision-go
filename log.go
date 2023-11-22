@@ -9,8 +9,8 @@ import (
 type LogLevel int
 
 const (
-	// LevelNull sets the logger to disables logging entirely
-	LevelNull LogLevel = 0
+	// LevelNone sets the logger to disables logging entirely
+	LevelNone LogLevel = 0
 	// LevelError sets the logger to show only error messages
 	LevelError LogLevel = 1
 	// LevelWarn sets the logger to show warning and error messages

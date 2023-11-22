@@ -13,7 +13,7 @@ const (
 var (
 	defaultClient = http.DefaultClient
 	defaultLogger = &LeveledLogger{
-		Level: LevelNull,
+		Level: LevelNone,
 	}
 )
 
