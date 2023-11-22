@@ -279,7 +279,7 @@ type LeveledLogger struct {
 | `LevelInfo`  | `3`   | Log all informational messages and output them to `stdout` |
 | `LevelDebug` | `4`   | Log all debugging messages and output them to `stdout`     |
 
-All `Level` property also logs any messages below their `Level`.
+All `Level` property also logs any messages below their `Level`. For example, `LeveledLogger` with `LevelInfo` will log informational, warnings, and error messages.
 
 ## License
 
