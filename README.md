@@ -62,11 +62,12 @@ func main() {
 
 The configuration object will be initialized with the following values:
 
-| Option       | Default                       | Description                                                     |
-| ------------ | ----------------------------- | --------------------------------------------------------------- |
-| `BaseUrl`    | `https://api.vision.glair.ai` | Base URL for GLAIR Vision API                                   |
-| `ApiVersion` | `v1`                          | GLAIR Vision API version to be used                             |
-| `Client`     | Default Go HTTP client        | HTTP Client to be used when sending request to GLAIR Vision API |
+| Option       | Default                          | Description                                                                 |
+| ------------ | -------------------------------- | --------------------------------------------------------------------------- |
+| `BaseUrl`    | `https://api.vision.glair.ai`    | Base URL for GLAIR Vision API                                               |
+| `ApiVersion` | `v1`                             | GLAIR Vision API version to be used                                         |
+| `Client`     | Default Go HTTP client           | HTTP Client to be used when sending request to GLAIR Vision API             |
+| `Logger`     | `LeveledLogger` with `LevelNone` | Logger instace to be used to log errors, information, or debugging messages |
 
 You can change the above values using the provided `With<Option>` method of the configuration object, for example:
 
@@ -213,7 +214,74 @@ When error with code `ErrorCodeAPIError` is returned, GLAIR Vision SDK with retu
 
 ## Logging
 
-GLAIR Vision Go SDK provides basic logging functions... TBD
+By default, GLAIR Vision Go SDK does not log anything regardless of severity. However, you can enable logging implementing the `Logger` interface from the main package and add it to the configuration object with `WithLogger` method.
+
+```go
+package main
+
+import (
+
+	"fmt"
+
+	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
+)
+
+type MyLogger struct {}
+
+func (l MyLogger) Debugf(format string, val ...interface{}) {
+	// do not log debug messages
+}
+
+func (l MyLogger) Infof(format string, val ...interface{}) {
+	fmt.Printf("[GLAIR - Information] " + format, val)
+}
+
+func (l MyLogger) Warnf(format string, val ...interface{}) {
+	fmt.Printf("[GLAIR - Warning] " + format, val)
+}
+
+func (l MyLogger) Errorf(format string, val ...interface{}) {
+	fmt.Printf("[GLAIR - Debug] " + format, val)
+}
+
+func main() {
+	config := glair.NewConfig("<username>", "<password>", "<api_key>").
+		WithLogger(MyLogger{})
+}
+```
+
+The `Logger` interface has the following signature
+
+```go
+type Logger interface {
+	Debugf(format string, val ...interface{})
+	Infof(format string, val ...interface{})
+	Warnf(format string, val ...interface{})
+	Errorf(format string, val ...interface{})
+}
+```
+
+Alternatively, the SDK provides convenient `LeveledLogger` struct that implements the
+`Logger` interface.
+
+```go
+type LeveledLogger struct {
+	Level LogLevel
+}
+```
+
+`LeveledLogger` accepts `Level` property that determines what messages should be logged. Below is the list of available `Level` for `LeveledLogger`
+
+| Level        | Value | Description                                                |
+| ------------ | ----- | ---------------------------------------------------------- |
+| `LevelNone`  | `0`   | Do not log anything                                        |
+| `LevelError` | `1`   | Log all error messages and output them to `stderr`         |
+| `LevelWarn`  | `2`   | Log all warning messages and output them to `stdout`       |
+| `LevelInfo`  | `3`   | Log all informational messages and output them to `stdout` |
+| `LevelDebug` | `4`   | Log all debugging messages and output them to `stdout`     |
+
+All `Level` property also logs any messages below their `Level`. For example, `LeveledLogger` with `LevelInfo` will log informational, warnings, and error messages.
 
 ## License
 

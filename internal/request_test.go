@@ -124,6 +124,10 @@ func TestMakeRequest(t *testing.T) {
 				url = tc.mockServer.URL
 			}
 
+			tc.config.Logger = &glair.LeveledLogger{
+				Level: glair.LevelDebug,
+			}
+
 			params := RequestParameters{
 				Url:       url,
 				RequestID: "samples",
