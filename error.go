@@ -6,8 +6,11 @@ type ErrorCode string
 
 const (
 	// ErrorCodeInvalidFile is returned when the SDK fails
-	// to read the input
+	// to read the input file
 	ErrorCodeInvalidFile ErrorCode = "INVALID_FILE"
+	// ErrorCodeInvalidArgs is returned when the SDK fails
+	// to read arguments other than file
+	ErrorCodeInvalidArgs ErrorCode = "INVALID_ARGS"
 	// ErrorCodeFileCorrupted is returned when the provided file
 	// is corrupted or too low on quality
 	ErrorCodeFileCorrupted ErrorCode = "FILE_CORRUPTED"

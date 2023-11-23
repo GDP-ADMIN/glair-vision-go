@@ -17,10 +17,11 @@ func main() {
 	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	file, _ := os.Open("../images/kk.jpg")
+	image, _ := os.Open("../images/face.jpeg")
 
-	result, err := client.Ocr.KK(ctx, glair.OCRInput{
-		File: file,
+	result, err := client.FaceBio.FaceMatching(ctx, glair.FaceMatchingInput{
+		StoredImage:   image,
+		CapturedImage: image,
 	})
 
 	if err != nil {

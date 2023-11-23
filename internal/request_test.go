@@ -131,8 +131,9 @@ func TestMakeRequest(t *testing.T) {
 			params := RequestParameters{
 				Url:       url,
 				RequestID: "samples",
-				Payload: map[string]*os.File{
-					"image": file,
+				Payload: map[string]interface{}{
+					"image":    file,
+					"category": "do-not-panic",
 				},
 			}
 

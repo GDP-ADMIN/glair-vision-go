@@ -17,7 +17,7 @@ import (
 type RequestParameters struct {
 	Url       string
 	RequestID string
-	Payload   map[string]*os.File
+	Payload   map[string]interface{}
 }
 
 // MakeRequest creates and sends HTTP request to a specified
@@ -26,12 +26,12 @@ type RequestParameters struct {
 // This function is not meant to be used outside GLAIR Vision SDK
 func MakeRequest[T any](
 	ctx context.Context,
-	payload RequestParameters,
+	params RequestParameters,
 	config *glair.Config,
 ) (T, error) {
 	var response T
 
-	res, status, err := sendRequest(ctx, payload, config)
+	res, status, err := sendRequest(ctx, params, config)
 	if err != nil {
 		return response, err
 	}
@@ -152,34 +152,47 @@ func sendRequest(
 }
 
 func createRequestPayload(
-	payload map[string]*os.File,
+	payload map[string]interface{},
 	logger glair.Logger,
 ) (map[string]string, *bytes.Buffer, error) {
 	header := map[string]string{}
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	for field, file := range payload {
-		var bytes []byte
-		file.Read(bytes)
+	for field, value := range payload {
+		switch val := value.(type) {
+		case string:
+			{
+				part, _ := writer.CreateFormField(field)
+				part.Write([]byte(val))
 
-		part, err := writer.CreateFormFile(field, filepath.Base(file.Name()))
-		if err != nil {
-			logger.Errorf("Failed when appending file to request body: %v", err.Error())
-			return header, nil, &glair.Error{
-				Code:    glair.ErrorCodeFileCorrupted,
-				Message: "Failed to append file into request body.",
-				Err:     err,
+				break
 			}
-		}
+		case *os.File:
+			{
+				var bytes []byte
+				val.Read(bytes)
 
-		_, err = io.Copy(part, file)
-		if err != nil {
-			logger.Errorf("Failed to copy image data to request body: %v", err.Error())
-			return header, nil, &glair.Error{
-				Code:    glair.ErrorCodeFileCorrupted,
-				Message: "Failed to parse image data.",
-				Err:     err,
+				part, err := writer.CreateFormFile(field, filepath.Base(val.Name()))
+				if err != nil {
+					logger.Errorf("Failed when appending file to request body: %v", err.Error())
+					return header, nil, &glair.Error{
+						Code:    glair.ErrorCodeFileCorrupted,
+						Message: "Failed to append file into request body.",
+						Err:     err,
+					}
+				}
+
+				_, err = io.Copy(part, val)
+				if err != nil {
+					logger.Errorf("Failed to copy image data to request body: %v", err.Error())
+					return header, nil, &glair.Error{
+						Code:    glair.ErrorCodeFileCorrupted,
+						Message: "Failed to parse image data.",
+						Err:     err,
+					}
+				}
+				break
 			}
 		}
 	}
