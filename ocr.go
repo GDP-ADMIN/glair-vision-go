@@ -8,6 +8,6 @@ type OCRInput struct {
 	// Vision OCR API.
 	//
 	// File must be provided as a string that represents a path to the
-	// image or an object that implements *os.File*
+	// image or an object that implements *os.File
 	File interface{}
 }
