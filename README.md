@@ -168,7 +168,7 @@ func main() {
 	})
 
 	if err != nil {
-    	// is a glair.Error, assert the error code
+    		// is a glair.Error, assert the error code
 	  	if glairErr, ok := err.(*glair.Error); ok {
       		switch glairErr.Code {
         		case glair.ErrorCodeInvalidFile:
@@ -179,10 +179,10 @@ func main() {
           			fmt.Println("URL is invalid")
         		default:
           			fmt.Printf("GLAIR SDK returns error code: %d", glairErr.Code)
-      		}
-    	} else {
-      		fmt.Printf("Unexpected error occured: %w", err)
-    	}
+      			}
+    		} else {
+      			fmt.Printf("Unexpected error occured: %w", err)
+    		}
 	}
 }
 ```
