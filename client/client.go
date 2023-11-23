@@ -8,6 +8,7 @@ package client
 
 import (
 	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/face"
 	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
@@ -16,8 +17,11 @@ type Client struct {
 	// Config provides basic configurations that are used to interact when
 	// calling the GLAIR Vision API
 	Config *glair.Config
-	// Ocr provides API interface to interact with GLAIR Vision products
+	// Ocr provides API interface to interact with GLAIR Vision OCR API
 	Ocr *ocr.OCR
+	// FaceBio provides API interface to interact with GLAIR Vision Face
+	// Biometrics API
+	FaceBio *face.FaceBio
 }
 
 // New instatiates a client instance with the provided configuration
@@ -26,6 +30,7 @@ func New(config *glair.Config) *Client {
 	return &Client{
 		Config: config,
 
-		Ocr: ocr.New(config),
+		Ocr:     ocr.New(config),
+		FaceBio: face.New(config),
 	}
 }

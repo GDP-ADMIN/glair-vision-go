@@ -24,7 +24,16 @@ func main() {
 	})
 
 	if err != nil {
-		log.Fatalln(err.(*glair.Error).Response)
+		if glairErr, ok := err.(*glair.Error); ok {
+			switch glairErr.Code {
+			case glair.ErrorCodeAPIError:
+				log.Printf("API Error: %v\n", glairErr.Response)
+			default:
+				log.Printf("Error: %v\n", glairErr.Code)
+			}
+		}
+
+		log.Printf("Unexpected Error: %v\n", err)
 	}
 
 	beautified, _ := json.MarshalIndent(result, "", "  ")
