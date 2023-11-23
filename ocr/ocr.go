@@ -4,7 +4,6 @@ package ocr
 
 import (
 	"context"
-	"os"
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/internal"
@@ -94,7 +93,8 @@ type OCRQualities struct {
 	IsRotated bool `json:"is_rotated,omitempty"`
 }
 
-// New creates a GLAIR Vision OCR API Client from the provided config
+// New creates a GLAIR Vision OCR API Client with
+// the provided config
 func New(config *glair.Config) *OCR {
 	return &OCR{
 		config: config,
@@ -117,7 +117,7 @@ func (ocr *OCR) Ktp(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": ktp,
 		},
 	}
@@ -142,7 +142,7 @@ func (ocr *OCR) KtpWithQuality(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": ktp,
 		},
 	}
@@ -166,7 +166,7 @@ func (ocr *OCR) NPWP(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": npwp,
 		},
 	}
@@ -190,7 +190,7 @@ func (ocr *OCR) KK(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": kk,
 		},
 	}
@@ -214,7 +214,7 @@ func (ocr *OCR) STNK(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": stnk,
 		},
 	}
@@ -238,7 +238,7 @@ func (ocr *OCR) BPKB(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": bpkb,
 		},
 	}
@@ -262,7 +262,7 @@ func (ocr *OCR) Passport(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": passport,
 		},
 	}
@@ -286,7 +286,7 @@ func (ocr *OCR) Plate(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": plate,
 		},
 	}
@@ -310,7 +310,7 @@ func (ocr *OCR) GeneralDocument(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": generalDocument,
 		},
 	}
@@ -334,7 +334,7 @@ func (ocr *OCR) Invoice(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": invoice,
 		},
 	}
@@ -358,7 +358,7 @@ func (ocr *OCR) Receipt(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": receipt,
 		},
 	}
@@ -382,7 +382,7 @@ func (ocr *OCR) BankStatement(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": bankStatement,
 		},
 	}
@@ -406,7 +406,7 @@ func (ocr *OCR) SKPR(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]*os.File{
+		Payload: map[string]interface{}{
 			"image": skpr,
 		},
 	}

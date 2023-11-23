@@ -170,7 +170,7 @@ func main() {
 	})
 
 	if err != nil {
-    	// is a glair.Error, assert the error code
+    		// is a glair.Error, assert the error code
 	  	if glairErr, ok := err.(*glair.Error); ok {
       		switch glairErr.Code {
         		case glair.ErrorCodeInvalidFile:
@@ -181,10 +181,10 @@ func main() {
           			fmt.Println("URL is invalid")
         		default:
           			fmt.Printf("GLAIR SDK returns error code: %d", glairErr.Code)
-      		}
-    	} else {
-      		fmt.Printf("Unexpected error occured: %w", err)
-    	}
+      			}
+    		} else {
+      			fmt.Printf("Unexpected error occured: %w", err)
+    		}
 	}
 }
 ```
@@ -196,6 +196,7 @@ To make debugging errors easier, GLAIR Vision Go SDK provides error code to all 
 | Error Code                 | Reason                                                                                                                                                                                                           |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ErrorCodeInvalidFile`     | The SDK fails to read the input file. It's possible that the file doesn't exist or the SDK cannot access the file from the given path. This code also returned when incorrect representation of file is provided |
+| `ErrorCodeInvalidArgs`     | The SDK fails to read additional parameters other than the file(s). Please refer to the [official documentation](https://docs.glair.ai) for more information regarding parameters for each API.                  |
 | `ErrorCodeFileCorrupted`   | The SDK fails to parse the input file due to corrupted contents.                                                                                                                                                 |
 | `ErrorCodeInvalidURL`      | The SDK fails to make a request to GLAIR Vision API due to invalid `BaseURL` in the configuration object                                                                                                         |
 | `ErrorCodeBadClient`       | The SDK fails to make a request to GLAIR Vision API due to failures in the HTTP client provided in the configuration object                                                                                      |
