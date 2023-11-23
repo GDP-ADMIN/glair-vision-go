@@ -1,3 +1,5 @@
+> DEPRECATED: Moved to [GLAIR's repository](https://github.com/glair-ai/glair-vision-go)
+
 <p align="center">
   <a href="https://docs.glair.ai/vision" target="_blank">
     <picture>
