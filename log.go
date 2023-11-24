@@ -41,24 +41,24 @@ type LeveledLogger struct {
 
 func (l *LeveledLogger) Debugf(format string, val ...interface{}) {
 	if l.Level >= LevelDebug {
-		fmt.Printf("[DEBUG] "+format, val)
+		fmt.Printf("[DEBUG] "+format+"\n", val)
 	}
 }
 
 func (l *LeveledLogger) Infof(format string, val ...interface{}) {
 	if l.Level >= LevelInfo {
-		fmt.Printf("[INFO] "+format, val)
+		fmt.Printf("[INFO] "+format+"\n", val)
 	}
 }
 
 func (l *LeveledLogger) Warnf(format string, val ...interface{}) {
 	if l.Level >= LevelWarn {
-		fmt.Printf("[WARN] "+format, val)
+		fmt.Printf("[WARN] "+format+"\n", val)
 	}
 }
 
 func (l *LeveledLogger) Errorf(format string, val ...interface{}) {
 	if l.Level >= LevelError {
-		fmt.Fprintf(os.Stderr, "[ERROR] "+format, val)
+		fmt.Fprintf(os.Stderr, "[ERROR] "+format+"\n", val)
 	}
 }
