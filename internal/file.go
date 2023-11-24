@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/glair-ai/glair-vision-go"
@@ -17,7 +18,7 @@ func ReadFile(file interface{}) (*os.File, error) {
 		if err != nil {
 			return nil, &glair.Error{
 				Code:    glair.ErrorCodeInvalidFile,
-				Message: "Cannot read file from the given path.",
+				Message: fmt.Sprintf("Cannot read file from path %s", param),
 				Err:     err,
 			}
 		}

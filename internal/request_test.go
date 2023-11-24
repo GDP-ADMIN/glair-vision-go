@@ -22,7 +22,7 @@ func (c failingClient) Do(req *http.Request) (*http.Response, error) {
 	return nil, errors.New("failed to send request")
 }
 
-func TestMakeRequest(t *testing.T) {
+func TestMakeMultipartRequest(t *testing.T) {
 	file, _ := os.Open("../examples/ocr/images/ktp.jpeg")
 
 	tests := []struct {
@@ -124,20 +124,16 @@ func TestMakeRequest(t *testing.T) {
 				url = tc.mockServer.URL
 			}
 
-			tc.config.Logger = &glair.LeveledLogger{
-				Level: glair.LevelDebug,
-			}
-
 			params := RequestParameters{
 				Url:       url,
 				RequestID: "samples",
-				Payload: map[string]interface{}{
+				Body: map[string]interface{}{
 					"image":    file,
 					"category": "do-not-panic",
 				},
 			}
 
-			res, err := MakeRequest[mockStruct](
+			res, err := MakeMultipartRequest[mockStruct](
 				context.TODO(),
 				params,
 				tc.config,
@@ -156,4 +152,34 @@ func TestMakeRequest(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestMakeJSONRequest(t *testing.T) {
+	config := glair.NewConfig("username", "password", "api-key")
+
+	mockServer := httptest.NewServer(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(`{"name":"foo"}`))
+		}),
+	)
+
+	params := RequestParameters{
+		Url:       mockServer.URL,
+		RequestID: "samples",
+		Body: map[string]interface{}{
+			"success_url": "https://www.google.com",
+		},
+	}
+
+	res, err := MakeJSONRequest[mockStruct](
+		context.TODO(),
+		params,
+		config,
+	)
+
+	assert.Equal(t, res, mockStruct{
+		Name: "foo",
+	})
+	assert.Equal(t, nil, err)
 }

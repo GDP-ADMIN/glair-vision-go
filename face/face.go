@@ -27,7 +27,7 @@ func New(config *glair.Config) *FaceBio {
 // and captured image
 //
 // API Docs: https://docs.glair.ai/vision/face-matching
-func (f *FaceBio) FaceMatching(
+func (face *FaceBio) FaceMatching(
 	ctx context.Context,
 	input glair.FaceMatchingInput,
 ) (FaceMatching, error) {
@@ -41,23 +41,23 @@ func (f *FaceBio) FaceMatching(
 		return FaceMatching{}, err
 	}
 
-	url := f.config.GetEndpointURL("face", "match")
+	url := face.config.GetEndpointURL("face", "match")
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"stored_image":   storedImage,
 			"captured_image": capturedImage,
 		},
 	}
 
-	return internal.MakeRequest[FaceMatching](ctx, params, f.config)
+	return internal.MakeMultipartRequest[FaceMatching](ctx, params, face.config)
 }
 
 // PassiveLiveness performs liveness detection in passive environment
 //
 // API Docs: https://docs.glair.ai/vision/passive-liveness
-func (f *FaceBio) PassiveLiveness(
+func (face *FaceBio) PassiveLiveness(
 	ctx context.Context,
 	input glair.PassiveLivenessInput,
 ) (PassiveLiveness, error) {
@@ -66,23 +66,23 @@ func (f *FaceBio) PassiveLiveness(
 		return PassiveLiveness{}, err
 	}
 
-	url := f.config.GetEndpointURL("face", "passive-liveness")
+	url := face.config.GetEndpointURL("face", "passive-liveness")
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": image,
 		},
 	}
 
-	return internal.MakeRequest[PassiveLiveness](ctx, params, f.config)
+	return internal.MakeMultipartRequest[PassiveLiveness](ctx, params, face.config)
 }
 
 // ActiveLiveness performs liveness detection using predefined
 // gestures and poses
 //
 // API Docs: https://docs.glair.ai/vision/active-liveness
-func (f *FaceBio) ActiveLiveness(
+func (face *FaceBio) ActiveLiveness(
 	ctx context.Context,
 	input glair.ActiveLivenessInput,
 ) (ActiveLiveness, error) {
@@ -91,22 +91,63 @@ func (f *FaceBio) ActiveLiveness(
 		return ActiveLiveness{}, err
 	}
 
-	if input.GestureCode == "" {
-		return ActiveLiveness{}, &glair.Error{
-			Code:    glair.ErrorCodeInvalidArgs,
-			Message: "Gesture code is required.",
-		}
-	}
-
-	url := f.config.GetEndpointURL("face", "active-liveness")
+	url := face.config.GetEndpointURL("face", "active-liveness")
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image":        image,
 			"gesture-code": input.GestureCode,
 		},
 	}
 
-	return internal.MakeRequest[ActiveLiveness](ctx, params, f.config)
+	return internal.MakeMultipartRequest[ActiveLiveness](ctx, params, face.config)
+}
+
+// PassiveLivenessSessions sends session request for passive liveness
+// using the prebuilt web page
+//
+// API Docs: https://docs.glair.ai/vision/passive-liveness-sessions
+func (face *FaceBio) PassiveLivenessSessions(
+	ctx context.Context,
+	input glair.SessionsInput,
+) (glair.Session, error) {
+	payload := map[string]interface{}{
+		"success_url": input.SuccessURL,
+	}
+
+	if input.CancelURL != nil {
+		payload["cancel_url"] = input.CancelURL
+	}
+	url := face.config.GetEndpointURL("face", "passive-liveness-sessions")
+	params := internal.RequestParameters{
+		Url:  url,
+		Body: payload,
+	}
+
+	return internal.MakeJSONRequest[glair.Session](ctx, params, face.config)
+}
+
+// ActiveLivenessSessions sends session request for passive liveness
+// using the prebuilt web page
+//
+// API Docs: https://docs.glair.ai/vision/active-liveness-sessions
+func (face *FaceBio) ActiveLivenessSessions(
+	ctx context.Context,
+	input glair.SessionsInput,
+) (glair.Session, error) {
+	payload := map[string]interface{}{
+		"success_url": input.SuccessURL,
+	}
+
+	if input.CancelURL != nil {
+		payload["cancel_url"] = input.CancelURL
+	}
+	url := face.config.GetEndpointURL("face", "active-liveness-sessions")
+	params := internal.RequestParameters{
+		Url:  url,
+		Body: payload,
+	}
+
+	return internal.MakeJSONRequest[glair.Session](ctx, params, face.config)
 }

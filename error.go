@@ -8,15 +8,12 @@ const (
 	// ErrorCodeInvalidFile is returned when the SDK fails
 	// to read the input file
 	ErrorCodeInvalidFile ErrorCode = "INVALID_FILE"
-	// ErrorCodeInvalidArgs is returned when the SDK fails
-	// to read arguments other than file
-	ErrorCodeInvalidArgs ErrorCode = "INVALID_ARGS"
 	// ErrorCodeFileCorrupted is returned when the provided file
 	// is corrupted or too low on quality
 	ErrorCodeFileCorrupted ErrorCode = "FILE_CORRUPTED"
 	// ErrorCodeInvalidURL is returned when user provides
 	// an invalid base URL in the configuration object
-	ErrorCodeInvalidURL ErrorCode = "INVAlID_URL"
+	ErrorCodeInvalidURL ErrorCode = "INVALID_URL"
 	// ErrorCodeBadClient is returned when the provided HTTP
 	// client unable to send HTTP request to GLAIR Vision API
 	ErrorCodeBadClient ErrorCode = "BAD_CLIENT"
