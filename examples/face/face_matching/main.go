@@ -32,9 +32,11 @@ func main() {
 			default:
 				log.Printf("Error: %v\n", glairErr.Code)
 			}
+		} else {
+			log.Printf("Unexpected Error: %v\n", err)
 		}
 
-		log.Printf("Unexpected Error: %v\n", err)
+		os.Exit(1)
 	}
 
 	beautified, _ := json.MarshalIndent(result, "", "  ")

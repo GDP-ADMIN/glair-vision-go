@@ -117,12 +117,12 @@ func (ocr *OCR) Ktp(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": ktp,
 		},
 	}
 
-	return internal.MakeRequest[KTP](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[KTP](ctx, params, ocr.config)
 }
 
 // KtpWithQuality performs OCR on the given file using KTP model
@@ -142,12 +142,12 @@ func (ocr *OCR) KtpWithQuality(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": ktp,
 		},
 	}
 
-	return internal.MakeRequest[KTPWithQuality](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[KTPWithQuality](ctx, params, ocr.config)
 }
 
 // NPWP performs OCR on the given file using NPWP model
@@ -166,12 +166,12 @@ func (ocr *OCR) NPWP(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": npwp,
 		},
 	}
 
-	return internal.MakeRequest[NPWP](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[NPWP](ctx, params, ocr.config)
 }
 
 // KK performs OCR on the given file using Kartu Keluarga model
@@ -190,12 +190,12 @@ func (ocr *OCR) KK(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": kk,
 		},
 	}
 
-	return internal.MakeRequest[KK](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[KK](ctx, params, ocr.config)
 }
 
 // STNK performs OCR on the given file using STNK model
@@ -214,12 +214,12 @@ func (ocr *OCR) STNK(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": stnk,
 		},
 	}
 
-	return internal.MakeRequest[STNK](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[STNK](ctx, params, ocr.config)
 }
 
 // BPKB performs OCR on the given file using BPKB model
@@ -238,12 +238,12 @@ func (ocr *OCR) BPKB(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": bpkb,
 		},
 	}
 
-	return internal.MakeRequest[BPKB](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[BPKB](ctx, params, ocr.config)
 }
 
 // Passport performs OCR on the given file using Passport model
@@ -262,12 +262,12 @@ func (ocr *OCR) Passport(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": passport,
 		},
 	}
 
-	return internal.MakeRequest[Passport](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[Passport](ctx, params, ocr.config)
 }
 
 // Plate performs OCR on the given file using License Plate model
@@ -286,12 +286,12 @@ func (ocr *OCR) Plate(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": plate,
 		},
 	}
 
-	return internal.MakeRequest[Plate](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[Plate](ctx, params, ocr.config)
 }
 
 // GeneralDocument performs OCR on the given file using all-purpose Document model
@@ -310,12 +310,12 @@ func (ocr *OCR) GeneralDocument(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": generalDocument,
 		},
 	}
 
-	return internal.MakeRequest[GeneralDocument](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[GeneralDocument](ctx, params, ocr.config)
 }
 
 // Invoice performs OCR on the given file using Invoice model
@@ -334,12 +334,12 @@ func (ocr *OCR) Invoice(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": invoice,
 		},
 	}
 
-	return internal.MakeRequest[Invoice](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[Invoice](ctx, params, ocr.config)
 }
 
 // Receipt performs OCR on the given file using Receipt model
@@ -358,12 +358,12 @@ func (ocr *OCR) Receipt(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": receipt,
 		},
 	}
 
-	return internal.MakeRequest[Receipt](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[Receipt](ctx, params, ocr.config)
 }
 
 // BankStatement performs OCR on the given file using Bank Statement model
@@ -382,12 +382,12 @@ func (ocr *OCR) BankStatement(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": bankStatement,
 		},
 	}
 
-	return internal.MakeRequest[BankStatement](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[BankStatement](ctx, params, ocr.config)
 }
 
 // SKPR performs OCR on the given file using SKPR model
@@ -406,10 +406,58 @@ func (ocr *OCR) SKPR(
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
-		Payload: map[string]interface{}{
+		Body: map[string]interface{}{
 			"image": skpr,
 		},
 	}
 
-	return internal.MakeRequest[SKPR](ctx, params, ocr.config)
+	return internal.MakeMultipartRequest[SKPR](ctx, params, ocr.config)
+}
+
+// KtpSessions sends session request for passive liveness
+// using the prebuilt web page
+//
+// API Docs: https://docs.glair.ai/vision/ktp-sessions
+func (ocr *OCR) KtpSessions(
+	ctx context.Context,
+	input glair.SessionsInput,
+) (glair.Session, error) {
+	payload := map[string]interface{}{
+		"success_url": input.SuccessURL,
+	}
+
+	if input.CancelURL != nil {
+		payload["cancel_url"] = input.CancelURL
+	}
+	url := ocr.config.GetEndpointURL("ocr", "ktp-sessions")
+	params := internal.RequestParameters{
+		Url:  url,
+		Body: payload,
+	}
+
+	return internal.MakeJSONRequest[glair.Session](ctx, params, ocr.config)
+}
+
+// NPWPSessions sends session request for passive liveness
+// using the prebuilt web page
+//
+// API Docs: https://docs.glair.ai/vision/npwp-sessions
+func (ocr *OCR) NPWPSessions(
+	ctx context.Context,
+	input glair.SessionsInput,
+) (glair.Session, error) {
+	payload := map[string]interface{}{
+		"success_url": input.SuccessURL,
+	}
+
+	if input.CancelURL != nil {
+		payload["cancel_url"] = input.CancelURL
+	}
+	url := ocr.config.GetEndpointURL("ocr", "npwp-sessions")
+	params := internal.RequestParameters{
+		Url:  url,
+		Body: payload,
+	}
+
+	return internal.MakeJSONRequest[glair.Session](ctx, params, ocr.config)
 }

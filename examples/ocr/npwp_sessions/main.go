@@ -17,10 +17,8 @@ func main() {
 	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	file, _ := os.Open("../images/ktp.jpeg")
-
-	result, err := client.Ocr.Ktp(ctx, glair.OCRInput{
-		File: file,
+	result, err := client.Ocr.NPWPSessions(ctx, glair.SessionsInput{
+		SuccessURL: "https://www.google.com",
 	})
 
 	if err != nil {
