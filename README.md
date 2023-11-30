@@ -13,7 +13,7 @@
 <p>
 
 <p align="center">
-    <a href="https://github.com/glair-ai/glair-vision-java/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@glair/vision" alt="License"></a>
+    <a href="https://github.com/glair-ai/glair-vision-go/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@glair/vision" alt="License"></a>
 </p>
 
 ## Requirement
