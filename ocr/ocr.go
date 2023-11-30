@@ -108,7 +108,7 @@ func (ocr *OCR) Ktp(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (KTP, error) {
-	ktp, err := internal.ReadFile(input.File)
+	ktp, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return KTP{}, err
 	}
@@ -133,7 +133,7 @@ func (ocr *OCR) KtpWithQuality(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (KTPWithQuality, error) {
-	ktp, err := internal.ReadFile(input.File)
+	ktp, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return KTPWithQuality{}, err
 	}
@@ -157,7 +157,7 @@ func (ocr *OCR) NPWP(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (NPWP, error) {
-	npwp, err := internal.ReadFile(input.File)
+	npwp, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return NPWP{}, err
 	}
@@ -181,7 +181,7 @@ func (ocr *OCR) KK(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (KK, error) {
-	kk, err := internal.ReadFile(input.File)
+	kk, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return KK{}, err
 	}
@@ -205,7 +205,7 @@ func (ocr *OCR) STNK(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (STNK, error) {
-	stnk, err := internal.ReadFile(input.File)
+	stnk, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return STNK{}, err
 	}
@@ -229,7 +229,7 @@ func (ocr *OCR) BPKB(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (BPKB, error) {
-	bpkb, err := internal.ReadFile(input.File)
+	bpkb, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return BPKB{}, err
 	}
@@ -253,7 +253,7 @@ func (ocr *OCR) Passport(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (Passport, error) {
-	passport, err := internal.ReadFile(input.File)
+	passport, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return Passport{}, err
 	}
@@ -277,7 +277,7 @@ func (ocr *OCR) Plate(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (Plate, error) {
-	plate, err := internal.ReadFile(input.File)
+	plate, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return Plate{}, err
 	}
@@ -301,7 +301,7 @@ func (ocr *OCR) GeneralDocument(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (GeneralDocument, error) {
-	generalDocument, err := internal.ReadFile(input.File)
+	generalDocument, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return GeneralDocument{}, err
 	}
@@ -325,7 +325,7 @@ func (ocr *OCR) Invoice(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (Invoice, error) {
-	invoice, err := internal.ReadFile(input.File)
+	invoice, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return Invoice{}, err
 	}
@@ -349,7 +349,7 @@ func (ocr *OCR) Receipt(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (Receipt, error) {
-	receipt, err := internal.ReadFile(input.File)
+	receipt, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return Receipt{}, err
 	}
@@ -373,7 +373,7 @@ func (ocr *OCR) BankStatement(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (BankStatement, error) {
-	bankStatement, err := internal.ReadFile(input.File)
+	bankStatement, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return BankStatement{}, err
 	}
@@ -397,7 +397,7 @@ func (ocr *OCR) SKPR(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (SKPR, error) {
-	skpr, err := internal.ReadFile(input.File)
+	skpr, err := internal.ReadFile(input.Image)
 	if err != nil {
 		return SKPR{}, err
 	}

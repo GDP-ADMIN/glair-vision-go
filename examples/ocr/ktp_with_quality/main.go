@@ -20,7 +20,7 @@ func main() {
 	file, _ := os.Open("../images/ktp.jpeg")
 
 	result, err := client.Ocr.KtpWithQuality(ctx, glair.OCRInput{
-		File: file,
+		Image: file,
 	})
 
 	if err != nil {

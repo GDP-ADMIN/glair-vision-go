@@ -94,7 +94,7 @@ For comprehensive list of available API provided by GLAIR Vision Go SDK, check o
 
 Below are a few simple usage examples:
 
-### Fetch KTP
+### Perform OCR on KTP
 
 ```go
 package main
@@ -118,7 +118,7 @@ func main() {
 	file, _ := os.Open("path/to/image.jpg")
 
 	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
-		File: file,
+		Image: file,
 	})
 
 	if err != nil {
@@ -127,6 +127,117 @@ func main() {
 
   	fmt.Println(result.Read.Nama)
 }
+```
+
+### Perform OCR on Receipt by providing path to the image file
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+
+	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
+)
+
+func main() {
+	ctx := context.Background()
+
+	config := glair.NewConfig("", "", "")
+	client := client.New(config)
+
+	result, err := client.Ocr.Receipt(ctx, glair.OCRInput{
+		Image: "path/to/image.jpg",
+	})
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+  	fmt.Println(result.Read.Nama)
+}
+```
+
+### Perform face verification using GLAIR Vision Face Verification API
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
+)
+
+func main() {
+	ctx := context.Background()
+
+	config := glair.NewConfig("", "", "")
+	client := client.New(config)
+
+	image, _ := os.Open("path/to/image.jpg")
+
+	result, err := client.FaceBio.FaceMatching(ctx, glair.FaceMatchingInput{
+		StoredImage:   image,
+		CapturedImage: image,
+	})
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	beautified, _ := json.MarshalIndent(result, "", "  ")
+
+	fmt.Println(string(beautified))
+}
+```
+
+### Perform KTP data verification using GLAIR Identity Verification API
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
+)
+
+func main() {
+	ctx := context.Background()
+
+	config := glair.NewConfig("", "", "")
+	client := client.New(config)
+
+	result, err := client.Identity.BasicVerification(ctx, glair.BasicVerificationInput{
+		Nik:    "",
+		Name:   glair.String(""),
+		Gender: glair.String(""),
+		DateOfBirth: ""
+	})
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	beautified, _ := json.MarshalIndent(result, "", "  ")
+
+	fmt.Println(string(beautified))
+}
+
 ```
 
 ## Error Handling
@@ -164,7 +275,7 @@ func main() {
 	file, _ := os.Open("path/to/image.jpg")
 
 	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
-		File: file,
+		Image: file,
 	})
 
 	if err != nil {
@@ -197,6 +308,7 @@ To make debugging errors easier, GLAIR Vision Go SDK provides error code to all 
 | `ErrorCodeFileCorrupted`   | The SDK fails to parse the input file due to corrupted contents.                                                                                                                                                 |
 | `ErrorCodeInvalidURL`      | The SDK fails to make a request to GLAIR Vision API due to invalid `BaseURL` in the configuration object                                                                                                         |
 | `ErrorCodeBadClient`       | The SDK fails to make a request to GLAIR Vision API due to failures in the HTTP client provided in the configuration object                                                                                      |
+| `ErrorCodeForbidden`       | The SDK attempts to access an API endpoint with insufficient credentials. Please contact us if you think that this is a mistake                                                                                  |
 | `ErrorCodeAPIError`        | GLAIR Vision API returns a non-OK response. Please inspect the `Response` object for more detailed explanation if this code is returned                                                                          |
 | `ErrorCodeInvalidResponse` | GLAIR Vision API returns an unexpected response. Please contact us if you receive this error code                                                                                                                |
 
@@ -204,11 +316,10 @@ To make debugging errors easier, GLAIR Vision Go SDK provides error code to all 
 
 When error with code `ErrorCodeAPIError` is returned, GLAIR Vision SDK with return additional context of the failure encapsulated in the `Response` object. The `Response` object has the following properties.
 
-| Property | Description                                                                                                              |
-| -------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `Code`   | HTTP Status code returned by GLAIR Vision API                                                                            |
-| `Status` | GLAIR Vision API status string. Please refer to the [API Documentation](https://docs.glair.ai/vision) for list of status |
-| `Reason` | Human-readable error message from GLAIR Vision API                                                                       |
+| Property | Description                                    |
+| -------- | ---------------------------------------------- |
+| `Code`   | HTTP Status code returned by GLAIR Vision API  |
+| `Body`   | Raw response body returned by GLAIR Vision API |
 
 ## Logging
 

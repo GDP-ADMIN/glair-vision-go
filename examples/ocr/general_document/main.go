@@ -20,7 +20,7 @@ func main() {
 	file, _ := os.Open("../images/general-document.jpg")
 
 	result, err := client.Ocr.GeneralDocument(ctx, glair.OCRInput{
-		File: file,
+		Image: file,
 	})
 
 	if err != nil {

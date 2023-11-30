@@ -20,7 +20,7 @@ func main() {
 	file, _ := os.Open("../images/plate.jpg")
 
 	result, err := client.Ocr.Plate(ctx, glair.OCRInput{
-		File: file,
+		Image: file,
 	})
 
 	if err != nil {
