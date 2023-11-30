@@ -29,7 +29,7 @@ func ReadFile(file interface{}) (*os.File, error) {
 	default:
 		return nil, &glair.Error{
 			Code:    glair.ErrorCodeInvalidFile,
-			Message: "Invalid file type is provided. Valid file types are string or *os.File",
+			Message: "Invalid file type is provided. Valid file types are string or struct that implements os.File",
 		}
 	}
 
