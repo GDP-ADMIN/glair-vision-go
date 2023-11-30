@@ -132,7 +132,7 @@ func sendRequest(
 			Message: "Failed to parse API response. Please contact us about this error.",
 			Err:     err,
 			Response: glair.Response{
-				Code: res.StatusCode,
+				Status: res.StatusCode,
 			},
 		}
 	}
@@ -162,6 +162,15 @@ func createMultipartPayload(
 			bytes, _ := io.Copy(writer, reader)
 
 			writtenBytes += bytes
+		case *string:
+			if val != nil {
+				writer, _ := writer.CreateFormField(field)
+				reader := strings.NewReader(*val)
+
+				bytes, _ := io.Copy(writer, reader)
+
+				writtenBytes += bytes
+			}
 		case *os.File:
 			writer, err := writer.CreateFormFile(field, filepath.Base(val.Name()))
 			if err != nil {
@@ -204,7 +213,15 @@ func handleResponse[T any](
 
 	var err error
 
-	if status != http.StatusOK {
+	if status == http.StatusForbidden {
+		return response, &glair.Error{
+			Code:    glair.ErrorCodeForbidden,
+			Message: "Insufficient access to the API endpoint",
+		}
+	}
+
+	// allow 200-399
+	if status >= 400 {
 		var resBody map[string]interface{}
 		err = json.Unmarshal(res, &resBody)
 
@@ -215,35 +232,19 @@ func handleResponse[T any](
 				Message: "Failed to parse API response. Please contact us about this error.",
 				Err:     err,
 				Response: glair.Response{
-					Code: status,
+					Status: status,
 				},
 			}
 		}
 
-		glairErr := &glair.Error{
+		return response, &glair.Error{
 			Code:    glair.ErrorCodeAPIError,
 			Message: "GLAIR API returned non-OK response. Please check the Response property for more detailed explanation.",
 			Response: glair.Response{
-				Code: status,
+				Status: status,
+				Body:   resBody,
 			},
 		}
-
-		reason, ok := resBody["reason"].(string)
-		if ok {
-			glairErr.Response.Reason = reason
-		}
-
-		message, ok := resBody["message"].(string)
-		if glairErr.Response.Reason == "" && ok {
-			glairErr.Response.Reason = message
-		}
-
-		status, ok := resBody["status"].(string)
-		if ok {
-			glairErr.Response.Status = status
-		}
-
-		return response, glairErr
 	}
 
 	// we don't need to check the error here

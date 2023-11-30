@@ -17,6 +17,11 @@ const (
 	// ErrorCodeBadClient is returned when the provided HTTP
 	// client unable to send HTTP request to GLAIR Vision API
 	ErrorCodeBadClient ErrorCode = "BAD_CLIENT"
+	// ErrorCodeForbidden is returned when the provided credentials
+	// have insufficient access rights to the requested endpoint
+	//
+	// If you think this is a mistake, please contact us
+	ErrorCodeForbidden ErrorCode = "FORBIDDEN"
 	// ErrorCodeAPIError is returned when GLAIR Vision API
 	// returns a non-OK response. In this case, please
 	// check the Body property for more details on the error
@@ -24,7 +29,7 @@ const (
 	// ErrorCodeInvalidResponse is returned when GLAIR Vision API
 	// returns an unexpected response
 	//
-	// Genrally, this error is impossible to be returned.
+	// Generally, this error is impossible to be returned.
 	// If you encounter this error, please contact us
 	ErrorCodeInvalidResponse ErrorCode = "INVALID_RESPONSE"
 )
@@ -32,9 +37,8 @@ const (
 // Response represents the response returned
 // by GLAIR Vision API if request returned an error
 type Response struct {
-	Code   int    `json:"code,omitempty"`
-	Status string `json:"status,omitempty"`
-	Reason string `json:"reason,omitempty"`
+	Status int                    `json:"code,omitempty"`
+	Body   map[string]interface{} `json:"body"`
 }
 
 // Error is an extended error object used by

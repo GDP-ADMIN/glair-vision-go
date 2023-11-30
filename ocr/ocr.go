@@ -94,7 +94,7 @@ type OCRQualities struct {
 }
 
 // New creates a GLAIR Vision OCR API Client with
-// the provided config
+// the given config
 func New(config *glair.Config) *OCR {
 	return &OCR{
 		config: config,
