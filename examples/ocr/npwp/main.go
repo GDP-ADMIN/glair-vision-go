@@ -20,7 +20,7 @@ func main() {
 	file, _ := os.Open("../images/npwp.jpg")
 
 	result, err := client.Ocr.NPWP(ctx, glair.OCRInput{
-		File: file,
+		Image: file,
 	})
 
 	if err != nil {

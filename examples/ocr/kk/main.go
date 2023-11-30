@@ -20,7 +20,7 @@ func main() {
 	file, _ := os.Open("../images/kk.jpg")
 
 	result, err := client.Ocr.KK(ctx, glair.OCRInput{
-		File: file,
+		Image: file,
 	})
 
 	if err != nil {

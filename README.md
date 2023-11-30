@@ -94,7 +94,7 @@ For comprehensive list of available API provided by GLAIR Vision Go SDK, check o
 
 Below are a few simple usage examples:
 
-### Fetch KTP
+### Perform OCR on KTP
 
 ```go
 package main
@@ -118,7 +118,7 @@ func main() {
 	file, _ := os.Open("path/to/image.jpg")
 
 	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
-		File: file,
+		Image: file,
 	})
 
 	if err != nil {
@@ -127,6 +127,117 @@ func main() {
 
   	fmt.Println(result.Read.Nama)
 }
+```
+
+### Perform OCR on Receipt by providing path to the image file
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+
+	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
+)
+
+func main() {
+	ctx := context.Background()
+
+	config := glair.NewConfig("", "", "")
+	client := client.New(config)
+
+	result, err := client.Ocr.Receipt(ctx, glair.OCRInput{
+		Image: "path/to/image.jpg",
+	})
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+  	fmt.Println(result.Read.Nama)
+}
+```
+
+### Perform face verification using GLAIR Vision Face Verification API
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
+)
+
+func main() {
+	ctx := context.Background()
+
+	config := glair.NewConfig("", "", "")
+	client := client.New(config)
+
+	image, _ := os.Open("path/to/image.jpg")
+
+	result, err := client.FaceBio.FaceMatching(ctx, glair.FaceMatchingInput{
+		StoredImage:   image,
+		CapturedImage: image,
+	})
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	beautified, _ := json.MarshalIndent(result, "", "  ")
+
+	fmt.Println(string(beautified))
+}
+```
+
+### Perform KTP data verification using GLAIR Identity Verification API
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
+)
+
+func main() {
+	ctx := context.Background()
+
+	config := glair.NewConfig("", "", "")
+	client := client.New(config)
+
+	result, err := client.Identity.BasicVerification(ctx, glair.BasicVerificationInput{
+		Nik:    "",
+		Name:   glair.String(""),
+		Gender: glair.String(""),
+		DateOfBirth: ""
+	})
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	beautified, _ := json.MarshalIndent(result, "", "  ")
+
+	fmt.Println(string(beautified))
+}
+
 ```
 
 ## Error Handling
@@ -164,7 +275,7 @@ func main() {
 	file, _ := os.Open("path/to/image.jpg")
 
 	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
-		File: file,
+		Image: file,
 	})
 
 	if err != nil {

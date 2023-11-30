@@ -20,7 +20,7 @@ func main() {
 	file, _ := os.Open("../images/stnk.jpg")
 
 	result, err := client.Ocr.STNK(ctx, glair.OCRInput{
-		File: file,
+		Image: file,
 	})
 
 	if err != nil {

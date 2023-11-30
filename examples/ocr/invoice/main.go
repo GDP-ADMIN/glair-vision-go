@@ -20,7 +20,7 @@ func main() {
 	file, _ := os.Open("../images/invoice.jpg")
 
 	result, err := client.Ocr.Invoice(ctx, glair.OCRInput{
-		File: file,
+		Image: file,
 	})
 
 	if err != nil {
