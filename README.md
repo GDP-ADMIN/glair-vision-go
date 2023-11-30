@@ -197,6 +197,7 @@ To make debugging errors easier, GLAIR Vision Go SDK provides error code to all 
 | `ErrorCodeFileCorrupted`   | The SDK fails to parse the input file due to corrupted contents.                                                                                                                                                 |
 | `ErrorCodeInvalidURL`      | The SDK fails to make a request to GLAIR Vision API due to invalid `BaseURL` in the configuration object                                                                                                         |
 | `ErrorCodeBadClient`       | The SDK fails to make a request to GLAIR Vision API due to failures in the HTTP client provided in the configuration object                                                                                      |
+| `ErrorCodeForbidden`       | The SDK attempts to access an API endpoint with insufficient credentials. Please contact us if you think that this is a mistake                                                                                  |
 | `ErrorCodeAPIError`        | GLAIR Vision API returns a non-OK response. Please inspect the `Response` object for more detailed explanation if this code is returned                                                                          |
 | `ErrorCodeInvalidResponse` | GLAIR Vision API returns an unexpected response. Please contact us if you receive this error code                                                                                                                |
 
@@ -204,11 +205,10 @@ To make debugging errors easier, GLAIR Vision Go SDK provides error code to all 
 
 When error with code `ErrorCodeAPIError` is returned, GLAIR Vision SDK with return additional context of the failure encapsulated in the `Response` object. The `Response` object has the following properties.
 
-| Property | Description                                                                                                              |
-| -------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `Code`   | HTTP Status code returned by GLAIR Vision API                                                                            |
-| `Status` | GLAIR Vision API status string. Please refer to the [API Documentation](https://docs.glair.ai/vision) for list of status |
-| `Reason` | Human-readable error message from GLAIR Vision API                                                                       |
+| Property | Description                                    |
+| -------- | ---------------------------------------------- |
+| `Code`   | HTTP Status code returned by GLAIR Vision API  |
+| `Body`   | Raw response body returned by GLAIR Vision API |
 
 ## Logging
 
