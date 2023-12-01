@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/stretchr/testify/assert"
@@ -25,8 +26,14 @@ func (c failingClient) Do(req *http.Request) (*http.Response, error) {
 func TestMakeMultipartRequest(t *testing.T) {
 	file, _ := os.Open("../examples/ocr/images/ktp.jpeg")
 
+	baseCtx := context.Background()
+	// set unrealistic timeout
+	timeoutCtx, cancel := context.WithTimeout(baseCtx, 0*time.Nanosecond)
+	defer cancel()
+
 	tests := []struct {
 		name       string
+		ctx        context.Context
 		config     *glair.Config
 		mockServer *httptest.Server
 		want       mockStruct
@@ -34,26 +41,39 @@ func TestMakeMultipartRequest(t *testing.T) {
 	}{
 		{
 			name: "failed to send request due to bad url",
+			ctx:  context.Background(),
 			config: glair.NewConfig("username", "password", "api-key").
 				WithBaseURL("%+0"),
 			want: mockStruct{},
 			wantErr: &glair.Error{
-				Code:    glair.ErrorCodeInvalidURL,
-				Message: "Invalid base URL is provided in configuration.",
+				Code:    glair.ErrorCodeNetworkError,
+				Message: "Invalid base URL %+0 is provided in configuration.",
 			},
 		},
 		{
-			name: "failed to send request due to bad client",
+			name: "failed to send request due to network error",
+			ctx:  context.Background(),
 			config: glair.NewConfig("username", "password", "api-key").
 				WithClient(failingClient{}),
 			want: mockStruct{},
 			wantErr: &glair.Error{
-				Code:    glair.ErrorCodeBadClient,
-				Message: "Bad HTTP client is provided in configuration.",
+				Code:    glair.ErrorCodeNetworkError,
+				Message: "Failed to send HTTP request due to network error.",
+			},
+		},
+		{
+			name:   "failed to send request due to timeout",
+			ctx:    timeoutCtx,
+			config: glair.NewConfig("username", "password", "api-key"),
+			want:   mockStruct{},
+			wantErr: &glair.Error{
+				Code:    glair.ErrorCodeTimeout,
+				Message: "Request to https://api.vision.glair.ai timed out",
 			},
 		},
 		{
 			name:   "response is not OK, forbidden",
+			ctx:    context.Background(),
 			config: glair.NewConfig("username", "password", "api-key"),
 			mockServer: httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusForbidden)
@@ -67,6 +87,7 @@ func TestMakeMultipartRequest(t *testing.T) {
 		},
 		{
 			name:   "response is not OK, handled error, OCR",
+			ctx:    context.Background(),
 			config: glair.NewConfig("username", "password", "api-key"),
 			mockServer: httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
@@ -87,6 +108,7 @@ func TestMakeMultipartRequest(t *testing.T) {
 		},
 		{
 			name:   "response is not OK, gateway and miscellanous errors",
+			ctx:    context.Background(),
 			config: glair.NewConfig("username", "password", "api-key"),
 			mockServer: httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadGateway)
@@ -103,6 +125,7 @@ func TestMakeMultipartRequest(t *testing.T) {
 		},
 		{
 			name:   "success",
+			ctx:    context.Background(),
 			config: glair.NewConfig("username", "password", "api-key"),
 			mockServer: httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusOK)
@@ -133,7 +156,7 @@ func TestMakeMultipartRequest(t *testing.T) {
 			}
 
 			res, err := MakeMultipartRequest[mockStruct](
-				context.TODO(),
+				tc.ctx,
 				params,
 				tc.config,
 			)
@@ -167,8 +190,8 @@ func TestMakeJSONRequest(t *testing.T) {
 				WithBaseURL("%+0"),
 			want: mockStruct{},
 			wantErr: &glair.Error{
-				Code:    glair.ErrorCodeInvalidURL,
-				Message: "Invalid base URL is provided in configuration.",
+				Code:    glair.ErrorCodeNetworkError,
+				Message: "Invalid base URL %+0 is provided in configuration.",
 			},
 		},
 		{

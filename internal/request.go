@@ -85,16 +85,19 @@ func sendRequest(
 	payload RequestPayload,
 	config *glair.Config,
 ) ([]byte, int, error) {
-	req, err := http.NewRequest("POST", payload.Url, payload.Body)
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", payload.Url, payload.Body)
+
 	if err != nil {
 		return []byte{}, 0, &glair.Error{
-			Code:    glair.ErrorCodeInvalidURL,
-			Message: "Invalid base URL is provided in configuration.",
+			Code:    glair.ErrorCodeNetworkError,
+			Message: fmt.Sprintf("Invalid base URL %s is provided in configuration.", config.BaseUrl),
 			Err:     err,
 		}
 	}
-
-	req = req.WithContext(ctx)
 
 	req.SetBasicAuth(config.Username, config.Password)
 	req.Header.Set("x-api-key", config.ApiKey)
@@ -113,9 +116,16 @@ func sendRequest(
 
 	res, err := config.Client.Do(req)
 	if err != nil {
+		if strings.HasSuffix(err.Error(), "context deadline exceeded") {
+			return []byte{}, 0, &glair.Error{
+				Code:    glair.ErrorCodeTimeout,
+				Message: fmt.Sprintf("Request to %s timed out", payload.Url),
+			}
+		}
+
 		return []byte{}, 0, &glair.Error{
-			Code:    glair.ErrorCodeBadClient,
-			Message: "Bad HTTP client is provided in configuration.",
+			Code:    glair.ErrorCodeNetworkError,
+			Message: "Failed to send HTTP request due to network error.",
 			Err:     err,
 		}
 	}
@@ -176,7 +186,7 @@ func createMultipartPayload(
 			if err != nil {
 				logger.Errorf("Failed to append file %s to request body: %v", field, err.Error())
 				return header, nil, &glair.Error{
-					Code:    glair.ErrorCodeFileCorrupted,
+					Code:    glair.ErrorCodeFileError,
 					Message: fmt.Sprintf("Failed to append file %s into request body.", field),
 					Err:     err,
 				}
@@ -186,7 +196,7 @@ func createMultipartPayload(
 			if err != nil {
 				logger.Errorf("Failed to write field %s to request body: %v", field, err.Error())
 				return header, nil, &glair.Error{
-					Code:    glair.ErrorCodeFileCorrupted,
+					Code:    glair.ErrorCodeFileError,
 					Message: fmt.Sprintf("Failed to write field %s into request body.", field),
 					Err:     err,
 				}
