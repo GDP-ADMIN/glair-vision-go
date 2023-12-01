@@ -161,6 +161,59 @@ func main() {
 }
 ```
 
+### Perform OCR on KTP with timeout
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+	"time"
+
+	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
+)
+
+func main() {
+	baseContext := context.Background()
+	contextWithTimeout, cancel := context.WithTimeout(baseContext, 100*time.Millisecond)
+	defer cancel()
+
+	config := glair.NewConfig("", "", "")
+	client := client.New(config)
+
+	file, _ := os.Open("../images/ktp.jpeg")
+
+	result, err := client.Ocr.Ktp(contextWithTimeout, glair.OCRInput{
+		Image: file,
+	})
+
+	if err != nil {
+		if glairErr, ok := err.(*glair.Error); ok {
+			switch glairErr.Code {
+			case glair.ErrorCodeTimeout:
+				log.Printf("Request timed out")
+			default:
+				log.Printf("Error: %v\n", glairErr.Code)
+			}
+		} else {
+			log.Printf("Unexpected Error: %v\n", err)
+		}
+
+		os.Exit(1)
+	}
+
+	beautified, _ := json.MarshalIndent(result, "", "  ")
+
+	fmt.Println(string(beautified))
+}
+
+```
+
 ### Perform face verification using GLAIR Vision Face Verification API
 
 ```go
@@ -302,15 +355,14 @@ func main() {
 
 To make debugging errors easier, GLAIR Vision Go SDK provides error code to all `glair.Error` objects. Below are the list of error codes that are returned by GLAIR Vision Go SDK
 
-| Error Code                 | Reason                                                                                                                                                                                                           |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ErrorCodeInvalidFile`     | The SDK fails to read the input file. It's possible that the file doesn't exist or the SDK cannot access the file from the given path. This code also returned when incorrect representation of file is provided |
-| `ErrorCodeFileCorrupted`   | The SDK fails to parse the input file due to corrupted contents.                                                                                                                                                 |
-| `ErrorCodeInvalidURL`      | The SDK fails to make a request to GLAIR Vision API due to invalid `BaseURL` in the configuration object                                                                                                         |
-| `ErrorCodeBadClient`       | The SDK fails to make a request to GLAIR Vision API due to failures in the HTTP client provided in the configuration object                                                                                      |
-| `ErrorCodeForbidden`       | The SDK attempts to access an API endpoint with insufficient credentials. Please contact us if you think that this is a mistake                                                                                  |
-| `ErrorCodeAPIError`        | GLAIR Vision API returns a non-OK response. Please inspect the `Response` object for more detailed explanation if this code is returned                                                                          |
-| `ErrorCodeInvalidResponse` | GLAIR Vision API returns an unexpected response. Please contact us if you receive this error code                                                                                                                |
+| Error Code                 | Reason                                                                                                                                                                                                                                                          |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ErrorCodeFileError`       | The SDK encounters an error when processing the image file. It's possible that the file doesn't exist, the SDK cannot access the file from the given path, or the file is corrupted. This code also returned when incorrect representation of file is provided. |
+| `ErrorCodeNetworkError`    | The SDK fails to complete the HTTP request with the given HTTP client                                                                                                                                                                                           |
+| `ErrorCodeTimeout`         | The network request sent by the SDK has timed out. This error is fixable by increasing the request timeout duration or by completely removing the timeout from the context                                                                                      |
+| `ErrorCodeForbidden`       | The SDK attempts to access an API endpoint with insufficient credentials. Please contact us if you think that this is a mistake                                                                                                                                 |
+| `ErrorCodeAPIError`        | GLAIR Vision API returns a non-OK response. Please inspect the `Response` object for more detailed explanation if this code is returned                                                                                                                         |
+| `ErrorCodeInvalidResponse` | GLAIR Vision API returns an unexpected response. Please contact us if you receive this error code                                                                                                                                                               |
 
 ### `Response`
 

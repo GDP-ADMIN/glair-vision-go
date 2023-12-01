@@ -6,31 +6,28 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
 )
 
 func main() {
-	baseContext := context.Background()
-	contextWithTimeout, cancel := context.WithTimeout(baseContext, 100*time.Millisecond)
-	defer cancel()
+	ctx := context.Background()
 
 	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
 	file, _ := os.Open("../images/ktp.jpeg")
 
-	result, err := client.Ocr.Ktp(contextWithTimeout, glair.OCRInput{
+	result, err := client.Ocr.Ktp(ctx, glair.OCRInput{
 		Image: file,
 	})
 
 	if err != nil {
 		if glairErr, ok := err.(*glair.Error); ok {
 			switch glairErr.Code {
-			case glair.ErrorCodeTimeout:
-				log.Printf("Request timed out")
+			case glair.ErrorCodeAPIError:
+				log.Printf("API Error: %v\n", glairErr.Response)
 			default:
 				log.Printf("Error: %v\n", glairErr.Code)
 			}

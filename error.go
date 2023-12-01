@@ -16,7 +16,7 @@ const (
 	// by the SDK has timed out
 	//
 	// To solve this problem, you can increase the timeout
-	// value from the context
+	// value from the context or remove the timeout entirely
 	ErrorCodeTimeout ErrorCode = "TIMEOUT"
 	// ErrorCodeForbidden is returned when the provided credentials
 	// have insufficient access rights to the requested endpoint
