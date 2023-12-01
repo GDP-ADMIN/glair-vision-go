@@ -33,13 +33,13 @@ func TestReadFile(t *testing.T) {
 			name:    "should return invalid file error when file is not expected type",
 			file:    12321321,
 			want:    false,
-			wantErr: glair.ErrorCodeInvalidFile,
+			wantErr: glair.ErrorCodeFileError,
 		},
 		{
 			name:    "should return error if filepath is invalid",
 			file:    "not_exist.jpg",
 			want:    false,
-			wantErr: glair.ErrorCodeInvalidFile,
+			wantErr: glair.ErrorCodeFileError,
 		},
 	}
 

@@ -17,7 +17,7 @@ func ReadFile(file interface{}) (*os.File, error) {
 		file, err := os.Open(param)
 		if err != nil {
 			return nil, &glair.Error{
-				Code:    glair.ErrorCodeInvalidFile,
+				Code:    glair.ErrorCodeFileError,
 				Message: fmt.Sprintf("Cannot read file from path %s", param),
 				Err:     err,
 			}
@@ -28,7 +28,7 @@ func ReadFile(file interface{}) (*os.File, error) {
 		input = file.(*os.File)
 	default:
 		return nil, &glair.Error{
-			Code:    glair.ErrorCodeInvalidFile,
+			Code:    glair.ErrorCodeFileError,
 			Message: "Invalid file type is provided. Valid file types are string or struct that implements os.File",
 		}
 	}

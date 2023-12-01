@@ -5,18 +5,19 @@ package glair
 type ErrorCode string
 
 const (
-	// ErrorCodeInvalidFile is returned when the SDK fails
-	// to read the input file
-	ErrorCodeInvalidFile ErrorCode = "INVALID_FILE"
-	// ErrorCodeFileCorrupted is returned when the provided file
-	// is corrupted or too low on quality
-	ErrorCodeFileCorrupted ErrorCode = "FILE_CORRUPTED"
-	// ErrorCodeInvalidURL is returned when user provides
-	// an invalid base URL in the configuration object
-	ErrorCodeInvalidURL ErrorCode = "INVALID_URL"
-	// ErrorCodeBadClient is returned when the provided HTTP
-	// client unable to send HTTP request to GLAIR Vision API
-	ErrorCodeBadClient ErrorCode = "BAD_CLIENT"
+	// ErrorCodeFileError is returned when the SDK fails
+	// to read or parse the given input file
+	ErrorCodeFileError ErrorCode = "FILE_ERROR"
+	// ErrorCodeNetworkError is returned when the SDK is unable to
+	// complete the HTTP request to GLAIR Vision API with the given
+	// HTTP client
+	ErrorCodeNetworkError ErrorCode = "NETWORK_ERROR"
+	// ErrorCodeTimeout is returned when the HTTP request sent
+	// by the SDK has timed out
+	//
+	// To solve this problem, you can increase the timeout
+	// value from the context or remove the timeout entirely
+	ErrorCodeTimeout ErrorCode = "TIMEOUT"
 	// ErrorCodeForbidden is returned when the provided credentials
 	// have insufficient access rights to the requested endpoint
 	//
@@ -37,7 +38,7 @@ const (
 // Response represents the response returned
 // by GLAIR Vision API if request returned an error
 type Response struct {
-	Status int                    `json:"code,omitempty"`
+	Status int                    `json:"status,omitempty"`
 	Body   map[string]interface{} `json:"body"`
 }
 
