@@ -381,7 +381,6 @@ By default, GLAIR Vision Go SDK does not log anything regardless of severity. Ho
 package main
 
 import (
-
 	"fmt"
 
 	"github.com/glair-ai/glair-vision-go"
