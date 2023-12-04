@@ -335,12 +335,10 @@ func main() {
     		// is a glair.Error, assert the error code
 	  	if glairErr, ok := err.(*glair.Error); ok {
       		switch glairErr.Code {
-        		case glair.ErrorCodeInvalidFile:
-          			fmt.Println("Cannot read input file")
-        		case glair.ErrorCodeFileCorrupted:
-          			fmt.Println("File corrupted")
-        		case glair.ErrorCodeInvalidURL:
-          			fmt.Println("URL is invalid")
+        		case glair.ErrorCodeFileError:
+          			fmt.Println("Cannot read input file correctly")
+        		case glair.ErrorCodeNetworkError:
+          			fmt.Println("There are problems while connecting to GLAIR Vision API")
         		default:
           			fmt.Printf("GLAIR SDK returns error code: %d", glairErr.Code)
       			}
