@@ -3,7 +3,7 @@ package ocr
 // KTP stores OCR result of KTP model from the given input
 type KTP struct {
 	OCRResult[KTPData]
-	Image OCRImage `json:"image,omitempty"`
+	Images OCRImage `json:"images,omitempty"`
 }
 
 // KTPWithQuality stores OCR result of KTP model from the given

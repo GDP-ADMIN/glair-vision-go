@@ -104,7 +104,7 @@ func New(config *glair.Config) *OCR {
 // Ktp performs OCR on the given file using KTP model
 //
 // API Docs: https://docs.glair.ai/vision/ktp
-func (ocr *OCR) Ktp(
+func (ocr *OCR) KTP(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (KTP, error) {
@@ -129,7 +129,7 @@ func (ocr *OCR) Ktp(
 // and supplements it with file quality data
 //
 // API Docs: https://docs.glair.ai/vision/ktp
-func (ocr *OCR) KtpWithQuality(
+func (ocr *OCR) KTPWithQuality(
 	ctx context.Context,
 	input glair.OCRInput,
 ) (KTPWithQuality, error) {
@@ -220,6 +220,30 @@ func (ocr *OCR) STNK(
 	}
 
 	return internal.MakeMultipartRequest[STNK](ctx, params, ocr.config)
+}
+
+// STNK performs OCR on the given file using SIM model
+//
+// API Docs: https://docs.glair.ai/vision/sim
+func (ocr *OCR) SIM(
+	ctx context.Context,
+	input glair.OCRInput,
+) (SIM, error) {
+	sim, err := internal.ReadFile(input.Image)
+	if err != nil {
+		return SIM{}, err
+	}
+
+	url := ocr.config.GetEndpointURL("ocr", "sim")
+	params := internal.RequestParameters{
+		Url:       url,
+		RequestID: input.RequestID,
+		Body: map[string]interface{}{
+			"image": sim,
+		},
+	}
+
+	return internal.MakeMultipartRequest[SIM](ctx, params, ocr.config)
 }
 
 // BPKB performs OCR on the given file using BPKB model
