@@ -227,7 +227,7 @@ func (ocr *OCR) STNK(
 // API Docs: https://docs.glair.ai/vision/bpkb
 func (ocr *OCR) BPKB(
 	ctx context.Context,
-	input glair.OCRInput,
+	input glair.BPKBInput,
 ) (BPKB, error) {
 	bpkb, err := internal.ReadFile(input.Image)
 	if err != nil {
@@ -235,11 +235,13 @@ func (ocr *OCR) BPKB(
 	}
 
 	url := ocr.config.GetEndpointURL("ocr", "bpkb")
+
 	params := internal.RequestParameters{
 		Url:       url,
 		RequestID: input.RequestID,
 		Body: map[string]interface{}{
 			"image": bpkb,
+			"page":  input.Page,
 		},
 	}
 
