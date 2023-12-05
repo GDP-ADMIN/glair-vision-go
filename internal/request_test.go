@@ -152,6 +152,7 @@ func TestMakeMultipartRequest(t *testing.T) {
 					"image":          file,
 					"category":       "do-not-panic",
 					"pointer-string": glair.String("do-not-panic"),
+					"page":           glair.Int(3),
 				},
 			}
 
