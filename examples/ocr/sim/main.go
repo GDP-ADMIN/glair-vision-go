@@ -17,9 +17,9 @@ func main() {
 	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	file, _ := os.Open("../images/ktp.jpeg")
+	file, _ := os.Open("../images/sim.jpg")
 
-	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
+	result, err := client.Ocr.SIM(ctx, glair.OCRInput{
 		Image: file,
 	})
 
