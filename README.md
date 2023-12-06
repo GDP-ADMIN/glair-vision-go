@@ -214,6 +214,64 @@ func main() {
 
 ```
 
+### Using custom HTTP client to intercept HTTP requests
+
+```go
+package client
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/glair-ai/glair-vision-go"
+)
+
+// MyClient is a HTTP client that adds `x-powered-by`
+// header to a normal HTTP request.
+//
+// It wraps the default HTTP client
+type MyClient struct {
+	client *http.Client
+}
+
+func (c *MyClient) Do(req *http.Request) (*http.Response, error) {
+	req.Header.Set("X-Powered-By", "GLAIR")
+
+	res, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func main() {
+	ctx := context.Background()
+
+	config := glair.NewConfig("", "", "").WithClient(&MyClient{client: http.DefaultClient})
+	client := New(config)
+
+	file, _ := os.Open("../images/ktp.jpeg")
+
+	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
+		Image: file,
+	})
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	beautified, _ := json.MarshalIndent(result, "", "  ")
+
+	fmt.Println(string(beautified))
+}
+
+```
+
 ### Perform face verification using GLAIR Vision Face Verification API
 
 ```go
