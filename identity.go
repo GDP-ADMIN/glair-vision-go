@@ -105,7 +105,7 @@ type FaceVerificationInput struct {
 	// DateOfBirth represents date of birth of the person to
 	// be verified
 	//
-	// DateOfBirth must be provided as a string with yyyy-mm-dd
+	// DateOfBirth must be provided as a string with dd-mm-yyyy
 	// format or as an instance of *time.Time
 	DateOfBirth interface{}
 }
