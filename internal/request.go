@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -176,6 +177,16 @@ func createMultipartPayload(
 			if val != nil {
 				writer, _ := writer.CreateFormField(field)
 				reader := strings.NewReader(*val)
+
+				bytes, _ := io.Copy(writer, reader)
+
+				writtenBytes += bytes
+			}
+		case *int:
+			if val != nil {
+				writer, _ := writer.CreateFormField(field)
+				numStr := strconv.Itoa(*val)
+				reader := strings.NewReader(numStr)
 
 				bytes, _ := io.Copy(writer, reader)
 
