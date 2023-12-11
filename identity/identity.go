@@ -28,6 +28,8 @@ func parseDateOfBirth(dateOfBirth interface{}) *string {
 	switch dob := dateOfBirth.(type) {
 	case string:
 		return glair.String(dob)
+	case *string:
+		return dob
 	case time.Time:
 		return glair.String(dob.Format("02-01-2006"))
 	default:
