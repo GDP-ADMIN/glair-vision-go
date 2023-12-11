@@ -101,7 +101,7 @@ func New(config *glair.Config) *OCR {
 	}
 }
 
-// Ktp performs OCR on the given file using KTP model
+// KTP performs OCR on the given file using KTP model
 //
 // API Docs: https://docs.glair.ai/vision/ktp
 func (ocr *OCR) KTP(
@@ -125,7 +125,7 @@ func (ocr *OCR) KTP(
 	return internal.MakeMultipartRequest[KTP](ctx, params, ocr.config)
 }
 
-// KtpWithQuality performs OCR on the given file using KTP model
+// KTPWithQuality performs OCR on the given file using KTP model
 // and supplements it with file quality data
 //
 // API Docs: https://docs.glair.ai/vision/ktp
@@ -440,11 +440,11 @@ func (ocr *OCR) SKPR(
 	return internal.MakeMultipartRequest[SKPR](ctx, params, ocr.config)
 }
 
-// KtpSessions sends session request for passive liveness
+// KTPSessions sends session request for passive liveness
 // using the prebuilt web page
 //
 // API Docs: https://docs.glair.ai/vision/ktp-sessions
-func (ocr *OCR) KtpSessions(
+func (ocr *OCR) KTPSessions(
 	ctx context.Context,
 	input glair.SessionsInput,
 ) (glair.Session, error) {

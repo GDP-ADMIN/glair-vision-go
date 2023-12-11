@@ -188,7 +188,7 @@ func main() {
 
 	file, _ := os.Open("../images/ktp.jpeg")
 
-	result, err := client.Ocr.Ktp(contextWithTimeout, glair.OCRInput{
+	result, err := client.Ocr.KTP(contextWithTimeout, glair.OCRInput{
 		Image: file,
 	})
 

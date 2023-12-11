@@ -17,7 +17,7 @@ func main() {
 	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	result, err := client.Ocr.KtpSessions(ctx, glair.SessionsInput{
+	result, err := client.Ocr.KTPSessions(ctx, glair.SessionsInput{
 		SuccessURL: "https://www.google.com",
 	})
 
