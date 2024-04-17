@@ -35,10 +35,10 @@ type PaymentBank struct {
 }
 
 type InvoiceItem struct {
-	ItemName        OCRStringField `json:"item_name,omitempty"`
-	ItemQuantity    OCRStringField `json:"item_quantity,omitempty"`
-	ItemPrice       OCRIntField    `json:"item_price,omitempty"`
-	ItemUnitPrice   OCRStringField `json:"item_unit_price,omitempty"`
-	ItemProductCode OCRStringField `json:"item_product_code,omitempty"`
-	ItemUnit        OCRStringField `json:"item_unit,omitempty"`
+	ItemName         OCRStringField `json:"item_name,omitempty"`
+	ItemQuantity     OCRStringField `json:"item_quantity,omitempty"`
+	ItemTotalPrice   OCRIntField    `json:"item_total_price,omitempty"`
+	ItemEachPrice    OCRIntField    `json:"item_each_price,omitempty"`
+	ItemProductCode  OCRStringField `json:"item_product_code,omitempty"`
+	ItemQuantityUnit OCRStringField `json:"item_quantity_unit,omitempty"`
 }
