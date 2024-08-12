@@ -18,7 +18,7 @@
 
 ## Requirement
 
-- Go 1.18 or later with Go modules.
+- Go 1.20 or later with Go modules.
 
 ## Installation
 

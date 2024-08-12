@@ -1,6 +1,6 @@
 package glair
 
-// OCRInput stores parameters for Face Matching request
+// FaceMatchingInput stores parameters for Face Matching request
 type FaceMatchingInput struct {
 	// RequestID represents request identifier for debugging purposes
 	RequestID string
