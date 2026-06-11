@@ -22,6 +22,8 @@
 
 ## Installation
 
+**Method 1: Go Module Fetching**
+
 You can import the SDK in your Go files with `import`:
 
 ```go
@@ -37,6 +39,22 @@ Alternatively, you can also run `go get` to explicitly resolve and fetch the SDK
 
 ```bash
 go get -u github.com/glair-ai/glair-vision-go
+
+```
+
+**Method 2: Local ZIP Installation**
+
+If you downloaded the source code as a ZIP file, extract it and update your `go.mod` file with the `replace` directive pointing to the local directory:
+
+```go
+module your_module_name
+
+go 1.20
+
+require github.com/glair-ai/glair-vision-go v0.0.0
+
+replace github.com/glair-ai/glair-vision-go => /path/to/extracted/glair-vision-go
+
 ```
 
 ## Usage
