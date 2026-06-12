@@ -110,6 +110,57 @@ Afterwards, you can use the provided functions to access GLAIR Vision API.
 
 For comprehensive list of available API provided by GLAIR Vision Go SDK, check out the [API Documentation](https://docs.glair.ai/vision). You can also see the runnable examples in the [examples folder](./examples). For details on all the functionality in this library, see the Go documentation.
 
+### Custom Response Type
+
+Each OCR function accepts a pointer to your result struct as the last argument. You can create custom result types to only extract the fields you need.
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/ocr"
+)
+
+// MyKTP only extracts the fields that matter to your application.
+type MyKTP struct {
+	ocr.OCRResult[MyKTPData]
+}
+
+type MyKTPData struct {
+	Nama          ocr.OCRField[string] `json:"nama,omitempty"`
+	Nik           ocr.OCRField[string] `json:"nik,omitempty"`
+	TempatLahir   ocr.OCRField[string] `json:"tempatLahir,omitempty"`
+}
+
+func main() {
+	ctx := context.Background()
+
+	config := glair.NewConfig("", "", "")
+	c := client.New(config)
+
+	file, _ := os.Open("path/to/image.jpg")
+
+	var result MyKTP
+
+	err := c.Ocr.KTP(ctx, glair.OCRInput{
+		Image: file,
+	}, &result)
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	fmt.Println(result.Read.Nama)
+}
+```
+
 Below are a few simple usage examples:
 
 ### Perform OCR on KTP
@@ -125,6 +176,7 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
@@ -135,9 +187,11 @@ func main() {
 
 	file, _ := os.Open("path/to/image.jpg")
 
-	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
+	var result ocr.KTP
+
+	err := client.Ocr.KTP(ctx, glair.OCRInput{
 		Image: file,
-	})
+	}, &result)
 
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -159,6 +213,7 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
@@ -167,9 +222,11 @@ func main() {
 	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	result, err := client.Ocr.Receipt(ctx, glair.OCRInput{
+	var result ocr.Receipt
+
+	err := client.Ocr.Receipt(ctx, glair.OCRInput{
 		Image: "path/to/image.jpg",
-	})
+	}, &result)
 
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -194,6 +251,7 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
@@ -206,9 +264,11 @@ func main() {
 
 	file, _ := os.Open("../images/ktp.jpeg")
 
-	result, err := client.Ocr.KTP(contextWithTimeout, glair.OCRInput{
+	var result ocr.KTP
+
+	err := client.Ocr.KTP(contextWithTimeout, glair.OCRInput{
 		Image: file,
-	})
+	}, &result)
 
 	if err != nil {
 		if glairErr, ok := err.(*glair.Error); ok {
@@ -235,7 +295,7 @@ func main() {
 ### Using custom HTTP client to intercept HTTP requests
 
 ```go
-package client
+package main
 
 import (
 	"context"
@@ -246,6 +306,8 @@ import (
 	"os"
 
 	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 // MyClient is a HTTP client that adds `x-powered-by`
@@ -253,13 +315,13 @@ import (
 //
 // It wraps the default HTTP client
 type MyClient struct {
-	client *http.Client
+	inner *http.Client
 }
 
 func (c *MyClient) Do(req *http.Request) (*http.Response, error) {
 	req.Header.Set("X-Powered-By", "GLAIR")
 
-	res, err := c.client.Do(req)
+	res, err := c.inner.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -270,14 +332,16 @@ func (c *MyClient) Do(req *http.Request) (*http.Response, error) {
 func main() {
 	ctx := context.Background()
 
-	config := glair.NewConfig("", "", "").WithClient(&MyClient{client: http.DefaultClient})
-	client := New(config)
+	config := glair.NewConfig("", "", "").WithClient(&MyClient{inner: http.DefaultClient})
+	c := client.New(config)
 
 	file, _ := os.Open("../images/ktp.jpeg")
 
-	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
+	var result ocr.KTP
+
+	err := c.Ocr.KTP(ctx, glair.OCRInput{
 		Image: file,
-	})
+	}, &result)
 
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -304,6 +368,7 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/face"
 )
 
 func main() {
@@ -314,10 +379,12 @@ func main() {
 
 	image, _ := os.Open("path/to/image.jpg")
 
-	result, err := client.FaceBio.FaceMatching(ctx, glair.FaceMatchingInput{
+	var result face.FaceMatching
+
+	err := client.FaceBio.FaceMatching(ctx, glair.FaceMatchingInput{
 		StoredImage:   image,
 		CapturedImage: image,
-	})
+	}, &result)
 
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -393,6 +460,7 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
@@ -403,9 +471,11 @@ func main() {
 
 	file, _ := os.Open("path/to/image.jpg")
 
-	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
+	var result ocr.KTP
+
+	err := client.Ocr.KTP(ctx, glair.OCRInput{
 		Image: file,
-	})
+	}, &result)
 
 	if err != nil {
     		// is a glair.Error, assert the error code
