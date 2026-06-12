@@ -16,21 +16,21 @@ type KTPWithQuality struct {
 // KTPData stores key-value field of KTP that can be
 // recognized by the OCR engine
 type KTPData struct {
-	Agama            OCRStringField `json:"agama,omitempty"`
-	Alamat           OCRStringField `json:"alamat,omitempty"`
-	BerlakuHingga    OCRStringField `json:"berlakuHingga,omitempty"`
-	GolonganDarah    OCRStringField `json:"golonganDarah,omitempty"`
-	JenisKelamin     OCRStringField `json:"jenisKelamin,omitempty"`
-	Kecamatan        OCRStringField `json:"kecamatan,omitempty"`
-	KelurahanDesa    OCRStringField `json:"kelurahanDesa,omitempty"`
-	Kewarganegaraan  OCRStringField `json:"kewarganegaraan,omitempty"`
-	KotaKabupaten    OCRStringField `json:"kotaKabupaten,omitempty"`
-	Nama             OCRStringField `json:"nama,omitempty"`
-	Nik              OCRStringField `json:"nik,omitempty"`
-	Pekerjaan        OCRStringField `json:"pekerjaan,omitempty"`
-	Provinsi         OCRStringField `json:"provinsi,omitempty"`
-	RtRw             OCRStringField `json:"rtRw,omitempty"`
-	StatusPerkawinan OCRStringField `json:"statusPerkawinan,omitempty"`
-	TanggalLahir     OCRStringField `json:"tanggalLahir,omitempty"`
-	TempatLahir      OCRStringField `json:"tempatLahir,omitempty"`
+	Agama            OCRField[string] `json:"agama,omitempty"`
+	Alamat           OCRField[string] `json:"alamat,omitempty"`
+	BerlakuHingga    OCRField[string] `json:"berlakuHingga,omitempty"`
+	GolonganDarah    OCRField[string] `json:"golonganDarah,omitempty"`
+	JenisKelamin     OCRField[string] `json:"jenisKelamin,omitempty"`
+	Kecamatan        OCRField[string] `json:"kecamatan,omitempty"`
+	KelurahanDesa    OCRField[string] `json:"kelurahanDesa,omitempty"`
+	Kewarganegaraan  OCRField[string] `json:"kewarganegaraan,omitempty"`
+	KotaKabupaten    OCRField[string] `json:"kotaKabupaten,omitempty"`
+	Nama             OCRField[string] `json:"nama,omitempty"`
+	Nik              OCRField[string] `json:"nik,omitempty"`
+	Pekerjaan        OCRField[string] `json:"pekerjaan,omitempty"`
+	Provinsi         OCRField[string] `json:"provinsi,omitempty"`
+	RtRw             OCRField[string] `json:"rtRw,omitempty"`
+	StatusPerkawinan OCRField[string] `json:"statusPerkawinan,omitempty"`
+	TanggalLahir     OCRField[string] `json:"tanggalLahir,omitempty"`
+	TempatLahir      OCRField[string] `json:"tempatLahir,omitempty"`
 }

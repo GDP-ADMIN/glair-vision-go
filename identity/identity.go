@@ -78,11 +78,9 @@ func (identity *Identity) BasicVerification(
 		},
 	}
 
-	return internal.MakeMultipartRequest[BasicIdentityVerificationResult](
-		ctx,
-		params,
-		identity.config,
-	)
+	var result BasicIdentityVerificationResult
+	err := internal.MakeMultipartRequest(ctx, params, identity.config, &result)
+	return result, err
 }
 
 // FaceVerification performs KTP data verification
@@ -111,9 +109,7 @@ func (identity *Identity) FaceVerification(
 		},
 	}
 
-	return internal.MakeMultipartRequest[FaceIdentityVerificationResult](
-		ctx,
-		params,
-		identity.config,
-	)
+	var result FaceIdentityVerificationResult
+	err = internal.MakeMultipartRequest(ctx, params, identity.config, &result)
+	return result, err
 }

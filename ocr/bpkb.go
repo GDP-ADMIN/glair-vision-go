@@ -11,42 +11,42 @@ type BPKBData struct {
 }
 
 type OwnerIdentity struct {
-	Alamat      string `json:"alamat,omitempty"`
-	AlamatEmail string `json:"alamat_email,omitempty"`
-	Dikeluarkan string `json:"dikeluarkan,omitempty"`
-	NamaPemilik string `json:"nama_pemilik,omitempty"`
-	NomorBpkb   string `json:"nomor_bpkb,omitempty"`
-	NoKtpTdp    string `json:"nomor_ktp_tdp,omitempty"`
-	NoTelepon   string `json:"no_telepon,omitempty"`
-	PadaTanggal string `json:"pada_tanggal,omitempty"`
-	Pekerjaan   string `json:"pekerjaan,omitempty"`
+	Alamat      OCRField[string] `json:"alamat,omitempty"`
+	AlamatEmail OCRField[string] `json:"alamat_email,omitempty"`
+	Dikeluarkan OCRField[string] `json:"dikeluarkan,omitempty"`
+	NamaPemilik OCRField[string] `json:"nama_pemilik,omitempty"`
+	NomorBpkb   OCRField[string] `json:"nomor_bpkb,omitempty"`
+	NoKtpTdp    OCRField[string] `json:"nomor_ktp_tdp,omitempty"`
+	NoTelepon   OCRField[string] `json:"no_telepon,omitempty"`
+	PadaTanggal OCRField[string] `json:"pada_tanggal,omitempty"`
+	Pekerjaan   OCRField[string] `json:"pekerjaan,omitempty"`
 }
 
 type VehicleIdentity struct {
-	BahanBakar      string `json:"bahan_bakar,omitempty"`
-	IsiSilinder     string `json:"isi_silinder,omitempty"`
-	Jenis           string `json:"jenis,omitempty"`
-	JumlahRoda      string `json:"jumlah_roda,omitempty"`
-	JumlahSumbu     string `json:"jumlah_sumbu,omitempty"`
-	Merk            string `json:"merk,omitempty"`
-	Model           string `json:"model,omitempty"`
-	NomorMesin      string `json:"nomor_mesin,omitempty"`
-	NomorRangka     string `json:"nomor_rangka,omitempty"`
-	NomorRegistrasi string `json:"nomor_registrasi,omitempty"`
-	TahunPembuatan  string `json:"tahun_pembuatan,omitempty"`
-	Type            string `json:"type,omitempty"`
-	Warna           string `json:"warna,omitempty"`
-	WarnaTnkb       string `json:"warna_tnkb,omitempty"`
+	BahanBakar      OCRField[string] `json:"bahan_bakar,omitempty"`
+	IsiSilinder     OCRField[string] `json:"isi_silinder,omitempty"`
+	Jenis           OCRField[string] `json:"jenis,omitempty"`
+	JumlahRoda      OCRField[string] `json:"jumlah_roda,omitempty"`
+	JumlahSumbu     OCRField[string] `json:"jumlah_sumbu,omitempty"`
+	Merk            OCRField[string] `json:"merk,omitempty"`
+	Model           OCRField[string] `json:"model,omitempty"`
+	NomorMesin      OCRField[string] `json:"nomor_mesin,omitempty"`
+	NomorRangka     OCRField[string] `json:"nomor_rangka,omitempty"`
+	NomorRegistrasi OCRField[string] `json:"nomor_registrasi,omitempty"`
+	TahunPembuatan  OCRField[string] `json:"tahun_pembuatan,omitempty"`
+	Type            OCRField[string] `json:"type,omitempty"`
+	Warna           OCRField[string] `json:"warna,omitempty"`
+	WarnaTnkb       OCRField[string] `json:"warna_tnkb,omitempty"`
 }
 
 type RegistrationDocument struct {
-	NamaApm       string `json:"nama_apm,omitempty"`
-	NomorFaktur   string `json:"nomor_faktur,omitempty"`
-	NomorFormAbc  string `json:"nomor_form_abc,omitempty"`
-	TanggalFaktur string `json:"tanggal_faktur,omitempty"`
+	NamaApm       OCRField[string] `json:"nama_apm,omitempty"`
+	NomorFaktur   OCRField[string] `json:"nomor_faktur,omitempty"`
+	NomorFormAbc  OCRField[string] `json:"nomor_form_abc,omitempty"`
+	TanggalFaktur OCRField[string] `json:"tanggal_faktur,omitempty"`
 }
 
 type LastPageInformation struct {
-	DiterbitkanOleh string `json:"diterbitkan_oleh,omitempty"`
-	NoRegister      string `json:"no_register,omitempty"`
+	DiterbitkanOleh OCRField[string] `json:"diterbitkan_oleh,omitempty"`
+	NoRegister      OCRField[string] `json:"no_register,omitempty"`
 }

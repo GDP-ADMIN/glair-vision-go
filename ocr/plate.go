@@ -5,6 +5,6 @@ type Plate = OCRResult[PlatesData]
 
 type PlatesData struct {
 	Plates []struct {
-		Text string `json:"text,omitempty"`
+		Text OCRField[string] `json:"text,omitempty"`
 	} `json:"plates,omitempty"`
 }

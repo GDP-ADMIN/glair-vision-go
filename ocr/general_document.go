@@ -5,5 +5,5 @@ package ocr
 type GeneralDocument = OCRResult[GeneralDocumentData]
 
 type GeneralDocumentData struct {
-	AllTexts []OCRStringField `json:"all_texts,omitempty"`
+	AllTexts []OCRField[string] `json:"all_texts,omitempty"`
 }

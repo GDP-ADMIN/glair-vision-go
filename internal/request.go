@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"reflect"
 
 	"github.com/glair-ai/glair-vision-go"
 )
@@ -29,56 +30,62 @@ type RequestPayload struct {
 	Body   io.Reader
 }
 
-// MakeMultipartRequest creates and sends multipart/formdata request to a specified
-// GLAIR Vision service endpoint.
-func MakeMultipartRequest[T any](
-	ctx context.Context,
-	params RequestParameters,
-	config *glair.Config,
-) (T, error) {
-	var response T
+// MakeMultipartRequest creates and sends multipart/formdata request and
+// unmarshals the response into the provided target.
+func MakeMultipartRequest(
+    ctx context.Context,
+    params RequestParameters,
+    config *glair.Config,
+    target any,
+) error {
+    header, body, err := createMultipartPayload(params.Body, config.Logger)
+    if err != nil {
+        return err
+    }
 
-	header, body, err := createMultipartPayload(params.Body, config.Logger)
-	if err != nil {
-		return response, err
-	}
+    res, status, err := sendRequest(ctx, RequestPayload{
+        RequestParameters: params,
+        Header:            header,
+        Body:              body,
+    }, config)
+    if err != nil {
+        return err
+    }
 
-	res, status, err := sendRequest(ctx, RequestPayload{
-		RequestParameters: params,
-		Header:            header,
-		Body:              body,
-	}, config)
-	if err != nil {
-		return response, err
-	}
-
-	return handleResponse[T](res, status, config)
+    return handleResponse(res, status, config, target)
 }
 
 // MakeJSONRequest creates and sends application/json request to a specified
 // GLAIR Vision service endpoint.
-func MakeJSONRequest[T any](
-	ctx context.Context,
-	params RequestParameters,
-	config *glair.Config,
-) (T, error) {
-	var response T
+func MakeJSONRequest(
+    ctx context.Context,
+    params RequestParameters,
+    config *glair.Config,
+    target any,
+) error {
+    body, err := json.Marshal(params.Body)
+    if err != nil {
+        return &glair.Error{
+            Code:    glair.ErrorCodeInvalidRequest,
+            Message: "Failed to serialize request body.",
+            Err:     err,
+        }
+    }
 
-	body, _ := json.Marshal(params.Body)
-	reader := bytes.NewReader(body)
+    reader := bytes.NewReader(body)
 
-	res, status, err := sendRequest(ctx, RequestPayload{
-		RequestParameters: params,
-		Header: map[string]string{
-			"Content-Type": "application/json",
-		},
-		Body: reader,
-	}, config)
-	if err != nil {
-		return response, err
-	}
+    res, status, err := sendRequest(ctx, RequestPayload{
+        RequestParameters: params,
+        Header: map[string]string{
+            "Content-Type": "application/json",
+        },
+        Body: reader,
+    }, config)
+    if err != nil {
+        return err
+    }
 
-	return handleResponse[T](res, status, config)
+    return handleResponse(res, status, config, target)
 }
 
 func sendRequest(
@@ -225,51 +232,69 @@ func createMultipartPayload(
 	return header, body, nil
 }
 
-func handleResponse[T any](
-	res []byte,
-	status int,
-	config *glair.Config,
-) (T, error) {
-	var response T
+func handleResponse(
+    res []byte,
+    status int,
+    config *glair.Config,
+    target any,
+) error {
+    if status == http.StatusForbidden {
+        return &glair.Error{
+            Code:    glair.ErrorCodeForbidden,
+            Message: "Insufficient access to the API endpoint",
+        }
+    }
 
-	var err error
+    if status >= 400 {
+        var resBody map[string]any
 
-	if status == http.StatusForbidden {
-		return response, &glair.Error{
-			Code:    glair.ErrorCodeForbidden,
-			Message: "Insufficient access to the API endpoint",
-		}
-	}
+        if err := json.Unmarshal(res, &resBody); err != nil {
+            config.Logger.Errorf("Failed to parse API response due to %v", err)
 
-	// allow 200-399
-	if status >= 400 {
-		var resBody map[string]interface{}
-		err = json.Unmarshal(res, &resBody)
+            return &glair.Error{
+                Code:    glair.ErrorCodeInvalidResponse,
+                Message: "Failed to parse API response. Please contact us about this error.",
+                Err:     err,
+                Response: glair.Response{
+                    Status: status,
+                },
+            }
+        }
 
-		if err != nil {
-			config.Logger.Errorf("Failed to parse API response due to %v", err)
-			return response, &glair.Error{
-				Code:    glair.ErrorCodeInvalidResponse,
-				Message: "Failed to parse API response. Please contact us about this error.",
-				Err:     err,
-				Response: glair.Response{
-					Status: status,
-				},
-			}
-		}
+        return &glair.Error{
+            Code:    glair.ErrorCodeAPIError,
+            Message: "GLAIR API returned non-OK response. Please check the Response property for more detailed explanation.",
+            Response: glair.Response{
+                Status: status,
+                Body:   resBody,
+            },
+        }
+    }
 
-		return response, &glair.Error{
-			Code:    glair.ErrorCodeAPIError,
-			Message: "GLAIR API returned non-OK response. Please check the Response property for more detailed explanation.",
-			Response: glair.Response{
-				Status: status,
-				Body:   resBody,
-			},
-		}
-	}
+    if target == nil {
+        return nil
+    }
 
-	// we don't need to check the error here
-	json.Unmarshal(res, &response)
+    rv := reflect.ValueOf(target)
+    if rv.Kind() != reflect.Ptr || rv.IsNil() {
+        return &glair.Error{
+            Code:    glair.ErrorCodeInvalidRequest,
+            Message: "target must be a non-nil pointer",
+        }
+    }
 
-	return response, nil
+    if err := json.Unmarshal(res, target); err != nil {
+        config.Logger.Errorf("Failed to parse API response due to %v", err)
+
+        return &glair.Error{
+            Code:    glair.ErrorCodeInvalidResponse,
+            Message: "Failed to parse API response. Please contact us about this error.",
+            Err:     err,
+            Response: glair.Response{
+                Status: status,
+            },
+        }
+    }
+
+    return nil
 }
