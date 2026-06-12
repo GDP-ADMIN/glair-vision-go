@@ -8,20 +8,22 @@ import (
 	"os"
 
 	"github.com/glair-ai/glair-vision-go"
-	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/examples/config"
+	"github.com/glair-ai/glair-vision-go/face"
 )
 
 func main() {
 	ctx := context.Background()
 
-	config := glair.NewConfig("", "", "")
-	client := client.New(config)
+	client := config.NewClient()
 
 	image, _ := os.Open("../images/face.jpeg")
 
-	result, err := client.FaceBio.PassiveLiveness(ctx, glair.PassiveLivenessInput{
+	var result face.PassiveLiveness
+
+	err := client.FaceBio.PassiveLiveness(ctx, glair.PassiveLivenessInput{
 		Image: image,
-	})
+	}, &result)
 
 	if err != nil {
 		if glairErr, ok := err.(*glair.Error); ok {

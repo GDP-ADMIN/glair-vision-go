@@ -8,21 +8,23 @@ import (
 	"os"
 
 	"github.com/glair-ai/glair-vision-go"
-	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/examples/config"
+	"github.com/glair-ai/glair-vision-go/face"
 )
 
 func main() {
 	ctx := context.Background()
 
-	config := glair.NewConfig("", "", "")
-	client := client.New(config)
+	client := config.NewClient()
 
 	image, _ := os.Open("../images/face.jpeg")
 
-	result, err := client.FaceBio.ActiveLiveness(ctx, glair.ActiveLivenessInput{
+	var result face.ActiveLiveness
+
+	err := client.FaceBio.ActiveLiveness(ctx, glair.ActiveLivenessInput{
 		Image:       image,
 		GestureCode: "HAND_00000",
-	})
+	}, &result)
 
 	if err != nil {
 		if glairErr, ok := err.(*glair.Error); ok {

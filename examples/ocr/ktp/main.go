@@ -8,20 +8,26 @@ import (
 	"os"
 
 	"github.com/glair-ai/glair-vision-go"
-	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/examples/config"
+	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
 	ctx := context.Background()
 
-	config := glair.NewConfig("", "", "")
-	client := client.New(config)
+	client := config.NewClient()
 
 	file, _ := os.Open("../images/ktp.jpeg")
 
-	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
-		Image: file,
-	})
+	var result ocr.KTP
+
+	err := client.Ocr.KTP(
+		ctx,
+		glair.OCRInput{
+			Image: file,
+		},
+		&result,
+	)
 
 	if err != nil {
 		if glairErr, ok := err.(*glair.Error); ok {
