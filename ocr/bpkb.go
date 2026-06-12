@@ -11,15 +11,16 @@ type BPKBData struct {
 }
 
 type OwnerIdentity struct {
-	Alamat      OCRField[string] `json:"alamat,omitempty"`
-	AlamatEmail OCRField[string] `json:"alamat_email,omitempty"`
-	Dikeluarkan OCRField[string] `json:"dikeluarkan,omitempty"`
-	NamaPemilik OCRField[string] `json:"nama_pemilik,omitempty"`
-	NomorBpkb   OCRField[string] `json:"nomor_bpkb,omitempty"`
-	NoKtpTdp    OCRField[string] `json:"nomor_ktp_tdp,omitempty"`
-	NoTelepon   OCRField[string] `json:"no_telepon,omitempty"`
-	PadaTanggal OCRField[string] `json:"pada_tanggal,omitempty"`
-	Pekerjaan   OCRField[string] `json:"pekerjaan,omitempty"`
+	Alamat      		OCRField[string] `json:"alamat,omitempty"`
+	AlamatEmail 		OCRField[string] `json:"alamat_email,omitempty"`
+	Dikeluarkan 		OCRField[string] `json:"dikeluarkan,omitempty"`
+	NamaPemilik 		OCRField[string] `json:"nama_pemilik,omitempty"`
+	NomorBpkb   		OCRField[string] `json:"nomor_bpkb,omitempty"`
+	NoKtpTdp    		OCRField[string] `json:"nomor_ktp_tdp,omitempty"`
+	NoTelepon   		OCRField[string] `json:"no_telepon,omitempty"`
+	PadaTanggal 		OCRField[string] `json:"pada_tanggal,omitempty"`
+	Pekerjaan   		OCRField[string] `json:"pekerjaan,omitempty"`
+	StempelNomorBpkb 	OCRField[string] `json:"stempel_nomor_bpkb,omitempty"`
 }
 
 type VehicleIdentity struct {

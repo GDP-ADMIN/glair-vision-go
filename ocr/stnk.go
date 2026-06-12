@@ -22,5 +22,5 @@ type STNKData struct {
 	TahunRegistrasi      OCRField[string] `json:"tahun_registrasi,omitempty"`
 	Tipe                 OCRField[string] `json:"tipe,omitempty"`
 	Warna                OCRField[string] `json:"warna,omitempty"`
-	WarnaTnkb            OCRField[string] `json:"warna_tnkb"`
+	WarnaTnkb            OCRField[string] `json:"warna_tnkb,omitempty"`
 }

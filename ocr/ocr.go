@@ -102,14 +102,14 @@ func (ocr *OCR) KTP(
 	return ocr.recognize(ctx, "ktp", input, target)
 }
 
-// KTPWithQualities performs OCR on the given file using KTP model
+// KTPWithQuality performs OCR on the given file using KTP model
 // and supplements it with file quality data.
-func (ocr *OCR) KTPWithQualities(
+func (ocr *OCR) KTPWithQuality(
 	ctx context.Context,
 	input glair.OCRInput,
 	target any,
 ) error {
-	return ocr.recognize(ctx, "ktp-with-qualities", input, target)
+	return ocr.recognize(ctx, "ktp/qualities", input, target)
 }
 
 // NPWP performs OCR on the given file using NPWP model.

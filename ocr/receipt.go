@@ -11,12 +11,12 @@ type ReceiptData struct {
 	ReceiptNumber       OCRField[string] `json:"receipt_number,omitempty"`
 	ReceiptOrder        OCRField[string] `json:"receipt_order,omitempty"`
 	ReceiptTime         OCRField[string] `json:"receipt_time,omitempty"`
-	SubTotalAmount      OCRField[string] `json:"sub_total_amount,omitempty"`
+	SubTotalAmount      OCRField[int64] `json:"sub_total_amount,omitempty"`
 	TaxAmount           OCRField[int64]  `json:"tax_amount,omitempty"`
 	DiscountAmount      OCRField[int64]  `json:"discount_amount,omitempty"`
 	ServiceChargeAmount OCRField[int64]  `json:"service_charge_amount,omitempty"`
 	TipAmount           OCRField[int64]  `json:"tip_amount,omitempty"`
-	TotalAmount         OCRField[string] `json:"total_amount,omitempty"`
+	TotalAmount         OCRField[int64] `json:"total_amount,omitempty"`
 	CCLast4Digit        OCRField[string] `json:"cc_last_4_digit,omitempty"`
 	Currency            OCRField[string] `json:"currency,omitempty"`
 	MerchantPhoneNumber OCRField[string] `json:"merchant_phone_number,omitempty"`
@@ -28,7 +28,7 @@ type ReceiptData struct {
 
 type ReceiptItem struct {
 	ItemName         OCRField[string] `json:"item_name,omitempty"`
-	ItemQuantity     OCRField[string] `json:"item_quantity,omitempty"`
+	ItemQuantity     OCRField[int64] `json:"item_quantity,omitempty"`
 	ItemTotalPrice   OCRField[int64]  `json:"item_total_price,omitempty"`
 	ItemProductCode  OCRField[string] `json:"item_product_code,omitempty"`
 	ItemEachPrice    OCRField[int64]  `json:"item_each_price,omitempty"`
