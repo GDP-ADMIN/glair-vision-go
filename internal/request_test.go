@@ -156,10 +156,12 @@ func TestMakeMultipartRequest(t *testing.T) {
 				},
 			}
 
-			res, err := MakeMultipartRequest[mockStruct](
+			var res mockStruct
+			err := MakeMultipartRequest(
 				tc.ctx,
 				params,
 				tc.config,
+				&res,
 			)
 
 			assert.Equal(t, tc.want, res)
@@ -227,10 +229,12 @@ func TestMakeJSONRequest(t *testing.T) {
 				},
 			}
 
-			res, err := MakeJSONRequest[mockStruct](
+			var res mockStruct
+			err := MakeJSONRequest(
 				context.TODO(),
 				params,
 				tc.config,
+				&res,
 			)
 
 			assert.Equal(t, tc.want, res)
