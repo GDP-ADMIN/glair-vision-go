@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -21,6 +22,27 @@ type failingClient struct{}
 
 func (c failingClient) Do(req *http.Request) (*http.Response, error) {
 	return nil, errors.New("failed to send request")
+}
+
+// failingBodyReader is a Reader that always returns an error after the first read.
+type failingBodyReader struct{}
+
+func (r failingBodyReader) Read(p []byte) (int, error) {
+	return 0, errors.New("simulated body read error")
+}
+
+func (r failingBodyReader) Close() error {
+	return nil
+}
+
+// bodyFailClient returns a 200 response with a body reader that fails immediately.
+type bodyFailClient struct{}
+
+func (c bodyFailClient) Do(req *http.Request) (*http.Response, error) {
+	return &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       failingBodyReader{},
+	}, nil
 }
 
 func TestMakeMultipartRequest(t *testing.T) {
@@ -245,4 +267,96 @@ func TestMakeJSONRequest(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestSendRequest_NilContext(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"name":"foo"}`))
+	}))
+	defer srv.Close()
+
+	config := glair.NewConfig("u", "p", "k").WithBaseURL(srv.URL)
+
+	params := RequestParameters{
+		Url:  srv.URL,
+		Body: map[string]interface{}{},
+	}
+
+	// Intentionally passing nil context to exercise the nil-ctx branch (line 89-91)
+	_, _, err := sendRequest(nil, RequestPayload{
+		RequestParameters: params,
+		Header:            map[string]string{"Content-Type": "application/json"},
+		Body:              strings.NewReader(`{}`),
+	}, config)
+
+	assert.NoError(t, err)
+}
+
+func TestSendRequest_BodyReadError(t *testing.T) {
+	config := glair.NewConfig("u", "p", "k").
+		WithBaseURL("https://api.vision.glair.ai").
+		WithClient(bodyFailClient{})
+
+	params := RequestParameters{
+		Url:  "https://api.vision.glair.ai",
+		Body: map[string]interface{}{},
+	}
+
+	_, _, err := sendRequest(context.Background(), RequestPayload{
+		RequestParameters: params,
+		Header:            map[string]string{"Content-Type": "application/json"},
+		Body:              strings.NewReader(`{}`),
+	}, config)
+
+	assert.Error(t, err)
+	glairErr, ok := err.(*glair.Error)
+	assert.True(t, ok)
+	assert.Equal(t, glair.ErrorCodeInvalidResponse, glairErr.Code)
+}
+
+func TestCreateMultipartPayload_ClosedFileCopyError(t *testing.T) {
+	// Open and immediately close a file so io.Copy will fail when reading it.
+	tmpFile, err := os.CreateTemp("", "test-*.jpg")
+	assert.NoError(t, err)
+	tmpFile.WriteString("dummy content")
+	tmpFile.Close() // close so subsequent reads fail
+
+	logger := &glair.LeveledLogger{Level: glair.LevelDebug}
+
+	_, _, err = createMultipartPayload(map[string]interface{}{
+		"image": tmpFile,
+	}, logger)
+
+	assert.Error(t, err)
+	glairErr, ok := err.(*glair.Error)
+	assert.True(t, ok)
+	assert.Equal(t, glair.ErrorCodeFileError, glairErr.Code)
+
+	os.Remove(tmpFile.Name())
+}
+
+func TestMakeMultipartRequest_CreateMultipartError(t *testing.T) {
+	// Open and immediately close a file so createMultipartPayload fails.
+	tmpFile, err := os.CreateTemp("", "test-*.jpg")
+	assert.NoError(t, err)
+	tmpFile.WriteString("dummy content")
+	tmpFile.Close()
+
+	config := glair.NewConfig("u", "p", "k")
+
+	params := RequestParameters{
+		Url: config.GetEndpointURL("ocr", "ktp"),
+		Body: map[string]interface{}{
+			"image": tmpFile,
+		},
+	}
+
+	_, err = MakeMultipartRequest[mockStruct](context.Background(), params, config)
+	assert.Error(t, err)
+	glairErr, ok := err.(*glair.Error)
+	assert.True(t, ok)
+	assert.Equal(t, glair.ErrorCodeFileError, glairErr.Code)
+
+	os.Remove(tmpFile.Name())
 }
