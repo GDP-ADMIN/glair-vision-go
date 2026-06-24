@@ -12,3 +12,10 @@ func TestString(t *testing.T) {
 
 	assert.Equal(t, expected, String(str))
 }
+
+func TestInt(t *testing.T) {
+	num := 42
+	expected := &num
+
+	assert.Equal(t, expected, Int(num))
+}
