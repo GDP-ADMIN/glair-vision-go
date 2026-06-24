@@ -39,24 +39,6 @@ steps:
     waitFor:
       - 'Run Unit Test'
 
-  - id: 'Publish to GAR'
-    name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: bash
-    args:
-      - '-c'
-      - |
-        gcloud artifacts go upload \
-          --project=$PROJECT_ID \
-          --repository=glair-vision-go \
-          --location=asia-southeast2 \
-          --module-path=github.com/glair-ai/glair-vision-go \
-          --version=$TAG_NAME \
-          --zip-source=.
-    env:
-      - 'TAG_NAME=$TAG_NAME'
-    waitFor:
-      - 'Run Unit Test'
-
 timeout: 15m
 
 substitutions:
