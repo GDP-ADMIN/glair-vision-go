@@ -9,6 +9,7 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/examples/config"
+	"github.com/glair-ai/glair-vision-go/identity"
 )
 
 func main() {
@@ -16,11 +17,13 @@ func main() {
 
 	client := config.NewClient()
 
-	result, err := client.Identity.BasicVerification(ctx, glair.BasicVerificationInput{
+	var result identity.BasicIdentityVerificationResult
+
+	err := client.Identity.BasicVerification(ctx, glair.BasicVerificationInput{
 		Nik:    "",
 		Name:   glair.String(""),
 		Gender: glair.String(""),
-	})
+	}, &result)
 
 	if err != nil {
 		if glairErr, ok := err.(*glair.Error); ok {

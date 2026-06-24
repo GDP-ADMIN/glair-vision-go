@@ -406,10 +406,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/identity"
 )
 
 func main() {
@@ -418,12 +418,13 @@ func main() {
 	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	result, err := client.Identity.BasicVerification(ctx, glair.BasicVerificationInput{
+	var result identity.BasicIdentityVerificationResult
+
+	err := client.Identity.BasicVerification(ctx, glair.BasicVerificationInput{
 		Nik:    "",
 		Name:   glair.String(""),
 		Gender: glair.String(""),
-		DateOfBirth: ""
-	})
+	}, &result)
 
 	if err != nil {
 		log.Fatalln(err.Error())

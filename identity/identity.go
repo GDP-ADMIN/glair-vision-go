@@ -52,7 +52,8 @@ func New(config *glair.Config) *Identity {
 func (identity *Identity) BasicVerification(
 	ctx context.Context,
 	input glair.BasicVerificationInput,
-) (BasicIdentityVerificationResult, error) {
+	target any,
+) error {
 	url := identity.config.GetEndpointURL("identity", "verification")
 
 	params := internal.RequestParameters{
@@ -78,9 +79,7 @@ func (identity *Identity) BasicVerification(
 		},
 	}
 
-	var result BasicIdentityVerificationResult
-	err := internal.MakeMultipartRequest(ctx, params, identity.config, &result)
-	return result, err
+	return internal.MakeMultipartRequest(ctx, params, identity.config, target)
 }
 
 // FaceVerification performs KTP data verification
@@ -90,10 +89,11 @@ func (identity *Identity) BasicVerification(
 func (identity *Identity) FaceVerification(
 	ctx context.Context,
 	input glair.FaceVerificationInput,
-) (FaceIdentityVerificationResult, error) {
+	target any,
+) error {
 	face, err := internal.ReadFile(input.FaceImage)
 	if err != nil {
-		return FaceIdentityVerificationResult{}, err
+		return err
 	}
 
 	url := identity.config.GetEndpointURL("identity", "face-verification")
@@ -109,7 +109,5 @@ func (identity *Identity) FaceVerification(
 		},
 	}
 
-	var result FaceIdentityVerificationResult
-	err = internal.MakeMultipartRequest(ctx, params, identity.config, &result)
-	return result, err
+	return internal.MakeMultipartRequest(ctx, params, identity.config, target)
 }

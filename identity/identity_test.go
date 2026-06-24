@@ -35,9 +35,10 @@ func TestBasicVerification(t *testing.T) {
 
 	id := New(newConfig(srv.URL))
 
-	_, err := id.BasicVerification(context.Background(), glair.BasicVerificationInput{
+	var result BasicIdentityVerificationResult
+	err := id.BasicVerification(context.Background(), glair.BasicVerificationInput{
 		Nik: "1234567890123456",
-	})
+	}, &result)
 	assert.NoError(t, err)
 }
 
@@ -48,17 +49,18 @@ func TestFaceVerification(t *testing.T) {
 	id := New(newConfig(srv.URL))
 
 	// face image read error
-	_, err := id.FaceVerification(context.Background(), glair.FaceVerificationInput{
+	var result FaceIdentityVerificationResult
+	err := id.FaceVerification(context.Background(), glair.FaceVerificationInput{
 		Nik:       "1234567890123456",
 		FaceImage: "does-not-exist.jpg",
-	})
+	}, &result)
 	assert.Error(t, err)
 
 	// success
-	_, err = id.FaceVerification(context.Background(), glair.FaceVerificationInput{
+	err = id.FaceVerification(context.Background(), glair.FaceVerificationInput{
 		Nik:       "1234567890123456",
 		FaceImage: "../examples/ocr/images/ktp.jpeg",
-	})
+	}, &result)
 	assert.NoError(t, err)
 }
 

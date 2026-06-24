@@ -9,6 +9,7 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/examples/config"
+	"github.com/glair-ai/glair-vision-go/identity"
 )
 
 func main() {
@@ -18,12 +19,14 @@ func main() {
 
 	image, _ := os.Open("../images/face.jpeg")
 
-	result, err := client.Identity.FaceVerification(ctx, glair.FaceVerificationInput{
+	var result identity.FaceIdentityVerificationResult
+
+	err := client.Identity.FaceVerification(ctx, glair.FaceVerificationInput{
 		Nik:         "",
 		Name:        "",
 		DateOfBirth: "",
 		FaceImage:   image,
-	})
+	}, &result)
 
 	if err != nil {
 		if glairErr, ok := err.(*glair.Error); ok {
