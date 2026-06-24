@@ -78,3 +78,13 @@ func TestConfig_WithLogger(t *testing.T) {
 
 	assert.Equal(t, logger, config.Logger)
 }
+
+func TestConfig_NilReceiver(t *testing.T) {
+	var c *Config
+
+	assert.Nil(t, c.WithCredentials("a", "b", "c"))
+	assert.Nil(t, c.WithClient(fakeClient{}))
+	assert.Nil(t, c.WithBaseURL("https://example.com"))
+	assert.Nil(t, c.WithVersion("v2"))
+	assert.Nil(t, c.WithLogger(SampleLogger{}))
+}
