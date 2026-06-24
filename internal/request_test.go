@@ -356,7 +356,7 @@ func TestMakeMultipartRequest_CreateMultipartError(t *testing.T) {
 		},
 	}
 
-	_, err = MakeMultipartRequest[mockStruct](context.Background(), params, config)
+	err = MakeMultipartRequest(context.Background(), params, config, nil)
 	assert.Error(t, err)
 	glairErr, ok := err.(*glair.Error)
 	assert.True(t, ok)

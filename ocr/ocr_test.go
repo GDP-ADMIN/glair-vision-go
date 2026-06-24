@@ -34,10 +34,10 @@ func TestKTP(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.KTP(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.KTP(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.KTP(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/ktp.jpeg"})
+	err = ocr.KTP(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/ktp.jpeg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -47,10 +47,10 @@ func TestKTPWithQuality(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.KTPWithQuality(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.KTPWithQuality(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.KTPWithQuality(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/ktp.jpeg"})
+	err = ocr.KTPWithQuality(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/ktp.jpeg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -60,10 +60,10 @@ func TestNPWP(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.NPWP(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.NPWP(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.NPWP(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/npwp.jpg"})
+	err = ocr.NPWP(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/npwp.jpg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -73,10 +73,10 @@ func TestKK(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.KK(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.KK(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.KK(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/kk.jpg"})
+	err = ocr.KK(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/kk.jpg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -86,10 +86,10 @@ func TestSTNK(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.STNK(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.STNK(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.STNK(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/stnk.jpg"})
+	err = ocr.STNK(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/stnk.jpg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -99,10 +99,10 @@ func TestSIM(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.SIM(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.SIM(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.SIM(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/sim.jpg"})
+	err = ocr.SIM(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/sim.jpg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -112,15 +112,15 @@ func TestBPKB(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.BPKB(context.Background(), glair.BPKBInput{Image: "does-not-exist.jpg"})
+	err := ocr.BPKB(context.Background(), glair.BPKBInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
 	// success without page
-	_, err = ocr.BPKB(context.Background(), glair.BPKBInput{Image: "../examples/ocr/images/bpkb.pdf"})
+	err = ocr.BPKB(context.Background(), glair.BPKBInput{Image: "../examples/ocr/images/bpkb.pdf"}, nil)
 	assert.NoError(t, err)
 
 	// success with page
-	_, err = ocr.BPKB(context.Background(), glair.BPKBInput{Image: "../examples/ocr/images/bpkb.pdf", Page: glair.Int(1)})
+	err = ocr.BPKB(context.Background(), glair.BPKBInput{Image: "../examples/ocr/images/bpkb.pdf", Page: glair.Int(1)}, nil)
 	assert.NoError(t, err)
 }
 
@@ -130,10 +130,10 @@ func TestPassport(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.Passport(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.Passport(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.Passport(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/passport.jpeg"})
+	err = ocr.Passport(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/passport.jpeg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -143,10 +143,10 @@ func TestPlate(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.Plate(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.Plate(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.Plate(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/plate.jpg"})
+	err = ocr.Plate(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/plate.jpg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -156,10 +156,10 @@ func TestGeneralDocument(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.GeneralDocument(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.GeneralDocument(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.GeneralDocument(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/general-document.jpg"})
+	err = ocr.GeneralDocument(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/general-document.jpg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -169,10 +169,10 @@ func TestInvoice(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.Invoice(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.Invoice(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.Invoice(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/invoice.jpg"})
+	err = ocr.Invoice(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/invoice.jpg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -182,10 +182,10 @@ func TestReceipt(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.Receipt(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.Receipt(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.Receipt(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/receipt.jpg"})
+	err = ocr.Receipt(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/receipt.jpg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -195,10 +195,10 @@ func TestBankStatement(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.BankStatement(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.BankStatement(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.BankStatement(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/bank-statement.jpg"})
+	err = ocr.BankStatement(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/bank-statement.jpg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -208,10 +208,10 @@ func TestSKPR(t *testing.T) {
 
 	ocr := New(newConfig(srv.URL))
 
-	_, err := ocr.SKPR(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"})
+	err := ocr.SKPR(context.Background(), glair.OCRInput{Image: "does-not-exist.jpg"}, nil)
 	assert.Error(t, err)
 
-	_, err = ocr.SKPR(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/skpr.jpg"})
+	err = ocr.SKPR(context.Background(), glair.OCRInput{Image: "../examples/ocr/images/skpr.jpg"}, nil)
 	assert.NoError(t, err)
 }
 
@@ -222,16 +222,16 @@ func TestKTPSessions(t *testing.T) {
 	ocr := New(newConfig(srv.URL))
 
 	// without cancel URL
-	_, err := ocr.KTPSessions(context.Background(), glair.SessionsInput{
+	err := ocr.KTPSessions(context.Background(), glair.SessionsInput{
 		SuccessURL: "https://example.com/success",
-	})
+	}, nil)
 	assert.NoError(t, err)
 
 	// with cancel URL
-	_, err = ocr.KTPSessions(context.Background(), glair.SessionsInput{
+	err = ocr.KTPSessions(context.Background(), glair.SessionsInput{
 		SuccessURL: "https://example.com/success",
 		CancelURL:  glair.String("https://example.com/cancel"),
-	})
+	}, nil)
 	assert.NoError(t, err)
 }
 
@@ -242,15 +242,15 @@ func TestNPWPSessions(t *testing.T) {
 	ocr := New(newConfig(srv.URL))
 
 	// without cancel URL
-	_, err := ocr.NPWPSessions(context.Background(), glair.SessionsInput{
+	err := ocr.NPWPSessions(context.Background(), glair.SessionsInput{
 		SuccessURL: "https://example.com/success",
-	})
+	}, nil)
 	assert.NoError(t, err)
 
 	// with cancel URL
-	_, err = ocr.NPWPSessions(context.Background(), glair.SessionsInput{
+	err = ocr.NPWPSessions(context.Background(), glair.SessionsInput{
 		SuccessURL: "https://example.com/success",
 		CancelURL:  glair.String("https://example.com/cancel"),
-	})
+	}, nil)
 	assert.NoError(t, err)
 }
