@@ -9,7 +9,6 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/examples/config"
-	"github.com/glair-ai/glair-vision-go/face"
 )
 
 func main() {
@@ -19,11 +18,9 @@ func main() {
 
 	image, _ := os.Open("../images/face.jpeg")
 
-	var result face.PassiveLiveness
-
-	err := client.FaceBio.PassiveLiveness(ctx, glair.PassiveLivenessInput{
+	result, err := client.FaceBio.PassiveLiveness(ctx, glair.PassiveLivenessInput{
 		Image: image,
-	}, &result)
+	})
 
 	if err != nil {
 		if glairErr, ok := err.(*glair.Error); ok {

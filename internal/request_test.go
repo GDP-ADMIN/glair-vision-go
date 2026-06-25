@@ -178,12 +178,10 @@ func TestMakeMultipartRequest(t *testing.T) {
 				},
 			}
 
-			var res mockStruct
-			err := MakeMultipartRequest(
+			res, err := MakeMultipartRequest[mockStruct](
 				tc.ctx,
 				params,
 				tc.config,
-				&res,
 			)
 
 			assert.Equal(t, tc.want, res)
@@ -251,12 +249,10 @@ func TestMakeJSONRequest(t *testing.T) {
 				},
 			}
 
-			var res mockStruct
-			err := MakeJSONRequest(
+			res, err := MakeJSONRequest[mockStruct](
 				context.TODO(),
 				params,
 				tc.config,
-				&res,
 			)
 
 			assert.Equal(t, tc.want, res)
@@ -356,7 +352,7 @@ func TestMakeMultipartRequest_CreateMultipartError(t *testing.T) {
 		},
 	}
 
-	err = MakeMultipartRequest(context.Background(), params, config, nil)
+	_, err = MakeMultipartRequest[mockStruct](context.Background(), params, config)
 	assert.Error(t, err)
 	glairErr, ok := err.(*glair.Error)
 	assert.True(t, ok)

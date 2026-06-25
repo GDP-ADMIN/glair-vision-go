@@ -16,11 +16,9 @@ func main() {
 
 	client := config.NewClient()
 
-	var result glair.Session
-
-	err := client.FaceBio.ActiveLivenessSessions(ctx, glair.SessionsInput{
+	result, err := client.FaceBio.ActiveLivenessSessions(ctx, glair.SessionsInput{
 		SuccessURL: "https://www.google.com",
-	}, &result)
+	})
 
 	if err != nil {
 		if glairErr, ok := err.(*glair.Error); ok {

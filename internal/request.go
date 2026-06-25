@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -30,17 +29,16 @@ type RequestPayload struct {
 	Body   io.Reader
 }
 
-// MakeMultipartRequest creates and sends multipart/formdata request and
-// unmarshals the response into the provided target.
-func MakeMultipartRequest(
+func MakeMultipartRequest[T any](
 	ctx context.Context,
 	params RequestParameters,
 	config *glair.Config,
-	target any,
-) error {
+) (T, error) {
+	var result T
+
 	header, body, err := createMultipartPayload(params.Body, config.Logger)
 	if err != nil {
-		return err
+		return result, err
 	}
 
 	res, status, err := sendRequest(ctx, RequestPayload{
@@ -49,23 +47,56 @@ func MakeMultipartRequest(
 		Body:              body,
 	}, config)
 	if err != nil {
-		return err
+		return result, err
 	}
 
-	return handleResponse(res, status, config, target)
+	if err := responseError(res, status, config); err != nil {
+		return result, err
+	}
+
+	if err := json.Unmarshal(res, &result); err != nil {
+		config.Logger.Errorf("Failed to parse API response due to %v", err)
+	}
+
+	return result, nil
 }
 
-// MakeJSONRequest creates and sends application/json request to a specified
-// GLAIR Vision service endpoint.
-func MakeJSONRequest(
+func MakeMultipartRequestRaw(
 	ctx context.Context,
 	params RequestParameters,
 	config *glair.Config,
-	target any,
-) error {
+) ([]byte, error) {
+	header, body, err := createMultipartPayload(params.Body, config.Logger)
+	if err != nil {
+		return nil, err
+	}
+
+	res, status, err := sendRequest(ctx, RequestPayload{
+		RequestParameters: params,
+		Header:            header,
+		Body:              body,
+	}, config)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := responseError(res, status, config); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func MakeJSONRequest[T any](
+	ctx context.Context,
+	params RequestParameters,
+	config *glair.Config,
+) (T, error) {
+	var result T
+
 	body, err := json.Marshal(params.Body)
 	if err != nil {
-		return &glair.Error{
+		return result, &glair.Error{
 			Code:    glair.ErrorCodeInvalidRequest,
 			Message: "Failed to serialize request body.",
 			Err:     err,
@@ -82,10 +113,18 @@ func MakeJSONRequest(
 		Body: reader,
 	}, config)
 	if err != nil {
-		return err
+		return result, err
 	}
 
-	return handleResponse(res, status, config, target)
+	if err := responseError(res, status, config); err != nil {
+		return result, err
+	}
+
+	if err := json.Unmarshal(res, &result); err != nil {
+		config.Logger.Errorf("Failed to parse API response due to %v", err)
+	}
+
+	return result, nil
 }
 
 func sendRequest(
@@ -232,12 +271,7 @@ func createMultipartPayload(
 	return header, body, nil
 }
 
-func handleResponse(
-	res []byte,
-	status int,
-	config *glair.Config,
-	target any,
-) error {
+func responseError(res []byte, status int, config *glair.Config) error {
 	if status == http.StatusForbidden {
 		return &glair.Error{
 			Code:    glair.ErrorCodeForbidden,
@@ -269,22 +303,6 @@ func handleResponse(
 				Body:   resBody,
 			},
 		}
-	}
-
-	if target == nil {
-		return nil
-	}
-
-	rv := reflect.ValueOf(target)
-	if rv.Kind() != reflect.Ptr || rv.IsNil() {
-		return &glair.Error{
-			Code:    glair.ErrorCodeInvalidRequest,
-			Message: "target must be a non-nil pointer",
-		}
-	}
-
-	if err := json.Unmarshal(res, target); err != nil {
-		config.Logger.Errorf("Failed to parse API response due to %v", err)
 	}
 
 	return nil

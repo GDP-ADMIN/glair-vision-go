@@ -9,7 +9,6 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/examples/config"
-	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
@@ -19,14 +18,11 @@ func main() {
 
 	file, _ := os.Open("../images/ktp.jpeg")
 
-	var result ocr.KTP
-
-	err := client.Ocr.KTP(
+	result, err := client.Ocr.KTP(
 		ctx,
 		glair.OCRInput{
 			Image: file,
 		},
-		&result,
 	)
 
 	if err != nil {

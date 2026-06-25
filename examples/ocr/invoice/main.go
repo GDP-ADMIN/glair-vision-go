@@ -9,7 +9,6 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/examples/config"
-	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
@@ -19,14 +18,11 @@ func main() {
 
 	file, _ := os.Open("../images/invoice.jpg")
 
-	var result ocr.Invoice
-
-	err := client.Ocr.Invoice(
+	result, err := client.Ocr.Invoice(
 		ctx,
 		glair.OCRInput{
 			Image: file,
 		},
-		&result,
 	)
 
 	if err != nil {

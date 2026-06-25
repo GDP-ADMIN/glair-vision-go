@@ -35,10 +35,21 @@ func TestBasicVerification(t *testing.T) {
 
 	id := New(newConfig(srv.URL))
 
-	var result BasicIdentityVerificationResult
-	err := id.BasicVerification(context.Background(), glair.BasicVerificationInput{
+	_, err := id.BasicVerification(context.Background(), glair.BasicVerificationInput{
 		Nik: "1234567890123456",
-	}, &result)
+	})
+	assert.NoError(t, err)
+}
+
+func TestBasicVerificationRaw(t *testing.T) {
+	srv := successServer()
+	defer srv.Close()
+
+	id := New(newConfig(srv.URL))
+
+	_, err := id.BasicVerificationRaw(context.Background(), glair.BasicVerificationInput{
+		Nik: "1234567890123456",
+	})
 	assert.NoError(t, err)
 }
 
@@ -49,18 +60,30 @@ func TestFaceVerification(t *testing.T) {
 	id := New(newConfig(srv.URL))
 
 	// face image read error
-	var result FaceIdentityVerificationResult
-	err := id.FaceVerification(context.Background(), glair.FaceVerificationInput{
+	_, err := id.FaceVerification(context.Background(), glair.FaceVerificationInput{
 		Nik:       "1234567890123456",
 		FaceImage: "does-not-exist.jpg",
-	}, &result)
+	})
 	assert.Error(t, err)
 
 	// success
-	err = id.FaceVerification(context.Background(), glair.FaceVerificationInput{
+	_, err = id.FaceVerification(context.Background(), glair.FaceVerificationInput{
 		Nik:       "1234567890123456",
 		FaceImage: "../examples/ocr/images/ktp.jpeg",
-	}, &result)
+	})
+	assert.NoError(t, err)
+}
+
+func TestFaceVerificationRaw(t *testing.T) {
+	srv := successServer()
+	defer srv.Close()
+
+	id := New(newConfig(srv.URL))
+
+	_, err := id.FaceVerificationRaw(context.Background(), glair.FaceVerificationInput{
+		Nik:       "1234567890123456",
+		FaceImage: "../examples/ocr/images/ktp.jpeg",
+	})
 	assert.NoError(t, err)
 }
 

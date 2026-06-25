@@ -9,7 +9,6 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/examples/config"
-	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
@@ -19,14 +18,11 @@ func main() {
 
 	file, _ := os.Open("../images/bpkb.pdf")
 
-	var result ocr.BPKB
-
-	err := client.Ocr.BPKB(
+	result, err := client.Ocr.BPKB(
 		ctx,
 		glair.BPKBInput{
 			Image: file,
 		},
-		&result,
 	)
 
 	if err != nil {

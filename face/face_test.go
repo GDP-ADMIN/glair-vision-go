@@ -35,24 +35,37 @@ func TestFaceMatching(t *testing.T) {
 	f := New(newConfig(srv.URL))
 
 	// stored image read error
-	err := f.FaceMatching(context.Background(), glair.FaceMatchingInput{
+	_, err := f.FaceMatching(context.Background(), glair.FaceMatchingInput{
 		StoredImage:   "does-not-exist.jpg",
 		CapturedImage: "../examples/ocr/images/ktp.jpeg",
-	}, nil)
+	})
 	assert.Error(t, err)
 
 	// captured image read error
-	err = f.FaceMatching(context.Background(), glair.FaceMatchingInput{
+	_, err = f.FaceMatching(context.Background(), glair.FaceMatchingInput{
 		StoredImage:   "../examples/ocr/images/ktp.jpeg",
 		CapturedImage: "does-not-exist.jpg",
-	}, nil)
+	})
 	assert.Error(t, err)
 
 	// success
-	err = f.FaceMatching(context.Background(), glair.FaceMatchingInput{
+	_, err = f.FaceMatching(context.Background(), glair.FaceMatchingInput{
 		StoredImage:   "../examples/ocr/images/ktp.jpeg",
 		CapturedImage: "../examples/ocr/images/ktp.jpeg",
-	}, nil)
+	})
+	assert.NoError(t, err)
+}
+
+func TestFaceMatchingRaw(t *testing.T) {
+	srv := successServer()
+	defer srv.Close()
+
+	f := New(newConfig(srv.URL))
+
+	_, err := f.FaceMatchingRaw(context.Background(), glair.FaceMatchingInput{
+		StoredImage:   "../examples/ocr/images/ktp.jpeg",
+		CapturedImage: "../examples/ocr/images/ktp.jpeg",
+	})
 	assert.NoError(t, err)
 }
 
@@ -62,14 +75,26 @@ func TestPassiveLiveness(t *testing.T) {
 
 	f := New(newConfig(srv.URL))
 
-	err := f.PassiveLiveness(context.Background(), glair.PassiveLivenessInput{
+	_, err := f.PassiveLiveness(context.Background(), glair.PassiveLivenessInput{
 		Image: "does-not-exist.jpg",
-	}, nil)
+	})
 	assert.Error(t, err)
 
-	err = f.PassiveLiveness(context.Background(), glair.PassiveLivenessInput{
+	_, err = f.PassiveLiveness(context.Background(), glair.PassiveLivenessInput{
 		Image: "../examples/ocr/images/ktp.jpeg",
-	}, nil)
+	})
+	assert.NoError(t, err)
+}
+
+func TestPassiveLivenessRaw(t *testing.T) {
+	srv := successServer()
+	defer srv.Close()
+
+	f := New(newConfig(srv.URL))
+
+	_, err := f.PassiveLivenessRaw(context.Background(), glair.PassiveLivenessInput{
+		Image: "../examples/ocr/images/ktp.jpeg",
+	})
 	assert.NoError(t, err)
 }
 
@@ -79,16 +104,29 @@ func TestActiveLiveness(t *testing.T) {
 
 	f := New(newConfig(srv.URL))
 
-	err := f.ActiveLiveness(context.Background(), glair.ActiveLivenessInput{
+	_, err := f.ActiveLiveness(context.Background(), glair.ActiveLivenessInput{
 		Image:       "does-not-exist.jpg",
 		GestureCode: "HAND_00000",
-	}, nil)
+	})
 	assert.Error(t, err)
 
-	err = f.ActiveLiveness(context.Background(), glair.ActiveLivenessInput{
+	_, err = f.ActiveLiveness(context.Background(), glair.ActiveLivenessInput{
 		Image:       "../examples/ocr/images/ktp.jpeg",
 		GestureCode: "HAND_00000",
-	}, nil)
+	})
+	assert.NoError(t, err)
+}
+
+func TestActiveLivenessRaw(t *testing.T) {
+	srv := successServer()
+	defer srv.Close()
+
+	f := New(newConfig(srv.URL))
+
+	_, err := f.ActiveLivenessRaw(context.Background(), glair.ActiveLivenessInput{
+		Image:       "../examples/ocr/images/ktp.jpeg",
+		GestureCode: "HAND_00000",
+	})
 	assert.NoError(t, err)
 }
 
@@ -99,16 +137,16 @@ func TestPassiveLivenessSessions(t *testing.T) {
 	f := New(newConfig(srv.URL))
 
 	// without cancel URL
-	err := f.PassiveLivenessSessions(context.Background(), glair.SessionsInput{
+	_, err := f.PassiveLivenessSessions(context.Background(), glair.SessionsInput{
 		SuccessURL: "https://example.com/success",
-	}, nil)
+	})
 	assert.NoError(t, err)
 
 	// with cancel URL
-	err = f.PassiveLivenessSessions(context.Background(), glair.SessionsInput{
+	_, err = f.PassiveLivenessSessions(context.Background(), glair.SessionsInput{
 		SuccessURL: "https://example.com/success",
 		CancelURL:  glair.String("https://example.com/cancel"),
-	}, nil)
+	})
 	assert.NoError(t, err)
 }
 
@@ -119,15 +157,15 @@ func TestActiveLivenessSessions(t *testing.T) {
 	f := New(newConfig(srv.URL))
 
 	// without cancel URL
-	err := f.ActiveLivenessSessions(context.Background(), glair.SessionsInput{
+	_, err := f.ActiveLivenessSessions(context.Background(), glair.SessionsInput{
 		SuccessURL: "https://example.com/success",
-	}, nil)
+	})
 	assert.NoError(t, err)
 
 	// with cancel URL
-	err = f.ActiveLivenessSessions(context.Background(), glair.SessionsInput{
+	_, err = f.ActiveLivenessSessions(context.Background(), glair.SessionsInput{
 		SuccessURL: "https://example.com/success",
 		CancelURL:  glair.String("https://example.com/cancel"),
-	}, nil)
+	})
 	assert.NoError(t, err)
 }

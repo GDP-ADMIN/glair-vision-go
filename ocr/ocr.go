@@ -9,27 +9,21 @@ import (
 	"github.com/glair-ai/glair-vision-go/internal"
 )
 
-// OCR provides functions to interact with GLAIR Vision
-// OCR products
 type OCR struct {
 	config *glair.Config
 }
 
-// OCRResult is wrapper object for OCR API responses
 type OCRResult[T any] struct {
 	Status string `json:"status"`
 	Reason string `json:"reason"`
 	Read   T      `json:"read"`
 }
 
-// OCRImage stores image data from OCR API response
 type OCRImage struct {
 	Photo string `json:"photo,omitempty"`
 	Sign  string `json:"sign,omitempty"`
 }
 
-// OCRField is a unified generic type that stores field information
-// of OCR result from the given file
 type OCRField[T any] struct {
 	Confidence     *float32 `json:"confidence,omitempty"`
 	ConfidenceText *float32 `json:"confidence_text,omitempty"`
@@ -39,14 +33,9 @@ type OCRField[T any] struct {
 	Value          *T       `json:"value,omitempty"`
 }
 
-// OCRStringField is a type alias for OCRField with string value
 type OCRStringField = OCRField[string]
-
-// OCRIntField is a type alias for OCRField with int64 value
 type OCRIntField = OCRField[int64]
 
-// OCRQualities stores image quality information from OCR result of
-// the given file
 type OCRQualities struct {
 	IsBlurred bool `json:"is_blurred,omitempty"`
 	IsBright  bool `json:"is_bright,omitempty"`
@@ -57,24 +46,17 @@ type OCRQualities struct {
 	IsRotated bool `json:"is_rotated,omitempty"`
 }
 
-// New creates a GLAIR Vision OCR API Client with
-// the given config
 func New(config *glair.Config) *OCR {
 	return &OCR{
 		config: config,
 	}
 }
 
-// recognize is a helper for standard multipart OCR endpoints.
-func (ocr *OCR) recognize(
-	ctx context.Context,
-	endpoint string,
-	input glair.OCRInput,
-	target any,
-) error {
+func recognize[T any](ocr *OCR, ctx context.Context, endpoint string, input glair.OCRInput) (T, error) {
 	file, err := internal.ReadFile(input.Image)
 	if err != nil {
-		return err
+		var zero T
+		return zero, err
 	}
 
 	params := internal.RequestParameters{
@@ -85,141 +67,134 @@ func (ocr *OCR) recognize(
 		},
 	}
 
-	return internal.MakeMultipartRequest(
-		ctx,
-		params,
-		ocr.config,
-		target,
-	)
+	return internal.MakeMultipartRequest[T](ctx, params, ocr.config)
 }
 
-// KTP performs OCR on the given file using KTP model.
-func (ocr *OCR) KTP(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "ktp", input, target)
-}
-
-// KTPWithQuality performs OCR on the given file using KTP model
-// and supplements it with file quality data.
-func (ocr *OCR) KTPWithQuality(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "ktp/qualities", input, target)
-}
-
-// NPWP performs OCR on the given file using NPWP model.
-func (ocr *OCR) NPWP(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "npwp", input, target)
-}
-
-// KK performs OCR on the given file using Kartu Keluarga model.
-func (ocr *OCR) KK(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "kk", input, target)
-}
-
-// STNK performs OCR on the given file using STNK model.
-func (ocr *OCR) STNK(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "stnk", input, target)
-}
-
-// SIM performs OCR on the given file using SIM model.
-func (ocr *OCR) SIM(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "sim", input, target)
-}
-
-// Passport performs OCR on the given file using Passport model.
-func (ocr *OCR) Passport(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "passport", input, target)
-}
-
-// Plate performs OCR on the given file using License Plate model.
-func (ocr *OCR) Plate(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "plate", input, target)
-}
-
-// GeneralDocument performs OCR on the given file using all-purpose Document model.
-func (ocr *OCR) GeneralDocument(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "general-document", input, target)
-}
-
-// Invoice performs OCR on the given file using Invoice model.
-func (ocr *OCR) Invoice(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "invoice", input, target)
-}
-
-// Receipt performs OCR on the given file using Receipt model.
-func (ocr *OCR) Receipt(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "receipt", input, target)
-}
-
-// BankStatement performs OCR on the given file using Bank Statement model.
-func (ocr *OCR) BankStatement(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "bank-statement", input, target)
-}
-
-// SKPR performs OCR on the given file using SKPR model.
-func (ocr *OCR) SKPR(
-	ctx context.Context,
-	input glair.OCRInput,
-	target any,
-) error {
-	return ocr.recognize(ctx, "skpr", input, target)
-}
-
-// BPKB performs OCR on the given file using BPKB model.
-func (ocr *OCR) BPKB(
-	ctx context.Context,
-	input glair.BPKBInput,
-	target any,
-) error {
+func recognizeRaw(ocr *OCR, ctx context.Context, endpoint string, input glair.OCRInput) ([]byte, error) {
 	file, err := internal.ReadFile(input.Image)
 	if err != nil {
-		return err
+		return nil, err
+	}
+
+	params := internal.RequestParameters{
+		Url:       ocr.config.GetEndpointURL("ocr", endpoint),
+		RequestID: input.RequestID,
+		Body: map[string]any{
+			"image": file,
+		},
+	}
+
+	return internal.MakeMultipartRequestRaw(ctx, params, ocr.config)
+}
+
+func (ocr *OCR) KTP(ctx context.Context, input glair.OCRInput) (KTP, error) {
+	return recognize[KTP](ocr, ctx, "ktp", input)
+}
+
+func (ocr *OCR) KTPRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "ktp", input)
+}
+
+func (ocr *OCR) KTPWithQuality(ctx context.Context, input glair.OCRInput) (KTPWithQuality, error) {
+	return recognize[KTPWithQuality](ocr, ctx, "ktp/qualities", input)
+}
+
+func (ocr *OCR) KTPWithQualityRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "ktp/qualities", input)
+}
+
+func (ocr *OCR) NPWP(ctx context.Context, input glair.OCRInput) (NPWP, error) {
+	return recognize[NPWP](ocr, ctx, "npwp", input)
+}
+
+func (ocr *OCR) NPWPRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "npwp", input)
+}
+
+func (ocr *OCR) KK(ctx context.Context, input glair.OCRInput) (KK, error) {
+	return recognize[KK](ocr, ctx, "kk", input)
+}
+
+func (ocr *OCR) KKRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "kk", input)
+}
+
+func (ocr *OCR) STNK(ctx context.Context, input glair.OCRInput) (STNK, error) {
+	return recognize[STNK](ocr, ctx, "stnk", input)
+}
+
+func (ocr *OCR) STNKRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "stnk", input)
+}
+
+func (ocr *OCR) SIM(ctx context.Context, input glair.OCRInput) (SIM, error) {
+	return recognize[SIM](ocr, ctx, "sim", input)
+}
+
+func (ocr *OCR) SIMRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "sim", input)
+}
+
+func (ocr *OCR) Passport(ctx context.Context, input glair.OCRInput) (Passport, error) {
+	return recognize[Passport](ocr, ctx, "passport", input)
+}
+
+func (ocr *OCR) PassportRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "passport", input)
+}
+
+func (ocr *OCR) Plate(ctx context.Context, input glair.OCRInput) (Plate, error) {
+	return recognize[Plate](ocr, ctx, "plate", input)
+}
+
+func (ocr *OCR) PlateRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "plate", input)
+}
+
+func (ocr *OCR) GeneralDocument(ctx context.Context, input glair.OCRInput) (GeneralDocument, error) {
+	return recognize[GeneralDocument](ocr, ctx, "general-document", input)
+}
+
+func (ocr *OCR) GeneralDocumentRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "general-document", input)
+}
+
+func (ocr *OCR) Invoice(ctx context.Context, input glair.OCRInput) (Invoice, error) {
+	return recognize[Invoice](ocr, ctx, "invoice", input)
+}
+
+func (ocr *OCR) InvoiceRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "invoice", input)
+}
+
+func (ocr *OCR) Receipt(ctx context.Context, input glair.OCRInput) (Receipt, error) {
+	return recognize[Receipt](ocr, ctx, "receipt", input)
+}
+
+func (ocr *OCR) ReceiptRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "receipt", input)
+}
+
+func (ocr *OCR) BankStatement(ctx context.Context, input glair.OCRInput) (BankStatement, error) {
+	return recognize[BankStatement](ocr, ctx, "bank-statement", input)
+}
+
+func (ocr *OCR) BankStatementRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "bank-statement", input)
+}
+
+func (ocr *OCR) SKPR(ctx context.Context, input glair.OCRInput) (SKPR, error) {
+	return recognize[SKPR](ocr, ctx, "skpr", input)
+}
+
+func (ocr *OCR) SKPRRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ocr, ctx, "skpr", input)
+}
+
+func (ocr *OCR) BPKB(ctx context.Context, input glair.BPKBInput) (BPKB, error) {
+	file, err := internal.ReadFile(input.Image)
+	if err != nil {
+		return BPKB{}, err
 	}
 
 	params := internal.RequestParameters{
@@ -231,21 +206,28 @@ func (ocr *OCR) BPKB(
 		},
 	}
 
-	return internal.MakeMultipartRequest(
-		ctx,
-		params,
-		ocr.config,
-		target,
-	)
+	return internal.MakeMultipartRequest[BPKB](ctx, params, ocr.config)
 }
 
-// KTPSessions sends session request for passive liveness
-// using the prebuilt web page.
-func (ocr *OCR) KTPSessions(
-	ctx context.Context,
-	input glair.SessionsInput,
-	target any,
-) error {
+func (ocr *OCR) BPKBRaw(ctx context.Context, input glair.BPKBInput) ([]byte, error) {
+	file, err := internal.ReadFile(input.Image)
+	if err != nil {
+		return nil, err
+	}
+
+	params := internal.RequestParameters{
+		Url:       ocr.config.GetEndpointURL("ocr", "bpkb"),
+		RequestID: input.RequestID,
+		Body: map[string]any{
+			"image": file,
+			"page":  input.Page,
+		},
+	}
+
+	return internal.MakeMultipartRequestRaw(ctx, params, ocr.config)
+}
+
+func (ocr *OCR) KTPSessions(ctx context.Context, input glair.SessionsInput) (glair.Session, error) {
 	payload := map[string]any{
 		"success_url": input.SuccessURL,
 	}
@@ -259,21 +241,10 @@ func (ocr *OCR) KTPSessions(
 		Body: payload,
 	}
 
-	return internal.MakeJSONRequest(
-		ctx,
-		params,
-		ocr.config,
-		target,
-	)
+	return internal.MakeJSONRequest[glair.Session](ctx, params, ocr.config)
 }
 
-// NPWPSessions sends session request for passive liveness
-// using the prebuilt web page.
-func (ocr *OCR) NPWPSessions(
-	ctx context.Context,
-	input glair.SessionsInput,
-	target any,
-) error {
+func (ocr *OCR) NPWPSessions(ctx context.Context, input glair.SessionsInput) (glair.Session, error) {
 	payload := map[string]any{
 		"success_url": input.SuccessURL,
 	}
@@ -287,10 +258,5 @@ func (ocr *OCR) NPWPSessions(
 		Body: payload,
 	}
 
-	return internal.MakeJSONRequest(
-		ctx,
-		params,
-		ocr.config,
-		target,
-	)
+	return internal.MakeJSONRequest[glair.Session](ctx, params, ocr.config)
 }

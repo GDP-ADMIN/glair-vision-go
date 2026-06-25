@@ -112,32 +112,26 @@ For comprehensive list of available API provided by GLAIR Vision Go SDK, check o
 
 ### Custom Response Type
 
-Each OCR function accepts a pointer to your result struct as the last argument. You can create custom result types to only extract the fields you need.
+Each OCR function comes in two forms:
+
+- `Foo(ctx, input) (ResultType, error)` — Returns the SDK's default typed struct. Uses the newest response format which may not be compatible with all API versions.
+- `FooRaw(ctx, input) ([]byte, error)` — Returns the raw JSON response body. Gives you full control to decode the response however you need.
+
+Use `FooRaw` if the default struct does not match your expected response format, or if you only need to extract specific fields:
 
 ```go
 package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
-	"github.com/glair-ai/glair-vision-go/ocr"
 )
-
-// MyKTP only extracts the fields that matter to your application.
-type MyKTP struct {
-	ocr.OCRResult[MyKTPData]
-}
-
-type MyKTPData struct {
-	Nama          ocr.OCRField[string] `json:"nama,omitempty"`
-	Nik           ocr.OCRField[string] `json:"nik,omitempty"`
-	TempatLahir   ocr.OCRField[string] `json:"tempatLahir,omitempty"`
-}
 
 func main() {
 	ctx := context.Background()
@@ -147,15 +141,24 @@ func main() {
 
 	file, _ := os.Open("path/to/image.jpg")
 
-	var result MyKTP
-
-	err := c.Ocr.KTP(ctx, glair.OCRInput{
+	raw, err := c.Ocr.KTPRaw(ctx, glair.OCRInput{
 		Image: file,
-	}, &result)
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
+
+	// Inspect the raw response
+	fmt.Println(string(raw))
+
+	// Parse only the fields you need
+	var result struct {
+		Read struct {
+			Nama string `json:"nama"`
+		} `json:"read"`
+	}
+	json.Unmarshal(raw, &result)
 
 	fmt.Println(result.Read.Nama)
 }
