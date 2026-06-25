@@ -1,0 +1,15 @@
+services:
+  glair-vision-go:
+    image: golang:1.20
+    working_dir: /workspace
+    entrypoint: bash
+    command:
+      - '-c'
+      - 'go test ./... -coverprofile=coverage.out'
+    volumes:
+      - '.:/workspace'
+
+networks:
+  default:
+    external: true
+    name: cloudbuild
