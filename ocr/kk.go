@@ -14,7 +14,7 @@ type KKData struct {
 	NomorKK            OCRField[string] `json:"nomor_kk,omitempty"`
 	Provinsi           OCRField[string] `json:"provinsi,omitempty"`
 	RtRw               OCRField[string] `json:"rt_rw,omitempty"`
-	Table              []KKTable          `json:"table,omitempty"`
+	Table              []KKTable        `json:"table,omitempty"`
 }
 
 type KKTable struct {

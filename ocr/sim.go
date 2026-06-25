@@ -19,6 +19,6 @@ type SIMData struct {
 	Tinggi        OCRField[string] `json:"tinggi,omitempty"`
 	TipeSim       OCRField[string] `json:"tipe_sim,omitempty"`
 	Wilayah       OCRField[string] `json:"wilayah,omitempty"`
-	Foto 		  OCRField[string] `json:"foto,omitempty"`
+	Foto          OCRField[string] `json:"foto,omitempty"`
 	TandaTangan   OCRField[string] `json:"tanda_tangan,omitempty"`
 }

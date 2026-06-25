@@ -33,6 +33,6 @@ type KTPData struct {
 	StatusPerkawinan OCRField[string] `json:"status_perkawinan,omitempty"`
 	TanggalLahir     OCRField[string] `json:"tanggal_lahir,omitempty"`
 	TempatLahir      OCRField[string] `json:"tempat_lahir,omitempty"`
-	Foto 			 OCRField[string] `json:"foto,omitempty"`
-	TandaTangan  	 OCRField[string] `json:"tanda_tangan,omitempty"`
+	Foto             OCRField[string] `json:"foto,omitempty"`
+	TandaTangan      OCRField[string] `json:"tanda_tangan,omitempty"`
 }
