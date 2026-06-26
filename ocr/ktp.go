@@ -3,14 +3,13 @@ package ocr
 // KTP stores OCR result of KTP model from the given input
 type KTP struct {
 	OCRResult[KTPData]
-	Images OCRImage `json:"images,omitempty"`
 }
 
 // KTPWithQuality stores OCR result of KTP model from the given
 // input with quality remarks
 type KTPWithQuality struct {
 	KTP
-	Qualities OCRQualities `json:"qualities,omitempty"`
+	Qualities OCRQualitiesData `json:"qualities,omitempty"`
 }
 
 // KTPData stores key-value field of KTP that can be
@@ -33,6 +32,6 @@ type KTPData struct {
 	StatusPerkawinan OCRField[string] `json:"status_perkawinan,omitempty"`
 	TanggalLahir     OCRField[string] `json:"tanggal_lahir,omitempty"`
 	TempatLahir      OCRField[string] `json:"tempat_lahir,omitempty"`
-	Foto             OCRField[string] `json:"foto,omitempty"`
-	TandaTangan      OCRField[string] `json:"tanda_tangan,omitempty"`
+	Foto             PhotoField       `json:"foto,omitempty"`
+	TandaTangan      PhotoField       `json:"tanda_tangan,omitempty"`
 }

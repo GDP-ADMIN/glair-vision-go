@@ -1,22 +1,22 @@
 package ocr
 
-// Passport stores OCR result of Passport model from the given input
+// Passport stores OCR result of Passport model from the given input.
 type Passport = OCRResult[PassportData]
 
 type PassportData struct {
-	BirthDate        OCRField[string] `json:"birth_date,omitempty"`
-	BirthDateHash    OCRField[string] `json:"birth_date_hash,omitempty"`
-	Country          OCRField[string] `json:"country,omitempty"`
-	DocNumber        OCRField[string] `json:"doc_number,omitempty"`
-	DocNumberHash    OCRField[string] `json:"doc_number_hash,omitempty"`
-	DocumentType     OCRField[string] `json:"document_type,omitempty"`
-	ExpiryDate       OCRField[string] `json:"expiry_date,omitempty"`
-	ExpiryDateHash   OCRField[string] `json:"expiry_date_hash,omitempty"`
-	FinalHash        OCRField[string] `json:"final_hash,omitempty"`
-	Name             OCRField[string] `json:"name,omitempty"`
-	Nationality      OCRField[string] `json:"nationality,omitempty"`
-	Sex              OCRField[string] `json:"sex,omitempty"`
-	Surname          OCRField[string] `json:"surname,omitempty"`
-	OptionalData     OCRField[string] `json:"optional_data,omitempty"`
-	OptionalDataHash OCRField[string] `json:"optional_data_hash,omitempty"`
+	BirthDate       OCRPageField[string] `json:"birth_date,omitempty"`
+	BirthDateHash   OCRPageField[string] `json:"birth_date_hash,omitempty"`
+	Country         OCRPageField[string] `json:"country,omitempty"`
+	DocNumber       OCRPageField[string] `json:"doc_number,omitempty"`
+	DocNumberHash   OCRPageField[string] `json:"doc_number_hash,omitempty"`
+	DocumentType    OCRPageField[string] `json:"document_type,omitempty"`
+	ExpiryDate      OCRPageField[string] `json:"expiry_date,omitempty"`
+	ExpiryDateHash  OCRPageField[string] `json:"expiry_date_hash,omitempty"`
+	FinalHash       OCRPageField[string] `json:"final_hash,omitempty"`
+	Name            OCRPageField[string] `json:"name,omitempty"`
+	Nationality     OCRPageField[string] `json:"nationality,omitempty"`
+	OptionalData    OCRPageField[string] `json:"optional_data,omitempty"`
+	OptionalDataHash OCRPageField[string] `json:"optional_data_hash,omitempty"`
+	Sex             OCRPageField[string] `json:"sex,omitempty"`
+	Surname         OCRPageField[string] `json:"surname,omitempty"`
 }

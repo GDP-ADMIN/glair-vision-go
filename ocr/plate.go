@@ -4,7 +4,5 @@ package ocr
 type Plate = OCRResult[PlatesData]
 
 type PlatesData struct {
-	Plates []struct {
-		Text OCRField[string] `json:"text,omitempty"`
-	} `json:"plates,omitempty"`
+	Plates []OCRPageField[string] `json:"plates,omitempty"`
 }

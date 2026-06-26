@@ -3,7 +3,6 @@ package ocr
 // SIM stores OCR result of SIM model from the given input
 type SIM struct {
 	OCRResult[SIMData]
-	Images OCRImage `json:"images,omitempty"`
 }
 
 type SIMData struct {
@@ -19,6 +18,6 @@ type SIMData struct {
 	Tinggi        OCRField[string] `json:"tinggi,omitempty"`
 	TipeSim       OCRField[string] `json:"tipe_sim,omitempty"`
 	Wilayah       OCRField[string] `json:"wilayah,omitempty"`
-	Foto          OCRField[string] `json:"foto,omitempty"`
-	TandaTangan   OCRField[string] `json:"tanda_tangan,omitempty"`
+	Foto          PhotoField       `json:"foto,omitempty"`
+	TandaTangan   PhotoField       `json:"tanda_tangan,omitempty"`
 }

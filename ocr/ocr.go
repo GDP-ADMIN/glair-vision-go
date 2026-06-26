@@ -19,9 +19,11 @@ type OCRResult[T any] struct {
 	Read   T      `json:"read"`
 }
 
-type OCRImage struct {
-	Photo string `json:"photo,omitempty"`
-	Sign  string `json:"sign,omitempty"`
+type PhotoField struct {
+	Confidence     *float32 `json:"confidence,omitempty"`
+	Polygon        [][]int  `json:"polygon,omitempty"`
+	PageIndex      *int     `json:"page_index,omitempty"`
+	Value          *string  `json:"value,omitempty"`
 }
 
 type OCRField[T any] struct {
@@ -33,17 +35,78 @@ type OCRField[T any] struct {
 	Value          *T       `json:"value,omitempty"`
 }
 
-type OCRStringField = OCRField[string]
-type OCRIntField = OCRField[int64]
+type OCRPageField[T any] struct {
+	OCRField[T]
+	PageIndex int64 `json:"page_index,omitempty"`
+}
+
+type QualityBooleanField struct {
+	Confidence *float64 `json:"confidence,omitempty"`
+	Value      *bool    `json:"value,omitempty"`
+}
+
+type BlurField struct {
+	QualityBooleanField
+	ConfidenceBlur *float64 `json:"confidence_blur,omitempty"`
+}
+
+type BrightField struct {
+	QualityBooleanField
+	ConfidenceBright *float64 `json:"confidence_bright,omitempty"`
+}
+
+type CropField struct {
+	QualityBooleanField
+	ConfidenceCrop *float64 `json:"confidence_crop,omitempty"`
+}
+
+type DarkField struct {
+	QualityBooleanField
+	ConfidenceDark *float64 `json:"confidence_dark,omitempty"`
+}
+
+type FlashField struct {
+	QualityBooleanField
+	ConfidenceFlash *float64 `json:"confidence_flash,omitempty"`
+}
+
+type PhotocopyField struct {
+	QualityBooleanField
+	ConfidencePhotocopy *float64 `json:"confidence_photocopy,omitempty"`
+}
+
+type ScreenField struct {
+	QualityBooleanField
+	ConfidenceScreen *float64 `json:"confidence_screen,omitempty"`
+}
+
+type DocumentField struct {
+	Confidence *float64 `json:"confidence,omitempty"`
+	Value      *string  `json:"value,omitempty"`
+}
+
+type RotateField struct {
+	Confidence *float64 `json:"confidence,omitempty"`
+	Value      *string  `json:"value,omitempty"`
+	FixedImage *string  `json:"fixed_image,omitempty"`
+}
 
 type OCRQualities struct {
-	IsBlurred bool `json:"is_blurred,omitempty"`
-	IsBright  bool `json:"is_bright,omitempty"`
-	IsCopy    bool `json:"is_copy,omitempty"`
-	IsDark    bool `json:"is_dark,omitempty"`
-	IsFlash   bool `json:"is_flash,omitempty"`
-	IsKtp     bool `json:"is_ktp,omitempty"`
-	IsRotated bool `json:"is_rotated,omitempty"`
+	Read   OCRQualitiesData  `json:"read,omitempty"`
+	Status string            `json:"status,omitempty"`
+	Reason string            `json:"reason,omitempty"`
+}
+
+type OCRQualitiesData struct {
+	Blur      *BlurField      `json:"blur,omitempty"`
+	Bright    *BrightField    `json:"bright,omitempty"`
+	Crop      *CropField      `json:"crop,omitempty"`
+	Dark      *DarkField      `json:"dark,omitempty"`
+	Document  *DocumentField  `json:"document,omitempty"`
+	Flash     *FlashField     `json:"flash,omitempty"`
+	Photocopy *PhotocopyField `json:"photocopy,omitempty"`
+	Rotate    *RotateField    `json:"rotate,omitempty"`
+	Screen    *ScreenField    `json:"screen,omitempty"`
 }
 
 func New(config *glair.Config) *OCR {
