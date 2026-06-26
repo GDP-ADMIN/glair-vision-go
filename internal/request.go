@@ -20,7 +20,7 @@ import (
 type RequestParameters struct {
 	Url       string
 	RequestID string
-	Body      map[string]interface{}
+	Body      map[string]any
 }
 
 type RequestPayload struct {
@@ -29,6 +29,8 @@ type RequestPayload struct {
 	Body   io.Reader
 }
 
+// MakeMultipartRequest creates and sends multipart/formdata request and
+// unmarshals the response into the provided type.
 func MakeMultipartRequest[T any](
 	ctx context.Context,
 	params RequestParameters,
@@ -55,7 +57,11 @@ func MakeMultipartRequest[T any](
 	}
 
 	if err := json.Unmarshal(res, &result); err != nil {
-		config.Logger.Errorf("Failed to parse API response due to %v", err)
+		return result, &glair.Error{
+			Code:    glair.ErrorCodeInvalidResponse,
+			Message: "Failed to parse API response.",
+			Err:     err,
+		}
 	}
 
 	return result, nil
@@ -87,6 +93,8 @@ func MakeMultipartRequestRaw(
 	return res, nil
 }
 
+// MakeJSONRequest creates and sends application/json request to a specified
+// GLAIR Vision service endpoint.
 func MakeJSONRequest[T any](
 	ctx context.Context,
 	params RequestParameters,
@@ -121,7 +129,11 @@ func MakeJSONRequest[T any](
 	}
 
 	if err := json.Unmarshal(res, &result); err != nil {
-		config.Logger.Errorf("Failed to parse API response due to %v", err)
+		return result, &glair.Error{
+			Code:    glair.ErrorCodeInvalidResponse,
+			Message: "Failed to parse API response.",
+			Err:     err,
+		}
 	}
 
 	return result, nil
@@ -200,7 +212,7 @@ func sendRequest(
 }
 
 func createMultipartPayload(
-	payload map[string]interface{},
+	payload map[string]any,
 	logger glair.Logger,
 ) (map[string]string, io.Reader, error) {
 	header := map[string]string{}

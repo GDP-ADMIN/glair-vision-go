@@ -190,17 +190,15 @@ func main() {
 
 	file, _ := os.Open("path/to/image.jpg")
 
-	var result ocr.KTP
-
-	err := client.Ocr.KTP(ctx, glair.OCRInput{
+	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
 		Image: file,
-	}, &result)
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 
-  	fmt.Println(result.Read.Nama)
+	fmt.Println(result.Read.Nama)
 }
 ```
 
@@ -225,17 +223,15 @@ func main() {
 	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	var result ocr.Receipt
-
-	err := client.Ocr.Receipt(ctx, glair.OCRInput{
+	result, err := client.Ocr.Receipt(ctx, glair.OCRInput{
 		Image: "path/to/image.jpg",
-	}, &result)
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 
-  	fmt.Println(result.Read.Nama)
+	fmt.Println(result.Read.MerchantName)
 }
 ```
 
@@ -267,11 +263,9 @@ func main() {
 
 	file, _ := os.Open("../images/ktp.jpeg")
 
-	var result ocr.KTP
-
-	err := client.Ocr.KTP(contextWithTimeout, glair.OCRInput{
+	result, err := client.Ocr.KTP(contextWithTimeout, glair.OCRInput{
 		Image: file,
-	}, &result)
+	})
 
 	if err != nil {
 		if glairErr, ok := err.(*glair.Error); ok {
@@ -340,11 +334,9 @@ func main() {
 
 	file, _ := os.Open("../images/ktp.jpeg")
 
-	var result ocr.KTP
-
-	err := c.Ocr.KTP(ctx, glair.OCRInput{
+	result, err := c.Ocr.KTP(ctx, glair.OCRInput{
 		Image: file,
-	}, &result)
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -382,12 +374,10 @@ func main() {
 
 	image, _ := os.Open("path/to/image.jpg")
 
-	var result face.FaceMatching
-
-	err := client.FaceBio.FaceMatching(ctx, glair.FaceMatchingInput{
+	result, err := client.FaceBio.FaceMatching(ctx, glair.FaceMatchingInput{
 		StoredImage:   image,
 		CapturedImage: image,
-	}, &result)
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -421,13 +411,11 @@ func main() {
 	config := glair.NewConfig("", "", "")
 	client := client.New(config)
 
-	var result identity.BasicIdentityVerificationResult
-
-	err := client.Identity.BasicVerification(ctx, glair.BasicVerificationInput{
+	result, err := client.Identity.BasicVerification(ctx, glair.BasicVerificationInput{
 		Nik:    "",
 		Name:   glair.String(""),
 		Gender: glair.String(""),
-	}, &result)
+	})
 
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -475,15 +463,13 @@ func main() {
 
 	file, _ := os.Open("path/to/image.jpg")
 
-	var result ocr.KTP
-
-	err := client.Ocr.KTP(ctx, glair.OCRInput{
+	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
 		Image: file,
-	}, &result)
+	})
 
 	if err != nil {
-    		// is a glair.Error, assert the error code
-	  	if glairErr, ok := err.(*glair.Error); ok {
+		// is a glair.Error, assert the error code
+		if glairErr, ok := err.(*glair.Error); ok {
       		switch glairErr.Code {
         		case glair.ErrorCodeFileError:
           			fmt.Println("Cannot read input file correctly")
