@@ -20,10 +20,10 @@ type OCRResult[T any] struct {
 }
 
 type PhotoField struct {
-	Confidence     *float32 `json:"confidence,omitempty"`
-	Polygon        [][]int  `json:"polygon,omitempty"`
-	PageIndex      *int     `json:"page_index,omitempty"`
-	Value          *string  `json:"value,omitempty"`
+	Confidence *float32 `json:"confidence,omitempty"`
+	Polygon    [][]int  `json:"polygon,omitempty"`
+	PageIndex  *int     `json:"page_index,omitempty"`
+	Value      *string  `json:"value,omitempty"`
 }
 
 type OCRField[T any] struct {
@@ -33,11 +33,6 @@ type OCRField[T any] struct {
 	PageIndex      *int     `json:"page_index,omitempty"`
 	ValueOriginal  *string  `json:"value_original,omitempty"`
 	Value          *T       `json:"value,omitempty"`
-}
-
-type OCRPageField[T any] struct {
-	OCRField[T]
-	PageIndex int64 `json:"page_index,omitempty"`
 }
 
 type QualityBooleanField struct {
@@ -92,9 +87,9 @@ type RotateField struct {
 }
 
 type OCRQualities struct {
-	Read   OCRQualitiesData  `json:"read,omitempty"`
-	Status string            `json:"status,omitempty"`
-	Reason string            `json:"reason,omitempty"`
+	Read   OCRQualitiesData `json:"read,omitempty"`
+	Status string           `json:"status,omitempty"`
+	Reason string           `json:"reason,omitempty"`
 }
 
 type OCRQualitiesData struct {

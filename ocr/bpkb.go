@@ -11,43 +11,43 @@ type BPKBData struct {
 }
 
 type OwnerIdentity struct {
-	Alamat           OCRPageField[string] `json:"alamat,omitempty"`
-	AlamatEmail      OCRPageField[string] `json:"alamat_email,omitempty"`
-	Dikeluarkan      OCRPageField[string] `json:"dikeluarkan,omitempty"`
-	NamaPemilik      OCRPageField[string] `json:"nama_pemilik,omitempty"`
-	NomorBpkb        OCRPageField[string] `json:"nomor_bpkb,omitempty"`
-	NoKtpTdp         OCRPageField[string] `json:"nomor_ktp_tdp,omitempty"`
-	NoTelepon        OCRPageField[string] `json:"no_telepon,omitempty"`
-	PadaTanggal      OCRPageField[string] `json:"pada_tanggal,omitempty"`
-	Pekerjaan        OCRPageField[string] `json:"pekerjaan,omitempty"`
-	StempelNomorBpkb OCRPageField[string] `json:"stempel_nomor_bpkb,omitempty"`
+	Alamat           OCRField[string] `json:"alamat,omitempty"`
+	AlamatEmail      OCRField[string] `json:"alamat_email,omitempty"`
+	Dikeluarkan      OCRField[string] `json:"dikeluarkan,omitempty"`
+	NamaPemilik      OCRField[string] `json:"nama_pemilik,omitempty"`
+	NomorBpkb        OCRField[string] `json:"nomor_bpkb,omitempty"`
+	NoKtpTdp         OCRField[string] `json:"nomor_ktp_tdp,omitempty"`
+	NoTelepon        OCRField[string] `json:"no_telepon,omitempty"`
+	PadaTanggal      OCRField[string] `json:"pada_tanggal,omitempty"`
+	Pekerjaan        OCRField[string] `json:"pekerjaan,omitempty"`
+	StempelNomorBpkb OCRField[string] `json:"stempel_nomor_bpkb,omitempty"`
 }
 
 type VehicleIdentity struct {
-	BahanBakar      OCRPageField[string] `json:"bahan_bakar,omitempty"`
-	IsiSilinder     OCRPageField[string] `json:"isi_silinder,omitempty"`
-	Jenis           OCRPageField[string] `json:"jenis,omitempty"`
-	JumlahRoda      OCRPageField[string] `json:"jumlah_roda,omitempty"`
-	JumlahSumbu     OCRPageField[string] `json:"jumlah_sumbu,omitempty"`
-	Merk            OCRPageField[string] `json:"merk,omitempty"`
-	Model           OCRPageField[string] `json:"model,omitempty"`
-	NomorMesin      OCRPageField[string] `json:"nomor_mesin,omitempty"`
-	NomorRangka     OCRPageField[string] `json:"nomor_rangka,omitempty"`
-	NomorRegistrasi OCRPageField[string] `json:"nomor_registrasi,omitempty"`
-	TahunPembuatan  OCRPageField[string] `json:"tahun_pembuatan,omitempty"`
-	Type            OCRPageField[string] `json:"type,omitempty"`
-	Warna           OCRPageField[string] `json:"warna,omitempty"`
-	WarnaTnkb       OCRPageField[string] `json:"warna_tnkb,omitempty"`
+	BahanBakar      OCRField[string] `json:"bahan_bakar,omitempty"`
+	IsiSilinder     OCRField[string] `json:"isi_silinder,omitempty"`
+	Jenis           OCRField[string] `json:"jenis,omitempty"`
+	JumlahRoda      OCRField[string] `json:"jumlah_roda,omitempty"`
+	JumlahSumbu     OCRField[string] `json:"jumlah_sumbu,omitempty"`
+	Merk            OCRField[string] `json:"merk,omitempty"`
+	Model           OCRField[string] `json:"model,omitempty"`
+	NomorMesin      OCRField[string] `json:"nomor_mesin,omitempty"`
+	NomorRangka     OCRField[string] `json:"nomor_rangka,omitempty"`
+	NomorRegistrasi OCRField[string] `json:"nomor_registrasi,omitempty"`
+	TahunPembuatan  OCRField[string] `json:"tahun_pembuatan,omitempty"`
+	Type            OCRField[string] `json:"type,omitempty"`
+	Warna           OCRField[string] `json:"warna,omitempty"`
+	WarnaTnkb       OCRField[string] `json:"warna_tnkb,omitempty"`
 }
 
 type RegistrationDocument struct {
-	NamaApm       OCRPageField[string] `json:"nama_apm,omitempty"`
-	NomorFaktur   OCRPageField[string] `json:"nomor_faktur,omitempty"`
-	NomorFormAbc  OCRPageField[string] `json:"nomor_form_abc,omitempty"`
-	TanggalFaktur OCRPageField[string] `json:"tanggal_faktur,omitempty"`
+	NamaApm       OCRField[string] `json:"nama_apm,omitempty"`
+	NomorFaktur   OCRField[string] `json:"nomor_faktur,omitempty"`
+	NomorFormAbc  OCRField[string] `json:"nomor_form_abc,omitempty"`
+	TanggalFaktur OCRField[string] `json:"tanggal_faktur,omitempty"`
 }
 
 type LastPageInformation struct {
-	DiterbitkanOleh OCRPageField[string] `json:"diterbitkan_oleh,omitempty"`
-	NoRegister      OCRPageField[string] `json:"no_register,omitempty"`
+	DiterbitkanOleh OCRField[string] `json:"diterbitkan_oleh,omitempty"`
+	NoRegister      OCRField[string] `json:"no_register,omitempty"`
 }
