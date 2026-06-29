@@ -17,6 +17,8 @@ import (
 	"github.com/glair-ai/glair-vision-go"
 )
 
+const maxResponseBytes = 50 << 20 // 50 MB
+
 type RequestParameters struct {
 	Url       string
 	RequestID string
@@ -194,7 +196,7 @@ func sendRequest(
 
 	config.Logger.Infof("Request handled in %.2f second(s)", elapsed.Seconds())
 
-	str, err := io.ReadAll(res.Body)
+	str, err := io.ReadAll(io.LimitReader(res.Body, maxResponseBytes+1))
 	if err != nil {
 		return []byte{}, 0, &glair.Error{
 			Code:    glair.ErrorCodeInvalidResponse,
@@ -206,7 +208,17 @@ func sendRequest(
 		}
 	}
 
-	config.Logger.Debugf("API Response: %s", string(str))
+	if len(str) > maxResponseBytes {
+		return []byte{}, 0, &glair.Error{
+			Code:    glair.ErrorCodeInvalidResponse,
+			Message: "API response exceeded maximum allowed size.",
+			Response: glair.Response{
+				Status: res.StatusCode,
+			},
+		}
+	}
+
+	config.Logger.Debugf("API Response: %d bytes (status: %d)", len(str), res.StatusCode)
 
 	return str, res.StatusCode, nil
 }

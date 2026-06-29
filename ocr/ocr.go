@@ -123,186 +123,239 @@ func New(config *glair.Config) *OCR {
 	}
 }
 
-func recognize[T any](ctx context.Context, ocr *OCR, endpoint string, input glair.OCRInput) (T, error) {
+func ocrRequestParams(ocr *OCR, endpoint string, input glair.OCRInput) (internal.RequestParameters, error) {
 	file, err := internal.ReadFile(input.Image)
 	if err != nil {
-		var zero T
-		return zero, err
+		return internal.RequestParameters{}, err
 	}
 
-	params := internal.RequestParameters{
+	return internal.RequestParameters{
 		Url:       ocr.config.GetEndpointURL("ocr", endpoint),
 		RequestID: input.RequestID,
 		Body: map[string]any{
 			"image": file,
 		},
+	}, nil
+}
+
+func recognize[T any](ctx context.Context, ocr *OCR, endpoint string, input glair.OCRInput) (T, error) {
+	params, err := ocrRequestParams(ocr, endpoint, input)
+	if err != nil {
+		var zero T
+		return zero, err
 	}
 
 	return internal.MakeMultipartRequest[T](ctx, params, ocr.config)
 }
 
 func recognizeRaw(ctx context.Context, ocr *OCR, endpoint string, input glair.OCRInput) ([]byte, error) {
-	file, err := internal.ReadFile(input.Image)
+	params, err := ocrRequestParams(ocr, endpoint, input)
 	if err != nil {
 		return nil, err
-	}
-
-	params := internal.RequestParameters{
-		Url:       ocr.config.GetEndpointURL("ocr", endpoint),
-		RequestID: input.RequestID,
-		Body: map[string]any{
-			"image": file,
-		},
 	}
 
 	return internal.MakeMultipartRequestRaw(ctx, params, ocr.config)
 }
 
 // KTP performs OCR on the given file using KTP model
+//
+// API Docs: https://docs.glair.ai/vision/ktp
 func (ocr *OCR) KTP(ctx context.Context, input glair.OCRInput) (KTP, error) {
 	return recognize[KTP](ctx, ocr, "ktp", input)
 }
 
 // KTPRaw performs OCR on the given file using KTP model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/ktp
 func (ocr *OCR) KTPRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "ktp", input)
 }
 
 // KTPWithQuality performs OCR on the given file using KTP model
 // and supplements it with file quality data
+//
+// API Docs: https://docs.glair.ai/vision/ktp
 func (ocr *OCR) KTPWithQuality(ctx context.Context, input glair.OCRInput) (KTPWithQuality, error) {
 	return recognize[KTPWithQuality](ctx, ocr, "ktp/qualities", input)
 }
 
 // KTPWithQualityRaw performs OCR on the given file using KTP model
 // with quality supplements and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/ktp
 func (ocr *OCR) KTPWithQualityRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "ktp/qualities", input)
 }
 
 // NPWP performs OCR on the given file using NPWP model
+//
+// API Docs: https://docs.glair.ai/vision/npwp
 func (ocr *OCR) NPWP(ctx context.Context, input glair.OCRInput) (NPWP, error) {
 	return recognize[NPWP](ctx, ocr, "npwp", input)
 }
 
 // NPWPRaw performs OCR on the given file using NPWP model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/npwp
 func (ocr *OCR) NPWPRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "npwp", input)
 }
 
 // KK performs OCR on the given file using KK model
+//
+// API Docs: https://docs.glair.ai/vision/kk
 func (ocr *OCR) KK(ctx context.Context, input glair.OCRInput) (KK, error) {
 	return recognize[KK](ctx, ocr, "kk", input)
 }
 
 // KKRaw performs OCR on the given file using KK model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/kk
 func (ocr *OCR) KKRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "kk", input)
 }
 
 // STNK performs OCR on the given file using STNK model
+//
+// API Docs: https://docs.glair.ai/vision/stnk
 func (ocr *OCR) STNK(ctx context.Context, input glair.OCRInput) (STNK, error) {
 	return recognize[STNK](ctx, ocr, "stnk", input)
 }
 
 // STNKRaw performs OCR on the given file using STNK model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/stnk
 func (ocr *OCR) STNKRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "stnk", input)
 }
 
 // SIM performs OCR on the given file using SIM model
+//
+// API Docs: https://docs.glair.ai/vision/sim
 func (ocr *OCR) SIM(ctx context.Context, input glair.OCRInput) (SIM, error) {
 	return recognize[SIM](ctx, ocr, "sim", input)
 }
 
 // SIMRaw performs OCR on the given file using SIM model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/sim
 func (ocr *OCR) SIMRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "sim", input)
 }
 
 // Passport performs OCR on the given file using Passport model
+//
+// API Docs: https://docs.glair.ai/vision/passport
 func (ocr *OCR) Passport(ctx context.Context, input glair.OCRInput) (Passport, error) {
 	return recognize[Passport](ctx, ocr, "passport", input)
 }
 
 // PassportRaw performs OCR on the given file using Passport model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/passport
 func (ocr *OCR) PassportRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "passport", input)
 }
 
 // Plate performs OCR on the given file using Plate model
+//
+// API Docs: https://docs.glair.ai/vision/plate
 func (ocr *OCR) Plate(ctx context.Context, input glair.OCRInput) (Plate, error) {
 	return recognize[Plate](ctx, ocr, "plate", input)
 }
 
 // PlateRaw performs OCR on the given file using Plate model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/plate
 func (ocr *OCR) PlateRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "plate", input)
 }
 
 // GeneralDocument performs OCR on the given file using General Document model
+//
+// API Docs: https://docs.glair.ai/vision/general-document
 func (ocr *OCR) GeneralDocument(ctx context.Context, input glair.OCRInput) (GeneralDocument, error) {
 	return recognize[GeneralDocument](ctx, ocr, "general-document", input)
 }
 
 // GeneralDocumentRaw performs OCR on the given file using General Document model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/general-document
 func (ocr *OCR) GeneralDocumentRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "general-document", input)
 }
 
 // Invoice performs OCR on the given file using Invoice model
+//
+// API Docs: https://docs.glair.ai/vision/invoice
 func (ocr *OCR) Invoice(ctx context.Context, input glair.OCRInput) (Invoice, error) {
 	return recognize[Invoice](ctx, ocr, "invoice", input)
 }
 
 // InvoiceRaw performs OCR on the given file using Invoice model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/invoice
 func (ocr *OCR) InvoiceRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "invoice", input)
 }
 
 // Receipt performs OCR on the given file using Receipt model
+//
+// API Docs: https://docs.glair.ai/vision/receipt
 func (ocr *OCR) Receipt(ctx context.Context, input glair.OCRInput) (Receipt, error) {
 	return recognize[Receipt](ctx, ocr, "receipt", input)
 }
 
 // ReceiptRaw performs OCR on the given file using Receipt model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/receipt
 func (ocr *OCR) ReceiptRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "receipt", input)
 }
 
 // BankStatement performs OCR on the given file using Bank Statement model
+//
+// API Docs: https://docs.glair.ai/vision/bank-statement
 func (ocr *OCR) BankStatement(ctx context.Context, input glair.OCRInput) (BankStatement, error) {
 	return recognize[BankStatement](ctx, ocr, "bank-statement", input)
 }
 
 // BankStatementRaw performs OCR on the given file using Bank Statement model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/bank-statement
 func (ocr *OCR) BankStatementRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "bank-statement", input)
 }
 
 // SKPR performs OCR on the given file using SKPR model
+//
+// API Docs: https://docs.glair.ai/vision/skpr
 func (ocr *OCR) SKPR(ctx context.Context, input glair.OCRInput) (SKPR, error) {
 	return recognize[SKPR](ctx, ocr, "skpr", input)
 }
 
 // SKPRRaw performs OCR on the given file using SKPR model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/skpr
 func (ocr *OCR) SKPRRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "skpr", input)
 }
 
 // BPKB performs OCR on the given file using BPKB model
+//
+// API Docs: https://docs.glair.ai/vision/bpkb
 func (ocr *OCR) BPKB(ctx context.Context, input glair.BPKBInput) (BPKB, error) {
 	file, err := internal.ReadFile(input.Image)
 	if err != nil {
@@ -323,6 +376,8 @@ func (ocr *OCR) BPKB(ctx context.Context, input glair.BPKBInput) (BPKB, error) {
 
 // BPKBRaw performs OCR on the given file using BPKB model
 // and returns the raw API response as bytes
+//
+// API Docs: https://docs.glair.ai/vision/bpkb
 func (ocr *OCR) BPKBRaw(ctx context.Context, input glair.BPKBInput) ([]byte, error) {
 	file, err := internal.ReadFile(input.Image)
 	if err != nil {

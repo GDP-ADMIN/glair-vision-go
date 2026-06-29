@@ -158,7 +158,9 @@ func main() {
 			Nama string `json:"nama"`
 		} `json:"read"`
 	}
-	json.Unmarshal(raw, &result)
+	if err := json.Unmarshal(raw, &result); err != nil {
+		log.Fatalln(err.Error())
+	}
 
 	fmt.Println(result.Read.Nama)
 }
@@ -179,7 +181,6 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
-	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
@@ -198,7 +199,9 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-	fmt.Println(result.Read.Nama)
+	if result.Read.Nama.Value != nil {
+		fmt.Println(*result.Read.Nama.Value)
+	}
 }
 ```
 
@@ -214,7 +217,6 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
-	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
@@ -231,7 +233,9 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-	fmt.Println(result.Read.MerchantName)
+	if result.Read.MerchantName.Value != nil {
+		fmt.Println(*result.Read.MerchantName.Value)
+	}
 }
 ```
 
@@ -250,7 +254,6 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
-	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
@@ -304,7 +307,6 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
-	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 // MyClient is a HTTP client that adds `x-powered-by`
@@ -363,7 +365,6 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
-	"github.com/glair-ai/glair-vision-go/face"
 )
 
 func main() {
@@ -402,7 +403,6 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
-	"github.com/glair-ai/glair-vision-go/identity"
 )
 
 func main() {
@@ -452,7 +452,6 @@ import (
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
-	"github.com/glair-ai/glair-vision-go/ocr"
 )
 
 func main() {
