@@ -56,6 +56,19 @@ func TestFaceMatching(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestFaceMatchingRaw(t *testing.T) {
+	srv := successServer()
+	defer srv.Close()
+
+	f := New(newConfig(srv.URL))
+
+	_, err := f.FaceMatchingRaw(context.Background(), glair.FaceMatchingInput{
+		StoredImage:   "../examples/ocr/images/ktp.jpeg",
+		CapturedImage: "../examples/ocr/images/ktp.jpeg",
+	})
+	assert.NoError(t, err)
+}
+
 func TestPassiveLiveness(t *testing.T) {
 	srv := successServer()
 	defer srv.Close()
@@ -68,6 +81,18 @@ func TestPassiveLiveness(t *testing.T) {
 	assert.Error(t, err)
 
 	_, err = f.PassiveLiveness(context.Background(), glair.PassiveLivenessInput{
+		Image: "../examples/ocr/images/ktp.jpeg",
+	})
+	assert.NoError(t, err)
+}
+
+func TestPassiveLivenessRaw(t *testing.T) {
+	srv := successServer()
+	defer srv.Close()
+
+	f := New(newConfig(srv.URL))
+
+	_, err := f.PassiveLivenessRaw(context.Background(), glair.PassiveLivenessInput{
 		Image: "../examples/ocr/images/ktp.jpeg",
 	})
 	assert.NoError(t, err)
@@ -86,6 +111,19 @@ func TestActiveLiveness(t *testing.T) {
 	assert.Error(t, err)
 
 	_, err = f.ActiveLiveness(context.Background(), glair.ActiveLivenessInput{
+		Image:       "../examples/ocr/images/ktp.jpeg",
+		GestureCode: "HAND_00000",
+	})
+	assert.NoError(t, err)
+}
+
+func TestActiveLivenessRaw(t *testing.T) {
+	srv := successServer()
+	defer srv.Close()
+
+	f := New(newConfig(srv.URL))
+
+	_, err := f.ActiveLivenessRaw(context.Background(), glair.ActiveLivenessInput{
 		Image:       "../examples/ocr/images/ktp.jpeg",
 		GestureCode: "HAND_00000",
 	})

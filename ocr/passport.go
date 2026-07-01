@@ -1,20 +1,22 @@
 package ocr
 
-// Passport stores OCR result of Passport model from the given input
+// Passport stores OCR result of Passport model from the given input.
 type Passport = OCRResult[PassportData]
 
 type PassportData struct {
-	BirthDate      string `json:"birth_date,omitempty"`
-	BirthDateHash  string `json:"birth_date_hash,omitempty"`
-	Country        string `json:"country,omitempty"`
-	DocNumber      string `json:"doc_number,omitempty"`
-	DocNumberHash  string `json:"doc_number_hash,omitempty"`
-	DocumentType   string `json:"document_type,omitempty"`
-	ExpiryDate     string `json:"expiry_date,omitempty"`
-	ExpiryDateHash string `json:"expiry_date_hash,omitempty"`
-	FinalHash      string `json:"final_hash,omitempty"`
-	Name           string `json:"name,omitempty"`
-	Nationality    string `json:"nationality,omitempty"`
-	Sex            string `json:"sex,omitempty"`
-	Surname        string `json:"surname,omitempty"`
+	BirthDate        OCRField[string] `json:"birth_date,omitempty"`
+	BirthDateHash    OCRField[string] `json:"birth_date_hash,omitempty"`
+	Country          OCRField[string] `json:"country,omitempty"`
+	DocNumber        OCRField[string] `json:"doc_number,omitempty"`
+	DocNumberHash    OCRField[string] `json:"doc_number_hash,omitempty"`
+	DocumentType     OCRField[string] `json:"document_type,omitempty"`
+	ExpiryDate       OCRField[string] `json:"expiry_date,omitempty"`
+	ExpiryDateHash   OCRField[string] `json:"expiry_date_hash,omitempty"`
+	FinalHash        OCRField[string] `json:"final_hash,omitempty"`
+	Name             OCRField[string] `json:"name,omitempty"`
+	Nationality      OCRField[string] `json:"nationality,omitempty"`
+	OptionalData     OCRField[string] `json:"optional_data,omitempty"`
+	OptionalDataHash OCRField[string] `json:"optional_data_hash,omitempty"`
+	Sex              OCRField[string] `json:"sex,omitempty"`
+	Surname          OCRField[string] `json:"surname,omitempty"`
 }

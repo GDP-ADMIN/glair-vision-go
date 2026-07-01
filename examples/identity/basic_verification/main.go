@@ -8,14 +8,13 @@ import (
 	"os"
 
 	"github.com/glair-ai/glair-vision-go"
-	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/examples/config"
 )
 
 func main() {
 	ctx := context.Background()
 
-	config := glair.NewConfig("", "", "")
-	client := client.New(config)
+	client := config.NewClient()
 
 	result, err := client.Identity.BasicVerification(ctx, glair.BasicVerificationInput{
 		Nik:    "",

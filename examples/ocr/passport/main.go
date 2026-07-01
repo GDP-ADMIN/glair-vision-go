@@ -8,20 +8,22 @@ import (
 	"os"
 
 	"github.com/glair-ai/glair-vision-go"
-	"github.com/glair-ai/glair-vision-go/client"
+	"github.com/glair-ai/glair-vision-go/examples/config"
 )
 
 func main() {
 	ctx := context.Background()
 
-	config := glair.NewConfig("", "", "")
-	client := client.New(config)
+	client := config.NewClient()
 
 	file, _ := os.Open("../images/passport.jpeg")
 
-	result, err := client.Ocr.Passport(ctx, glair.OCRInput{
-		Image: file,
-	})
+	result, err := client.Ocr.Passport(
+		ctx,
+		glair.OCRInput{
+			Image: file,
+		},
+	)
 
 	if err != nil {
 		if glairErr, ok := err.(*glair.Error); ok {

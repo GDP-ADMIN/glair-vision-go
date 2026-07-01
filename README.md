@@ -22,6 +22,8 @@
 
 ## Installation
 
+**Method 1: Go Module Fetching**
+
 You can import the SDK in your Go files with `import`:
 
 ```go
@@ -37,6 +39,22 @@ Alternatively, you can also run `go get` to explicitly resolve and fetch the SDK
 
 ```bash
 go get -u github.com/glair-ai/glair-vision-go
+
+```
+
+**Method 2: Local ZIP Installation**
+
+If you downloaded the source code as a ZIP file, extract it and update your `go.mod` file with the `replace` directive pointing to the local directory:
+
+```go
+module your_module_name
+
+go 1.20
+
+require github.com/glair-ai/glair-vision-go v0.0.0
+
+replace github.com/glair-ai/glair-vision-go => /path/to/extracted/glair-vision-go
+
 ```
 
 ## Usage
@@ -60,12 +78,13 @@ func main() {
 
 The configuration object will be initialized with the following values:
 
-| Option       | Default                          | Description                                                                 |
-| ------------ | -------------------------------- | --------------------------------------------------------------------------- |
-| `BaseUrl`    | `https://api.vision.glair.ai`    | Base URL for GLAIR Vision API                                               |
-| `ApiVersion` | `v1`                             | GLAIR Vision API version to be used                                         |
-| `Client`     | Default Go HTTP client           | HTTP Client to be used when sending request to GLAIR Vision API             |
-| `Logger`     | `LeveledLogger` with `LevelNone` | Logger instace to be used to log errors, information, or debugging messages |
+| Option              | Default                          | Description                                                                 |
+| ------------------- | -------------------------------- | --------------------------------------------------------------------------- |
+| `BaseUrl`           | `https://api.vision.glair.ai`    | Base URL for GLAIR Vision API                                               |
+| `ApiVersion`        | `v1`                             | GLAIR Vision API version to be used                                         |
+| `MaxResponseBytes`  | `50 MB`                          | Maximum response body size in bytes. Set to 0 to disable limit.             |
+| `Client`            | Default Go HTTP client           | HTTP Client to be used when sending request to GLAIR Vision API             |
+| `Logger`            | `LeveledLogger` with `LevelNone` | Logger instace to be used to log errors, information, or debugging messages |
 
 You can change the above values using the provided `With<Option>` method of the configuration object, for example:
 
@@ -81,6 +100,8 @@ func main() {
     config := glair.NewConfig("<username>", "<password>", "<api_key>")
     // set the base url to `http://localhost:3000` 
     config = config.WithBaseURL("http://localhost:3000")
+    // set max response size to 10 MB
+    config = config.WithMaxResponseBytes(10 << 20)
 
     client := client.New(config)
 }
@@ -91,6 +112,64 @@ Afterwards, you can use the provided functions to access GLAIR Vision API.
 ## Documentation
 
 For comprehensive list of available API provided by GLAIR Vision Go SDK, check out the [API Documentation](https://docs.glair.ai/vision). You can also see the runnable examples in the [examples folder](./examples). For details on all the functionality in this library, see the Go documentation.
+
+### Custom Response Type
+
+Each OCR function comes in two forms:
+
+- `Foo(ctx, input) (ResultType, error)` — Returns the SDK's default typed struct. Uses the newest response format which may not be compatible with all API versions.
+- `FooRaw(ctx, input) ([]byte, error)` — Returns the raw JSON response body. Gives you full control to decode the response however you need.
+
+Use `FooRaw` if the default struct does not match your expected response format, or if you only need to extract specific fields:
+
+**⚠️ Security Warning:** Raw response methods (`*Raw`) return unredacted PII (personally identifiable information) such as NIK, names, dates of birth, addresses, photos, signatures, and other sensitive data. **Do not log or persist raw response bytes in plaintext.** Handle with appropriate security controls.
+
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
+)
+
+func main() {
+	ctx := context.Background()
+
+	config := glair.NewConfig("", "", "")
+	c := client.New(config)
+
+	file, _ := os.Open("path/to/image.jpg")
+
+	raw, err := c.Ocr.KTPRaw(ctx, glair.OCRInput{
+		Image: file,
+	})
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	// Inspect the raw response
+	fmt.Println(string(raw))
+
+	// Parse only the fields you need
+	var result struct {
+		Read struct {
+			Nama string `json:"nama"`
+		} `json:"read"`
+	}
+	if err := json.Unmarshal(raw, &result); err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	fmt.Println(result.Read.Nama)
+}
+```
 
 Below are a few simple usage examples:
 
@@ -125,7 +204,9 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-  	fmt.Println(result.Read.Nama)
+	if result.Read.Nama.Value != nil {
+		fmt.Println(*result.Read.Nama.Value)
+	}
 }
 ```
 
@@ -157,7 +238,9 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-  	fmt.Println(result.Read.Nama)
+	if result.Read.MerchantName.Value != nil {
+		fmt.Println(*result.Read.MerchantName.Value)
+	}
 }
 ```
 
@@ -217,7 +300,7 @@ func main() {
 ### Using custom HTTP client to intercept HTTP requests
 
 ```go
-package client
+package main
 
 import (
 	"context"
@@ -228,6 +311,7 @@ import (
 	"os"
 
 	"github.com/glair-ai/glair-vision-go"
+	"github.com/glair-ai/glair-vision-go/client"
 )
 
 // MyClient is a HTTP client that adds `x-powered-by`
@@ -235,13 +319,13 @@ import (
 //
 // It wraps the default HTTP client
 type MyClient struct {
-	client *http.Client
+	inner *http.Client
 }
 
 func (c *MyClient) Do(req *http.Request) (*http.Response, error) {
 	req.Header.Set("X-Powered-By", "GLAIR")
 
-	res, err := c.client.Do(req)
+	res, err := c.inner.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -252,12 +336,12 @@ func (c *MyClient) Do(req *http.Request) (*http.Response, error) {
 func main() {
 	ctx := context.Background()
 
-	config := glair.NewConfig("", "", "").WithClient(&MyClient{client: http.DefaultClient})
-	client := New(config)
+	config := glair.NewConfig("", "", "").WithClient(&MyClient{inner: http.DefaultClient})
+	c := client.New(config)
 
 	file, _ := os.Open("../images/ktp.jpeg")
 
-	result, err := client.Ocr.KTP(ctx, glair.OCRInput{
+	result, err := c.Ocr.KTP(ctx, glair.OCRInput{
 		Image: file,
 	})
 
@@ -321,7 +405,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/glair-ai/glair-vision-go"
 	"github.com/glair-ai/glair-vision-go/client"
@@ -337,7 +420,6 @@ func main() {
 		Nik:    "",
 		Name:   glair.String(""),
 		Gender: glair.String(""),
-		DateOfBirth: ""
 	})
 
 	if err != nil {
@@ -390,8 +472,8 @@ func main() {
 	})
 
 	if err != nil {
-    		// is a glair.Error, assert the error code
-	  	if glairErr, ok := err.(*glair.Error); ok {
+		// is a glair.Error, assert the error code
+		if glairErr, ok := err.(*glair.Error); ok {
       		switch glairErr.Code {
         		case glair.ErrorCodeFileError:
           			fmt.Println("Cannot read input file correctly")

@@ -33,6 +33,9 @@ const (
 	// Generally, this error is impossible to be returned.
 	// If you encounter this error, please contact us
 	ErrorCodeInvalidResponse ErrorCode = "INVALID_RESPONSE"
+	// ErrorCodeInvalidRequest is returned when the SDK is used
+	// with invalid request parameters or invalid target objects.
+	ErrorCodeInvalidRequest ErrorCode = "INVALID_REQUEST"
 )
 
 // Response represents the response returned
