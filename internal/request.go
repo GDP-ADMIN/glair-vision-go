@@ -17,7 +17,7 @@ import (
 	"github.com/glair-ai/glair-vision-go"
 )
 
-const maxResponseBytes = 50 << 20 // 50 MB
+const defaultMaxResponseBytes = 50 << 20 // 50 MB
 
 type RequestParameters struct {
 	Url       string
@@ -56,6 +56,10 @@ func MakeMultipartRequest[T any](
 
 	if err := responseError(res, status, config); err != nil {
 		return result, err
+	}
+
+	if len(res) == 0 {
+		return result, nil
 	}
 
 	if err := json.Unmarshal(res, &result); err != nil {
@@ -130,6 +134,10 @@ func MakeJSONRequest[T any](
 		return result, err
 	}
 
+	if len(res) == 0 {
+		return result, nil
+	}
+
 	if err := json.Unmarshal(res, &result); err != nil {
 		return result, &glair.Error{
 			Code:    glair.ErrorCodeInvalidResponse,
@@ -196,7 +204,26 @@ func sendRequest(
 
 	config.Logger.Infof("Request handled in %.2f second(s)", elapsed.Seconds())
 
-	str, err := io.ReadAll(io.LimitReader(res.Body, maxResponseBytes+1))
+	maxResponseBytes := config.MaxResponseBytes
+	if maxResponseBytes <= 0 {
+		// No limit if 0 or negative
+		str, err := io.ReadAll(res.Body)
+		if err != nil {
+			return []byte{}, 0, &glair.Error{
+				Code:    glair.ErrorCodeInvalidResponse,
+				Message: "Failed to parse API response. Please contact us about this error.",
+				Err:     err,
+				Response: glair.Response{
+					Status: res.StatusCode,
+				},
+			}
+		}
+		return str, res.StatusCode, nil
+	}
+
+	maxResponseBytesInt := int(maxResponseBytes)
+
+	str, err := io.ReadAll(io.LimitReader(res.Body, int64(maxResponseBytesInt)+1))
 	if err != nil {
 		return []byte{}, 0, &glair.Error{
 			Code:    glair.ErrorCodeInvalidResponse,
@@ -208,7 +235,7 @@ func sendRequest(
 		}
 	}
 
-	if len(str) > maxResponseBytes {
+	if len(str) > maxResponseBytesInt {
 		return []byte{}, 0, &glair.Error{
 			Code:    glair.ErrorCodeInvalidResponse,
 			Message: "API response exceeded maximum allowed size.",

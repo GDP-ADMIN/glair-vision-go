@@ -31,23 +31,9 @@ func (face *FaceBio) FaceMatching(
 	ctx context.Context,
 	input glair.FaceMatchingInput,
 ) (FaceMatching, error) {
-	storedImage, err := internal.ReadFile(input.StoredImage)
+	params, err := faceMatchingParams(face, input)
 	if err != nil {
 		return FaceMatching{}, err
-	}
-
-	capturedImage, err := internal.ReadFile(input.CapturedImage)
-	if err != nil {
-		return FaceMatching{}, err
-	}
-
-	params := internal.RequestParameters{
-		Url:       face.config.GetEndpointURL("face", "match"),
-		RequestID: input.RequestID,
-		Body: map[string]any{
-			"stored_image":   storedImage,
-			"captured_image": capturedImage,
-		},
 	}
 
 	return internal.MakeMultipartRequest[FaceMatching](ctx, params, face.config)
@@ -56,28 +42,17 @@ func (face *FaceBio) FaceMatching(
 // FaceMatchingRaw performs face matching and returns the raw
 // API response as bytes
 //
+// WARNING: The raw response contains unredacted PII (face images).
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/face-matching
 func (face *FaceBio) FaceMatchingRaw(
 	ctx context.Context,
 	input glair.FaceMatchingInput,
 ) ([]byte, error) {
-	storedImage, err := internal.ReadFile(input.StoredImage)
+	params, err := faceMatchingParams(face, input)
 	if err != nil {
 		return nil, err
-	}
-
-	capturedImage, err := internal.ReadFile(input.CapturedImage)
-	if err != nil {
-		return nil, err
-	}
-
-	params := internal.RequestParameters{
-		Url:       face.config.GetEndpointURL("face", "match"),
-		RequestID: input.RequestID,
-		Body: map[string]any{
-			"stored_image":   storedImage,
-			"captured_image": capturedImage,
-		},
 	}
 
 	return internal.MakeMultipartRequestRaw(ctx, params, face.config)
@@ -90,17 +65,9 @@ func (face *FaceBio) PassiveLiveness(
 	ctx context.Context,
 	input glair.PassiveLivenessInput,
 ) (PassiveLiveness, error) {
-	image, err := internal.ReadFile(input.Image)
+	params, err := passiveLivenessParams(face, input)
 	if err != nil {
 		return PassiveLiveness{}, err
-	}
-
-	params := internal.RequestParameters{
-		Url:       face.config.GetEndpointURL("face", "passive-liveness"),
-		RequestID: input.RequestID,
-		Body: map[string]any{
-			"image": image,
-		},
 	}
 
 	return internal.MakeMultipartRequest[PassiveLiveness](ctx, params, face.config)
@@ -109,22 +76,17 @@ func (face *FaceBio) PassiveLiveness(
 // PassiveLivenessRaw performs liveness detection in passive
 // environment and returns the raw API response as bytes
 //
+// WARNING: The raw response contains unredacted PII (face image).
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/passive-liveness
 func (face *FaceBio) PassiveLivenessRaw(
 	ctx context.Context,
 	input glair.PassiveLivenessInput,
 ) ([]byte, error) {
-	image, err := internal.ReadFile(input.Image)
+	params, err := passiveLivenessParams(face, input)
 	if err != nil {
 		return nil, err
-	}
-
-	params := internal.RequestParameters{
-		Url:       face.config.GetEndpointURL("face", "passive-liveness"),
-		RequestID: input.RequestID,
-		Body: map[string]any{
-			"image": image,
-		},
 	}
 
 	return internal.MakeMultipartRequestRaw(ctx, params, face.config)
@@ -138,18 +100,9 @@ func (face *FaceBio) ActiveLiveness(
 	ctx context.Context,
 	input glair.ActiveLivenessInput,
 ) (ActiveLiveness, error) {
-	image, err := internal.ReadFile(input.Image)
+	params, err := activeLivenessParams(face, input)
 	if err != nil {
 		return ActiveLiveness{}, err
-	}
-
-	params := internal.RequestParameters{
-		Url:       face.config.GetEndpointURL("face", "active-liveness"),
-		RequestID: input.RequestID,
-		Body: map[string]any{
-			"image":        image,
-			"gesture-code": input.GestureCode,
-		},
 	}
 
 	return internal.MakeMultipartRequest[ActiveLiveness](ctx, params, face.config)
@@ -158,23 +111,17 @@ func (face *FaceBio) ActiveLiveness(
 // ActiveLivenessRaw performs liveness detection using predefined
 // gestures and poses and returns the raw API response as bytes
 //
+// WARNING: The raw response contains unredacted PII (face image).
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/active-liveness
 func (face *FaceBio) ActiveLivenessRaw(
 	ctx context.Context,
 	input glair.ActiveLivenessInput,
 ) ([]byte, error) {
-	image, err := internal.ReadFile(input.Image)
+	params, err := activeLivenessParams(face, input)
 	if err != nil {
 		return nil, err
-	}
-
-	params := internal.RequestParameters{
-		Url:       face.config.GetEndpointURL("face", "active-liveness"),
-		RequestID: input.RequestID,
-		Body: map[string]any{
-			"image":        image,
-			"gesture-code": input.GestureCode,
-		},
 	}
 
 	return internal.MakeMultipartRequestRaw(ctx, params, face.config)
@@ -226,4 +173,56 @@ func (face *FaceBio) ActiveLivenessSessions(
 	}
 
 	return internal.MakeJSONRequest[glair.Session](ctx, params, face.config)
+}
+
+func faceMatchingParams(face *FaceBio, input glair.FaceMatchingInput) (internal.RequestParameters, error) {
+	storedImage, err := internal.ReadFile(input.StoredImage)
+	if err != nil {
+		return internal.RequestParameters{}, err
+	}
+
+	capturedImage, err := internal.ReadFile(input.CapturedImage)
+	if err != nil {
+		return internal.RequestParameters{}, err
+	}
+
+	return internal.RequestParameters{
+		Url:       face.config.GetEndpointURL("face", "match"),
+		RequestID: input.RequestID,
+		Body: map[string]any{
+			"stored_image":   storedImage,
+			"captured_image": capturedImage,
+		},
+	}, nil
+}
+
+func passiveLivenessParams(face *FaceBio, input glair.PassiveLivenessInput) (internal.RequestParameters, error) {
+	image, err := internal.ReadFile(input.Image)
+	if err != nil {
+		return internal.RequestParameters{}, err
+	}
+
+	return internal.RequestParameters{
+		Url:       face.config.GetEndpointURL("face", "passive-liveness"),
+		RequestID: input.RequestID,
+		Body: map[string]any{
+			"image": image,
+		},
+	}, nil
+}
+
+func activeLivenessParams(face *FaceBio, input glair.ActiveLivenessInput) (internal.RequestParameters, error) {
+	image, err := internal.ReadFile(input.Image)
+	if err != nil {
+		return internal.RequestParameters{}, err
+	}
+
+	return internal.RequestParameters{
+		Url:       face.config.GetEndpointURL("face", "active-liveness"),
+		RequestID: input.RequestID,
+		Body: map[string]any{
+			"image":        image,
+			"gesture-code": input.GestureCode,
+		},
+	}, nil
 }

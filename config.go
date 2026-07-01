@@ -6,8 +6,9 @@ import (
 )
 
 const (
-	defaultUrl     = "https://api.vision.glair.ai"
-	defaultVersion = "v1"
+	defaultUrl              = "https://api.vision.glair.ai"
+	defaultVersion          = "v1"
+	defaultMaxResponseBytes = 50 << 20 // 50 MB
 )
 
 var (
@@ -45,6 +46,10 @@ type Config struct {
 	// be called. Defaults to "v1"
 	ApiVersion string
 
+	// MaxResponseBytes represents maximum response body size in bytes.
+	// Defaults to 50 MB. Set to 0 to disable limit.
+	MaxResponseBytes int64
+
 	// Client represents the HTTP client that is used
 	// to call the HTTP endpoints of GLAIR Vision API.
 	// Defaults to the default HTTP client of Go
@@ -60,13 +65,14 @@ type Config struct {
 // base URL and API Version.
 func NewConfig(username string, password string, apiKey string) *Config {
 	return &Config{
-		Username:   username,
-		Password:   password,
-		ApiKey:     apiKey,
-		BaseUrl:    defaultUrl,
-		ApiVersion: defaultVersion,
-		Client:     defaultClient,
-		Logger:     defaultLogger,
+		Username:         username,
+		Password:         password,
+		ApiKey:           apiKey,
+		BaseUrl:          defaultUrl,
+		ApiVersion:       defaultVersion,
+		MaxResponseBytes: defaultMaxResponseBytes,
+		Client:           defaultClient,
+		Logger:           defaultLogger,
 	}
 }
 
@@ -133,5 +139,15 @@ func (c *Config) WithLogger(logger Logger) *Config {
 	}
 
 	c.Logger = logger
+	return c
+}
+
+// WithMaxResponseBytes sets maximum response body size in bytes.
+func (c *Config) WithMaxResponseBytes(bytes int64) *Config {
+	if c == nil {
+		return nil
+	}
+
+	c.MaxResponseBytes = bytes
 	return c
 }

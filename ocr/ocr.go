@@ -138,6 +138,27 @@ func ocrRequestParams(ocr *OCR, endpoint string, input glair.OCRInput) (internal
 	}, nil
 }
 
+func bpkbRequestParams(ocr *OCR, input glair.BPKBInput) (internal.RequestParameters, error) {
+	file, err := internal.ReadFile(input.Image)
+	if err != nil {
+		return internal.RequestParameters{}, err
+	}
+
+	body := map[string]any{
+		"image": file,
+	}
+
+	if input.Page != nil {
+		body["page"] = *input.Page
+	}
+
+	return internal.RequestParameters{
+		Url:       ocr.config.GetEndpointURL("ocr", "bpkb"),
+		RequestID: input.RequestID,
+		Body:      body,
+	}, nil
+}
+
 func recognize[T any](ctx context.Context, ocr *OCR, endpoint string, input glair.OCRInput) (T, error) {
 	params, err := ocrRequestParams(ocr, endpoint, input)
 	if err != nil {
@@ -167,6 +188,9 @@ func (ocr *OCR) KTP(ctx context.Context, input glair.OCRInput) (KTP, error) {
 // KTPRaw performs OCR on the given file using KTP model
 // and returns the raw API response as bytes
 //
+// WARNING: The raw response contains unredacted PII (NIK, name, address, photo, signature, etc.).
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/ktp
 func (ocr *OCR) KTPRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "ktp", input)
@@ -183,6 +207,9 @@ func (ocr *OCR) KTPWithQuality(ctx context.Context, input glair.OCRInput) (KTPWi
 // KTPWithQualityRaw performs OCR on the given file using KTP model
 // with quality supplements and returns the raw API response as bytes
 //
+// WARNING: The raw response contains unredacted PII (NIK, name, address, photo, signature, etc.).
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/ktp
 func (ocr *OCR) KTPWithQualityRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "ktp/qualities", input)
@@ -197,6 +224,9 @@ func (ocr *OCR) NPWP(ctx context.Context, input glair.OCRInput) (NPWP, error) {
 
 // NPWPRaw performs OCR on the given file using NPWP model
 // and returns the raw API response as bytes
+//
+// WARNING: The raw response contains unredacted PII (NPWP number, name, address, photo, etc.).
+// Do not log or persist the raw bytes in plaintext.
 //
 // API Docs: https://docs.glair.ai/vision/npwp
 func (ocr *OCR) NPWPRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
@@ -213,6 +243,9 @@ func (ocr *OCR) KK(ctx context.Context, input glair.OCRInput) (KK, error) {
 // KKRaw performs OCR on the given file using KK model
 // and returns the raw API response as bytes
 //
+// WARNING: The raw response contains unredacted PII (family member names, NIKs, relationships, etc.).
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/kk
 func (ocr *OCR) KKRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "kk", input)
@@ -228,9 +261,31 @@ func (ocr *OCR) STNK(ctx context.Context, input glair.OCRInput) (STNK, error) {
 // STNKRaw performs OCR on the given file using STNK model
 // and returns the raw API response as bytes
 //
+// WARNING: The raw response contains unredacted PII (vehicle owner name, NIK, address, plate number, etc.).
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/stnk
 func (ocr *OCR) STNKRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "stnk", input)
+}
+
+// STNKWithTable performs OCR on the given file using STNK model
+// with tax payment table data
+//
+// API Docs: https://docs.glair.ai/vision/stnk-with-table
+func (ocr *OCR) STNKWithTable(ctx context.Context, input glair.OCRInput) (STNKWithTable, error) {
+	return recognize[STNKWithTable](ctx, ocr, "stnk-with-table", input)
+}
+
+// STNKWithTableRaw performs OCR on the given file using STNK model
+// with tax payment table data and returns the raw API response as bytes
+//
+// WARNING: The raw response contains unredacted PII (vehicle owner name, NIK, address, plate number, tax payment details, etc.).
+// Do not log or persist the raw bytes in plaintext.
+//
+// API Docs: https://docs.glair.ai/vision/stnk-with-table
+func (ocr *OCR) STNKWithTableRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
+	return recognizeRaw(ctx, ocr, "stnk-with-table", input)
 }
 
 // SIM performs OCR on the given file using SIM model
@@ -242,6 +297,9 @@ func (ocr *OCR) SIM(ctx context.Context, input glair.OCRInput) (SIM, error) {
 
 // SIMRaw performs OCR on the given file using SIM model
 // and returns the raw API response as bytes
+//
+// WARNING: The raw response contains unredacted PII (name, NIK, address, photo, etc.).
+// Do not log or persist the raw bytes in plaintext.
 //
 // API Docs: https://docs.glair.ai/vision/sim
 func (ocr *OCR) SIMRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
@@ -258,6 +316,9 @@ func (ocr *OCR) Passport(ctx context.Context, input glair.OCRInput) (Passport, e
 // PassportRaw performs OCR on the given file using Passport model
 // and returns the raw API response as bytes
 //
+// WARNING: The raw response contains unredacted PII (passport number, name, nationality, date of birth, photo, etc.).
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/passport
 func (ocr *OCR) PassportRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "passport", input)
@@ -272,6 +333,9 @@ func (ocr *OCR) Plate(ctx context.Context, input glair.OCRInput) (Plate, error) 
 
 // PlateRaw performs OCR on the given file using Plate model
 // and returns the raw API response as bytes
+//
+// WARNING: The raw response contains vehicle plate information.
+// Do not log or persist the raw bytes in plaintext.
 //
 // API Docs: https://docs.glair.ai/vision/plate
 func (ocr *OCR) PlateRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
@@ -288,6 +352,9 @@ func (ocr *OCR) GeneralDocument(ctx context.Context, input glair.OCRInput) (Gene
 // GeneralDocumentRaw performs OCR on the given file using General Document model
 // and returns the raw API response as bytes
 //
+// WARNING: The raw response may contain unredacted PII from documents.
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/general-document
 func (ocr *OCR) GeneralDocumentRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "general-document", input)
@@ -302,6 +369,9 @@ func (ocr *OCR) Invoice(ctx context.Context, input glair.OCRInput) (Invoice, err
 
 // InvoiceRaw performs OCR on the given file using Invoice model
 // and returns the raw API response as bytes
+//
+// WARNING: The raw response may contain unredacted PII (seller/buyer names, addresses, tax IDs, etc.).
+// Do not log or persist the raw bytes in plaintext.
 //
 // API Docs: https://docs.glair.ai/vision/invoice
 func (ocr *OCR) InvoiceRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
@@ -318,6 +388,9 @@ func (ocr *OCR) Receipt(ctx context.Context, input glair.OCRInput) (Receipt, err
 // ReceiptRaw performs OCR on the given file using Receipt model
 // and returns the raw API response as bytes
 //
+// WARNING: The raw response may contain unredacted PII (merchant name, amounts, transaction details, etc.).
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/receipt
 func (ocr *OCR) ReceiptRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "receipt", input)
@@ -332,6 +405,9 @@ func (ocr *OCR) BankStatement(ctx context.Context, input glair.OCRInput) (BankSt
 
 // BankStatementRaw performs OCR on the given file using Bank Statement model
 // and returns the raw API response as bytes
+//
+// WARNING: The raw response contains unredacted PII (account holder name, account number, transaction details, balances, etc.).
+// Do not log or persist the raw bytes in plaintext.
 //
 // API Docs: https://docs.glair.ai/vision/bank-statement
 func (ocr *OCR) BankStatementRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
@@ -348,6 +424,9 @@ func (ocr *OCR) SKPR(ctx context.Context, input glair.OCRInput) (SKPR, error) {
 // SKPRRaw performs OCR on the given file using SKPR model
 // and returns the raw API response as bytes
 //
+// WARNING: The raw response may contain unredacted PII (business name, owner name, address, license number, etc.).
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/skpr
 func (ocr *OCR) SKPRRaw(ctx context.Context, input glair.OCRInput) ([]byte, error) {
 	return recognizeRaw(ctx, ocr, "skpr", input)
@@ -357,18 +436,9 @@ func (ocr *OCR) SKPRRaw(ctx context.Context, input glair.OCRInput) ([]byte, erro
 //
 // API Docs: https://docs.glair.ai/vision/bpkb
 func (ocr *OCR) BPKB(ctx context.Context, input glair.BPKBInput) (BPKB, error) {
-	file, err := internal.ReadFile(input.Image)
+	params, err := bpkbRequestParams(ocr, input)
 	if err != nil {
 		return BPKB{}, err
-	}
-
-	params := internal.RequestParameters{
-		Url:       ocr.config.GetEndpointURL("ocr", "bpkb"),
-		RequestID: input.RequestID,
-		Body: map[string]any{
-			"image": file,
-			"page":  input.Page,
-		},
 	}
 
 	return internal.MakeMultipartRequest[BPKB](ctx, params, ocr.config)
@@ -377,20 +447,14 @@ func (ocr *OCR) BPKB(ctx context.Context, input glair.BPKBInput) (BPKB, error) {
 // BPKBRaw performs OCR on the given file using BPKB model
 // and returns the raw API response as bytes
 //
+// WARNING: The raw response contains unredacted PII (owner name, NIK, address, vehicle details, etc.).
+// Do not log or persist the raw bytes in plaintext.
+//
 // API Docs: https://docs.glair.ai/vision/bpkb
 func (ocr *OCR) BPKBRaw(ctx context.Context, input glair.BPKBInput) ([]byte, error) {
-	file, err := internal.ReadFile(input.Image)
+	params, err := bpkbRequestParams(ocr, input)
 	if err != nil {
 		return nil, err
-	}
-
-	params := internal.RequestParameters{
-		Url:       ocr.config.GetEndpointURL("ocr", "bpkb"),
-		RequestID: input.RequestID,
-		Body: map[string]any{
-			"image": file,
-			"page":  input.Page,
-		},
 	}
 
 	return internal.MakeMultipartRequestRaw(ctx, params, ocr.config)

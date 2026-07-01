@@ -78,12 +78,13 @@ func main() {
 
 The configuration object will be initialized with the following values:
 
-| Option       | Default                          | Description                                                                 |
-| ------------ | -------------------------------- | --------------------------------------------------------------------------- |
-| `BaseUrl`    | `https://api.vision.glair.ai`    | Base URL for GLAIR Vision API                                               |
-| `ApiVersion` | `v1`                             | GLAIR Vision API version to be used                                         |
-| `Client`     | Default Go HTTP client           | HTTP Client to be used when sending request to GLAIR Vision API             |
-| `Logger`     | `LeveledLogger` with `LevelNone` | Logger instace to be used to log errors, information, or debugging messages |
+| Option              | Default                          | Description                                                                 |
+| ------------------- | -------------------------------- | --------------------------------------------------------------------------- |
+| `BaseUrl`           | `https://api.vision.glair.ai`    | Base URL for GLAIR Vision API                                               |
+| `ApiVersion`        | `v1`                             | GLAIR Vision API version to be used                                         |
+| `MaxResponseBytes`  | `50 MB`                          | Maximum response body size in bytes. Set to 0 to disable limit.             |
+| `Client`            | Default Go HTTP client           | HTTP Client to be used when sending request to GLAIR Vision API             |
+| `Logger`            | `LeveledLogger` with `LevelNone` | Logger instace to be used to log errors, information, or debugging messages |
 
 You can change the above values using the provided `With<Option>` method of the configuration object, for example:
 
@@ -99,6 +100,8 @@ func main() {
     config := glair.NewConfig("<username>", "<password>", "<api_key>")
     // set the base url to `http://localhost:3000` 
     config = config.WithBaseURL("http://localhost:3000")
+    // set max response size to 10 MB
+    config = config.WithMaxResponseBytes(10 << 20)
 
     client := client.New(config)
 }
@@ -118,6 +121,8 @@ Each OCR function comes in two forms:
 - `FooRaw(ctx, input) ([]byte, error)` — Returns the raw JSON response body. Gives you full control to decode the response however you need.
 
 Use `FooRaw` if the default struct does not match your expected response format, or if you only need to extract specific fields:
+
+**⚠️ Security Warning:** Raw response methods (`*Raw`) return unredacted PII (personally identifiable information) such as NIK, names, dates of birth, addresses, photos, signatures, and other sensitive data. **Do not log or persist raw response bytes in plaintext.** Handle with appropriate security controls.
 
 ```go
 package main
